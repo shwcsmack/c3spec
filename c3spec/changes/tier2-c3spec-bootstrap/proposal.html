@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proposal: c3spec Bootstrap</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; margin: 0; background: #0f1117; color: #e1e4e8; line-height: 1.6; }
+  .header { background: linear-gradient(135deg, #1a1f2e 0%, #0d1b2a 100%); border-bottom: 1px solid #30363d; padding: 2rem 3rem; }
+  .header h1 { margin: 0 0 0.25rem; font-size: 1.8rem; color: #58a6ff; }
+  .header .meta { color: #8b949e; font-size: 0.85rem; }
+  .badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600; margin-left: 0.5rem; background: #388bfd22; color: #58a6ff; border: 1px solid #388bfd44; }
+  .content { max-width: 900px; margin: 0 auto; padding: 2rem 3rem; }
+  section { margin-bottom: 2.5rem; }
+  h2 { color: #58a6ff; border-bottom: 1px solid #21262d; padding-bottom: 0.5rem; font-size: 1.2rem; text-transform: uppercase; letter-spacing: 0.05em; }
+  h3 { color: #e1e4e8; font-size: 1rem; margin-bottom: 0.5rem; }
+  .callout { background: #1c2333; border-left: 4px solid #58a6ff; border-radius: 0 6px 6px 0; padding: 1rem 1.25rem; margin: 1rem 0; }
+  .callout.why { border-color: #f78166; }
+  .callout.warning { border-color: #d29922; }
+  .pain-point { color: #f78166; font-weight: 600; }
+  .benefit { color: #3fb950; font-weight: 600; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem; }
+  th { background: #161b22; color: #8b949e; font-weight: 600; padding: 0.6rem 1rem; text-align: left; border-bottom: 1px solid #30363d; }
+  td { padding: 0.6rem 1rem; border-bottom: 1px solid #21262d; }
+  tr:hover td { background: #161b22; }
+  .from { color: #f78166; }
+  .to { color: #3fb950; }
+  .tag { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-family: 'SF Mono', monospace; margin: 0.1rem; }
+  .tag.new { background: #1f4e25; color: #3fb950; }
+  .tag.modified { background: #2d1f07; color: #d29922; }
+  .tag.removed { background: #3d1f1f; color: #f78166; }
+  .cap-card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 1rem 1.25rem; margin: 0.75rem 0; }
+  .cap-card h4 { margin: 0 0 0.4rem; color: #58a6ff; font-family: 'SF Mono', monospace; font-size: 0.9rem; }
+  .cap-card p { margin: 0; color: #8b949e; font-size: 0.875rem; }
+  ul { padding-left: 1.5rem; }
+  li { margin-bottom: 0.3rem; }
+  code { background: #161b22; border: 1px solid #30363d; padding: 0.1rem 0.4rem; border-radius: 4px; font-family: 'SF Mono', monospace; font-size: 0.85em; color: #79c0ff; }
+  .impact-table td:first-child { font-family: 'SF Mono', monospace; color: #79c0ff; font-size: 0.85rem; }
+  .scope-box { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; }
+  .scope-in { background: #1f4e2522; border: 1px solid #3fb95044; border-radius: 6px; padding: 1rem; }
+  .scope-out { background: #3d1f1f22; border: 1px solid #f7816644; border-radius: 6px; padding: 1rem; }
+  .scope-in h4 { color: #3fb950; margin: 0 0 0.5rem; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; }
+  .scope-out h4 { color: #f78166; margin: 0 0 0.5rem; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>c3spec Bootstrap <span class="badge">T2 — Lightweight Feature</span></h1>
+  <div class="meta">Proposed: 2026-05-25 &nbsp;·&nbsp; Repo: shwcsmack/c3spec &nbsp;·&nbsp; Change: tier2-c3spec-bootstrap</div>
+</div>
+
+<div class="content">
+
+  <section>
+    <h2>Why</h2>
+    <div class="callout why">
+      <p><span class="pain-point">Pain:</span> The project relies on <code>@fission-ai/openspec</code> — a generic, third-party tool with telemetry we don't control, a binary name that carries no brand identity, and an <code>init</code> command that scaffolds a generic structure instead of the opinionated Code 3 Dev workflow.</p>
+      <p><span class="benefit">Why now:</span> The workflow redesign (tiered routing, custom subagent orchestration, memory system) is complete in <code>open-brain</code>. The next step is owning the full stack — the CLI, the schema, and eventually the plugin — so future projects can be bootstrapped from a single <code>c3spec init</code> instead of manually copying files.</p>
+      <p><span class="benefit">Expected gain:</span> A fully branded, telemetry-free CLI that dogfoods itself. Running <code>c3spec init</code> in any new project will scaffold the entire tiered workflow, memory structure, and custom skills — zero manual setup.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>What Changes</h2>
+
+    <h3>Package Identity</h3>
+    <table>
+      <tr><th>Field</th><th class="from">From</th><th class="to">To</th></tr>
+      <tr><td>Package name</td><td class="from"><code>@fission-ai/openspec</code></td><td class="to"><code>@shwcsmack/c3spec</code></td></tr>
+      <tr><td>Binary name</td><td class="from"><code>openspec</code></td><td class="to"><code>c3spec</code></td></tr>
+      <tr><td>CLI description</td><td class="from">AI-native system for spec-driven development</td><td class="to">Code 3 Dev spec-driven development CLI</td></tr>
+      <tr><td>Repository</td><td class="from">github.com/Fission-AI/OpenSpec</td><td class="to">github.com/shwcsmack/c3spec</td></tr>
+      <tr><td>Publishing</td><td class="from">Public npm</td><td class="to">Private (GitHub install)</td></tr>
+    </table>
+
+    <h3>Telemetry</h3>
+    <table>
+      <tr><th>Area</th><th class="from">From</th><th class="to">To</th></tr>
+      <tr><td><code>posthog-node</code> dependency</td><td class="from">Required — tracks every command</td><td class="to">Removed entirely</td></tr>
+      <tr><td><code>src/telemetry/</code></td><td class="from">Active PostHog integration</td><td class="to">Stubbed no-op or deleted</td></tr>
+      <tr><td>Telemetry consent prompt</td><td class="from">Shown on first run</td><td class="to">Removed</td></tr>
+    </table>
+
+    <h3>Init Command</h3>
+    <table>
+      <tr><th>Behavior</th><th class="from">From</th><th class="to">To</th></tr>
+      <tr><td>Default schema</td><td class="from"><code>spec-driven</code></td><td class="to"><code>superpowers-bridge</code></td></tr>
+      <tr><td>Scaffolded structure</td><td class="from">Generic openspec/ skeleton</td><td class="to">Full c3spec structure: <code>c3spec/memory/</code>, tiered routing skills, CLAUDE.md</td></tr>
+      <tr><td>Skills installed</td><td class="from">Generic tool adapter skills</td><td class="to">Custom c3spec skills (openspec-start, openspec-tier1-fix, openspec-tier2-feature, openspec-subagent-dev)</td></tr>
+    </table>
+
+    <h3>New <code>c3spec memory</code> Command</h3>
+    <div class="callout">
+      <p>A new subcommand for managing the <code>c3spec/memory/</code> system. Three operations:</p>
+      <ul>
+        <li><code>c3spec memory list</code> — print MEMORY.md index with file sizes and dates</li>
+        <li><code>c3spec memory add &lt;category&gt; &lt;slug&gt;</code> — scaffold a new memory file with correct frontmatter and add index entry</li>
+        <li><code>c3spec memory promote &lt;slug&gt;</code> — mark a retro candidate as promoted and verify the memory file exists</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2>Capabilities</h2>
+
+    <div class="cap-card">
+      <h4>memory-management</h4>
+      <p>New capability: <code>c3spec memory</code> subcommand for listing, adding, and promoting project memory entries. Operates on the <code>c3spec/memory/</code> directory and <code>MEMORY.md</code> index.</p>
+    </div>
+
+    <div class="cap-card">
+      <h4>c3spec-init (modified)</h4>
+      <p>The existing <code>init</code> command is extended to scaffold the full Code 3 Dev workflow structure — superpowers-bridge schema, tiered routing skills, CLAUDE.md fragment, and memory directory — as the default profile.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Scope</h2>
+    <div class="scope-box">
+      <div class="scope-in">
+        <h4>In scope</h4>
+        <ul>
+          <li>Package rename (<code>c3spec</code> binary, package name, all internal references)</li>
+          <li>Workflow directory rename: <code>openspec/</code> → <code>c3spec/</code> (CLI path constant + default config)</li>
+          <li>Strip PostHog telemetry entirely</li>
+          <li>Custom <code>init</code> default profile (superpowers-bridge + memory + skills)</li>
+          <li><code>c3spec memory</code> subcommand (list, add, promote)</li>
+          <li>README and branding updates</li>
+          <li>Private publish setup (installable from GitHub)</li>
+        </ul>
+      </div>
+      <div class="scope-out">
+        <h4>Out of scope</h4>
+        <ul>
+          <li>New spec validation logic</li>
+          <li>Upstream OpenSpec feature parity</li>
+          <li>Plugin packaging for multi-project distribution</li>
+          <li>Public npm registry publishing</li>
+          <li>Windows CI (carry forward from upstream)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Impact</h2>
+    <table class="impact-table">
+      <tr><th>Area</th><th>Change</th><th>Risk</th></tr>
+      <tr><td>package.json</td><td>Name, bin key, description, remove posthog-node dep</td><td>Low</td></tr>
+      <tr><td>bin/openspec.js → bin/c3spec.js</td><td>Rename file, update shebang target</td><td>Low</td></tr>
+      <tr><td>src/core/config.ts (or equivalent)</td><td>Change hardcoded <code>"openspec"</code> directory constant → <code>"c3spec"</code></td><td>Medium — touches every path the CLI resolves</td></tr>
+      <tr><td>src/telemetry/</td><td>Replace with no-op stubs (preserve imports so nothing breaks)</td><td>Low</td></tr>
+      <tr><td>src/cli/index.ts</td><td>Update program name, description; remove telemetry hooks</td><td>Low</td></tr>
+      <tr><td>src/commands/memory.ts (new)</td><td>New file implementing memory subcommand</td><td>Medium</td></tr>
+      <tr><td>src/core/init.ts</td><td>Add c3spec default profile; scaffold memory + skills</td><td>Medium</td></tr>
+      <tr><td>README.md</td><td>Full rewrite for c3spec branding</td><td>None</td></tr>
+      <tr><td>All tests</td><td>Update binary name references from openspec → c3spec</td><td>Low</td></tr>
+    </table>
+  </section>
+
+</div>
+</body>
+</html>
