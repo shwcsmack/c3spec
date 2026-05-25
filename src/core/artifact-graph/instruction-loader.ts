@@ -7,6 +7,7 @@ import { resolveArtifactOutputs } from './outputs.js';
 import { readChangeMetadata, resolveSchemaForChange } from '../../utils/change-metadata.js';
 import { FileSystemUtils } from '../../utils/file-system.js';
 import { readProjectConfig, validateConfigRules } from '../project-config.js';
+import { C3SPEC_DIR_NAME } from '../config.js';
 import type { PlanningHome } from '../planning-home.js';
 import type { Artifact, CompletedSet } from './types.js';
 
@@ -222,7 +223,7 @@ export function loadTemplate(
  *
  * Schema resolution order:
  * 1. Explicit schemaName parameter (if provided)
- * 2. Schema from .openspec.yaml metadata (if exists in change directory)
+ * 2. Schema from .c3spec.yaml metadata (if exists in change directory)
  * 3. Default 'spec-driven'
  *
  * @param projectRoot - Project root directory
@@ -237,7 +238,7 @@ export function loadChangeContext(
   options: LoadChangeContextOptions = {}
 ): ChangeContext {
   const changeDir = FileSystemUtils.canonicalizeExistingPath(
-    options.changeDir ?? path.join(projectRoot, 'openspec', 'changes', changeName)
+    options.changeDir ?? path.join(projectRoot, C3SPEC_DIR_NAME, 'changes', changeName)
   );
 
   // Resolve schema: explicit > metadata > default
@@ -463,7 +464,7 @@ function buildNextSteps(
 
   if (readyArtifact) {
     steps.push(
-      `Run openspec instructions ${readyArtifact.id} --change "${context.changeName}" --json before writing that artifact.`
+      `Run c3spec instructions ${readyArtifact.id} --change "${context.changeName}" --json before writing that artifact.`
     );
   } else if (context.graph.isComplete(context.completed)) {
     steps.push('All planning artifacts are complete; review tasks before implementation.');

@@ -2,13 +2,13 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { isInteractive, resolveNoInteractive, InteractiveOptions } from '../../src/utils/interactive.js';
 
 describe('interactive utilities', () => {
-  let originalOpenSpecInteractive: string | undefined;
+  let originalC3SpecInteractive: string | undefined;
   let originalCI: string | undefined;
   let originalStdinIsTTY: boolean | undefined;
 
   beforeEach(() => {
     // Save original environment
-    originalOpenSpecInteractive = process.env.OPEN_SPEC_INTERACTIVE;
+    originalC3SpecInteractive = process.env.OPEN_SPEC_INTERACTIVE;
     originalCI = process.env.CI;
     originalStdinIsTTY = process.stdin.isTTY;
 
@@ -19,8 +19,8 @@ describe('interactive utilities', () => {
 
   afterEach(() => {
     // Restore original environment
-    if (originalOpenSpecInteractive !== undefined) {
-      process.env.OPEN_SPEC_INTERACTIVE = originalOpenSpecInteractive;
+    if (originalC3SpecInteractive !== undefined) {
+      process.env.OPEN_SPEC_INTERACTIVE = originalC3SpecInteractive;
     } else {
       delete process.env.OPEN_SPEC_INTERACTIVE;
     }

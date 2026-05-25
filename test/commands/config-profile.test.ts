@@ -23,7 +23,7 @@ async function runConfigCommand(args: string[]): Promise<void> {
   const { registerConfigCommand } = await import('../../src/commands/config.js');
   const program = new Command();
   registerConfigCommand(program);
-  await program.parseAsync(['node', 'openspec', 'config', ...args]);
+  await program.parseAsync(['node', 'c3spec', 'config', ...args]);
 }
 
 async function getPromptMocks(): Promise<{
@@ -92,20 +92,20 @@ describe('config profile interactive flow', () => {
   let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
 
   function setupDriftedProjectArtifacts(projectDir: string): void {
-    fs.mkdirSync(path.join(projectDir, 'openspec'), { recursive: true });
-    const exploreSkillPath = path.join(projectDir, '.claude', 'skills', 'openspec-explore', 'SKILL.md');
+    fs.mkdirSync(path.join(projectDir, 'c3spec'), { recursive: true });
+    const exploreSkillPath = path.join(projectDir, '.claude', 'skills', 'c3spec-explore', 'SKILL.md');
     fs.mkdirSync(path.dirname(exploreSkillPath), { recursive: true });
-    fs.writeFileSync(exploreSkillPath, 'name: openspec-explore\n', 'utf-8');
+    fs.writeFileSync(exploreSkillPath, 'name: c3spec-explore\n', 'utf-8');
   }
 
   function setupSyncedCoreBothArtifacts(projectDir: string): void {
-    fs.mkdirSync(path.join(projectDir, 'openspec'), { recursive: true });
+    fs.mkdirSync(path.join(projectDir, 'c3spec'), { recursive: true });
     const coreSkillDirs = [
-      'openspec-propose',
-      'openspec-explore',
-      'openspec-apply-change',
-      'openspec-sync-specs',
-      'openspec-archive-change',
+      'c3spec-propose',
+      'c3spec-explore',
+      'c3spec-apply-change',
+      'c3spec-sync-specs',
+      'c3spec-archive-change',
     ];
     for (const dirName of coreSkillDirs) {
       const skillPath = path.join(projectDir, '.claude', 'skills', dirName, 'SKILL.md');
@@ -122,9 +122,9 @@ describe('config profile interactive flow', () => {
   }
 
   function addExtraVerifyWorkflowArtifacts(projectDir: string): void {
-    const verifySkillPath = path.join(projectDir, '.claude', 'skills', 'openspec-verify-change', 'SKILL.md');
+    const verifySkillPath = path.join(projectDir, '.claude', 'skills', 'c3spec-verify-change', 'SKILL.md');
     fs.mkdirSync(path.dirname(verifySkillPath), { recursive: true });
-    fs.writeFileSync(verifySkillPath, 'name: openspec-verify-change\n', 'utf-8');
+    fs.writeFileSync(verifySkillPath, 'name: c3spec-verify-change\n', 'utf-8');
 
     const verifyCommandPath = path.join(projectDir, '.claude', 'commands', 'opsx', 'verify.md');
     fs.mkdirSync(path.dirname(verifyCommandPath), { recursive: true });
@@ -135,7 +135,7 @@ describe('config profile interactive flow', () => {
     workspaceRoot: string,
     options: { driftedSkills?: boolean } = {}
   ): void {
-    const metadataDir = path.join(workspaceRoot, '.openspec-workspace');
+    const metadataDir = path.join(workspaceRoot, '.c3spec-workspace');
     fs.mkdirSync(metadataDir, { recursive: true });
     fs.writeFileSync(
       path.join(metadataDir, 'workspace.yaml'),
@@ -177,7 +177,7 @@ describe('config profile interactive flow', () => {
   beforeEach(() => {
     vi.resetModules();
 
-    tempDir = path.join(os.tmpdir(), `openspec-config-profile-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+    tempDir = path.join(os.tmpdir(), `c3spec-config-profile-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
     fs.mkdirSync(tempDir, { recursive: true });
 
     originalEnv = { ...process.env };
@@ -328,7 +328,7 @@ describe('config profile interactive flow', () => {
     const configPath = getGlobalConfigPath();
     const beforeContent = fs.readFileSync(configPath, 'utf-8');
 
-    fs.mkdirSync(path.join(tempDir, 'openspec'), { recursive: true });
+    fs.mkdirSync(path.join(tempDir, 'c3spec'), { recursive: true });
     select.mockResolvedValueOnce('delivery');
     select.mockResolvedValueOnce('both');
 
@@ -404,7 +404,7 @@ describe('config profile interactive flow', () => {
     const { select, confirm } = await getPromptMocks();
 
     saveGlobalConfig({ featureFlags: {}, profile: 'core', delivery: 'both', workflows: ['propose', 'explore', 'apply', 'sync', 'archive'] });
-    fs.mkdirSync(path.join(tempDir, 'openspec'), { recursive: true });
+    fs.mkdirSync(path.join(tempDir, 'c3spec'), { recursive: true });
 
     select.mockResolvedValueOnce('delivery');
     select.mockResolvedValueOnce('skills');
@@ -438,7 +438,7 @@ describe('config profile interactive flow', () => {
       default: true,
     });
     expect(execSync).not.toHaveBeenCalled();
-    expect(consoleLogSpy).toHaveBeenCalledWith('Config updated. Run `openspec workspace update` to apply it to workspace-local skills.');
+    expect(consoleLogSpy).toHaveBeenCalledWith('Config updated. Run `c3spec workspace update` to apply it to workspace-local skills.');
   });
 
   it('confirmed workspace apply should run workspace update instead of repo-local update', async () => {
@@ -446,7 +446,7 @@ describe('config profile interactive flow', () => {
     const { select, confirm } = await getPromptMocks();
 
     setupWorkspaceState(tempDir);
-    fs.mkdirSync(path.join(tempDir, 'openspec'), { recursive: true });
+    fs.mkdirSync(path.join(tempDir, 'c3spec'), { recursive: true });
     saveGlobalConfig({ featureFlags: {}, profile: 'core', delivery: 'both', workflows: ['propose', 'explore', 'apply', 'sync', 'archive'] });
 
     select.mockResolvedValueOnce('delivery');
@@ -455,11 +455,11 @@ describe('config profile interactive flow', () => {
 
     await runConfigCommand(['profile']);
 
-    expect(execSync).toHaveBeenCalledWith('npx openspec workspace update', {
+    expect(execSync).toHaveBeenCalledWith('npx c3spec workspace update', {
       stdio: 'inherit',
       cwd: process.cwd(),
     });
-    expect(execSync).not.toHaveBeenCalledWith('npx openspec update', expect.anything());
+    expect(execSync).not.toHaveBeenCalledWith('npx c3spec update', expect.anything());
   });
 
   it('no-op inside a workspace should warn when workspace skills drift', async () => {
@@ -477,7 +477,7 @@ describe('config profile interactive flow', () => {
     expect(confirm).not.toHaveBeenCalled();
     expect(consoleLogSpy).toHaveBeenCalledWith('No config changes.');
     expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('Workspace-local agent skills are out of sync'));
-    expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('openspec workspace update'));
+    expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('c3spec workspace update'));
   });
 
   it('core preset should preserve delivery setting', async () => {
@@ -512,7 +512,7 @@ describe('config profile interactive flow', () => {
     expect(select).not.toHaveBeenCalled();
     expect(checkbox).not.toHaveBeenCalled();
     expect(confirm).not.toHaveBeenCalled();
-    expect(consoleLogSpy).toHaveBeenCalledWith('Config updated. Run `openspec workspace update` to apply it to workspace-local skills.');
+    expect(consoleLogSpy).toHaveBeenCalledWith('Config updated. Run `c3spec workspace update` to apply it to workspace-local skills.');
   });
 
   it('Ctrl+C should cancel without stack trace and set interrupted exit code', async () => {

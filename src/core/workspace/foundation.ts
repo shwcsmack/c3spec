@@ -8,7 +8,7 @@ import { FileSystemUtils } from '../../utils/file-system.js';
 
 const fs = nodeFs.promises;
 
-export const WORKSPACE_METADATA_DIR_NAME = '.openspec-workspace';
+export const WORKSPACE_METADATA_DIR_NAME = '.c3spec-workspace';
 export const WORKSPACE_SHARED_STATE_FILE_NAME = 'workspace.yaml';
 export const WORKSPACE_LOCAL_STATE_FILE_NAME = 'local.yaml';
 export const WORKSPACE_CHANGES_DIR_NAME = 'changes';

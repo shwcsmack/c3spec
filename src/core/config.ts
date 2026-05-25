@@ -1,11 +1,11 @@
-export const OPENSPEC_DIR_NAME = 'openspec';
+export const C3SPEC_DIR_NAME = 'c3spec';
 
-export const OPENSPEC_MARKERS = {
-  start: '<!-- OPENSPEC:START -->',
-  end: '<!-- OPENSPEC:END -->'
+export const C3SPEC_MARKERS = {
+  start: '<!-- C3SPEC:START -->',
+  end: '<!-- C3SPEC:END -->'
 };
 
-export interface OpenSpecConfig {
+export interface C3SpecConfig {
   aiTools: string[];
 }
 

@@ -41,14 +41,14 @@ describe('planning home paths', () => {
   });
 
   it('keeps a canonical workspace root comparable with an aliased start path', () => {
-    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'openspec-planning-home-'));
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'c3spec-planning-home-'));
     tempDirs.push(tempDir);
     const realWorkspaceRoot = path.join(tempDir, 'real-workspace');
     const aliasWorkspaceRoot = path.join(tempDir, 'alias-workspace');
 
-    fs.mkdirSync(path.join(realWorkspaceRoot, '.openspec-workspace'), { recursive: true });
+    fs.mkdirSync(path.join(realWorkspaceRoot, '.c3spec-workspace'), { recursive: true });
     fs.writeFileSync(
-      path.join(realWorkspaceRoot, '.openspec-workspace', 'workspace.yaml'),
+      path.join(realWorkspaceRoot, '.c3spec-workspace', 'workspace.yaml'),
       'version: 1\nname: platform\nlinks: {}\n',
       'utf-8'
     );

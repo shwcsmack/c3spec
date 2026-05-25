@@ -8,8 +8,8 @@ import type { SkillTemplate, CommandTemplate } from '../types.js';
 
 export function getFfChangeSkillTemplate(): SkillTemplate {
   return {
-    name: 'openspec-ff-change',
-    description: 'Fast-forward through OpenSpec artifact creation. Use when the user wants to quickly create all artifacts needed for implementation without stepping through each one individually.',
+    name: 'c3spec-ff-change',
+    description: 'Fast-forward through C3Spec artifact creation. Use when the user wants to quickly create all artifacts needed for implementation without stepping through each one individually.',
     instructions: `Fast-forward through artifact creation - generate everything needed to start implementation in one go.
 
 **Input**: The user's request should include a change name (kebab-case) OR a description of what they want to build.
@@ -27,13 +27,13 @@ export function getFfChangeSkillTemplate(): SkillTemplate {
 
 2. **Create the change directory**
    \`\`\`bash
-   openspec new change "<name>"
+   c3spec new change "<name>"
    \`\`\`
    This creates a scaffolded change in the planning home resolved by the CLI.
 
 3. **Get the artifact build order**
    \`\`\`bash
-   openspec status --change "<name>" --json
+   c3spec status --change "<name>" --json
    \`\`\`
    Parse the JSON to get:
    - \`applyRequires\`: array of artifact IDs needed before implementation (e.g., \`["tasks"]\`)
@@ -49,7 +49,7 @@ export function getFfChangeSkillTemplate(): SkillTemplate {
    a. **For each artifact that is \`ready\` (dependencies satisfied)**:
       - Get instructions:
         \`\`\`bash
-        openspec instructions <artifact-id> --change "<name>" --json
+        c3spec instructions <artifact-id> --change "<name>" --json
         \`\`\`
       - The instructions JSON includes:
         - \`context\`: Project background (constraints for you - do NOT include in output)
@@ -64,7 +64,7 @@ export function getFfChangeSkillTemplate(): SkillTemplate {
       - Show brief progress: "✓ Created <artifact-id>"
 
    b. **Continue until all \`applyRequires\` artifacts are complete**
-      - After creating each artifact, re-run \`openspec status --change "<name>" --json\`
+      - After creating each artifact, re-run \`c3spec status --change "<name>" --json\`
       - Check if every artifact ID in \`applyRequires\` has \`status: "done"\` in the artifacts array
       - Stop when all \`applyRequires\` artifacts are done
 
@@ -74,7 +74,7 @@ export function getFfChangeSkillTemplate(): SkillTemplate {
 
 5. **Show final status**
    \`\`\`bash
-   openspec status --change "<name>"
+   c3spec status --change "<name>"
    \`\`\`
 
 **Output**
@@ -87,7 +87,7 @@ After completing all artifacts, summarize:
 
 **Artifact Creation Guidelines**
 
-- Follow the \`instruction\` field from \`openspec instructions\` for each artifact type
+- Follow the \`instruction\` field from \`c3spec instructions\` for each artifact type
 - The schema defines what each artifact should contain - follow it
 - Read dependency artifacts for context before creating new ones
 - Use \`template\` as the structure for your output file - fill in its sections
@@ -102,8 +102,8 @@ After completing all artifacts, summarize:
 - If a change with that name already exists, suggest continuing that change instead
 - Verify each artifact file exists after writing before proceeding to next`,
     license: 'MIT',
-    compatibility: 'Requires openspec CLI.',
-    metadata: { author: 'openspec', version: '1.0' },
+    compatibility: 'Requires c3spec CLI.',
+    metadata: { author: 'c3spec', version: '1.0' },
   };
 }
 
@@ -130,13 +130,13 @@ export function getOpsxFfCommandTemplate(): CommandTemplate {
 
 2. **Create the change directory**
    \`\`\`bash
-   openspec new change "<name>"
+   c3spec new change "<name>"
    \`\`\`
    This creates a scaffolded change in the planning home resolved by the CLI.
 
 3. **Get the artifact build order**
    \`\`\`bash
-   openspec status --change "<name>" --json
+   c3spec status --change "<name>" --json
    \`\`\`
    Parse the JSON to get:
    - \`applyRequires\`: array of artifact IDs needed before implementation (e.g., \`["tasks"]\`)
@@ -152,7 +152,7 @@ export function getOpsxFfCommandTemplate(): CommandTemplate {
    a. **For each artifact that is \`ready\` (dependencies satisfied)**:
       - Get instructions:
         \`\`\`bash
-        openspec instructions <artifact-id> --change "<name>" --json
+        c3spec instructions <artifact-id> --change "<name>" --json
         \`\`\`
       - The instructions JSON includes:
         - \`context\`: Project background (constraints for you - do NOT include in output)
@@ -167,7 +167,7 @@ export function getOpsxFfCommandTemplate(): CommandTemplate {
       - Show brief progress: "✓ Created <artifact-id>"
 
    b. **Continue until all \`applyRequires\` artifacts are complete**
-      - After creating each artifact, re-run \`openspec status --change "<name>" --json\`
+      - After creating each artifact, re-run \`c3spec status --change "<name>" --json\`
       - Check if every artifact ID in \`applyRequires\` has \`status: "done"\` in the artifacts array
       - Stop when all \`applyRequires\` artifacts are done
 
@@ -177,7 +177,7 @@ export function getOpsxFfCommandTemplate(): CommandTemplate {
 
 5. **Show final status**
    \`\`\`bash
-   openspec status --change "<name>"
+   c3spec status --change "<name>"
    \`\`\`
 
 **Output**
@@ -190,7 +190,7 @@ After completing all artifacts, summarize:
 
 **Artifact Creation Guidelines**
 
-- Follow the \`instruction\` field from \`openspec instructions\` for each artifact type
+- Follow the \`instruction\` field from \`c3spec instructions\` for each artifact type
 - The schema defines what each artifact should contain - follow it
 - Read dependency artifacts for context before creating new ones
 - Use \`template\` as the structure for your output file - fill in its sections

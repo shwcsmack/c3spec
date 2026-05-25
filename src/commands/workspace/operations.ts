@@ -133,10 +133,10 @@ function formatDuplicateLinkMessage(
     `  ${linkName} -> ${existingPath ?? '(no local path recorded)'}`,
     '',
     'Choose a different link name:',
-    `  openspec workspace link archived-${linkName} ${replacementPath}`,
+    `  c3spec workspace link archived-${linkName} ${replacementPath}`,
     '',
     'If you meant to change the existing link path:',
-    `  openspec workspace relink ${linkName} ${replacementPath}`,
+    `  c3spec workspace relink ${linkName} ${replacementPath}`,
   ].join('\n');
 }
 
@@ -150,7 +150,7 @@ function duplicateLinkError(
     'duplicate_link_name',
     {
       target: `links.${linkName}`,
-      fix: `Choose a different link name or run 'openspec workspace relink ${linkName} ${replacementPath}'.`,
+      fix: `Choose a different link name or run 'c3spec workspace relink ${linkName} ${replacementPath}'.`,
     }
   );
 }
@@ -207,7 +207,7 @@ function localStateInvalidStatus(error: unknown): WorkspaceStatus {
     `Machine-local paths could not be read: ${asErrorMessage(error)}`,
     {
       target: 'workspace.local_state',
-      fix: 'Repair or remove .openspec-workspace/local.yaml, then run openspec workspace relink <name> <path> for affected links.',
+      fix: 'Repair or remove .c3spec-workspace/local.yaml, then run c3spec workspace relink <name> <path> for affected links.',
     }
   );
 }
@@ -219,7 +219,7 @@ function workspaceSkillDriftStatus(workspaceName: string): WorkspaceStatus {
     'Workspace-local agent skills are out of sync with the active global profile.',
     {
       target: 'workspace.skills',
-      fix: `openspec workspace update --workspace ${workspaceName}`,
+      fix: `c3spec workspace update --workspace ${workspaceName}`,
     }
   );
 }
@@ -458,7 +458,7 @@ export async function loadWorkspaceForDoctor(
             `Workspace state could not be read: ${asErrorMessage(error)}`,
             {
               target: 'workspace.root',
-              fix: 'Repair .openspec-workspace/workspace.yaml before using this workspace.',
+              fix: 'Repair .c3spec-workspace/workspace.yaml before using this workspace.',
             }
           ),
         ],
@@ -479,7 +479,7 @@ export async function loadWorkspaceForDoctor(
           'Machine-local paths are not recorded yet.',
           {
             target: 'workspace.local_state',
-            fix: 'Run openspec workspace relink <name> <path> for each linked repo or folder on this machine.',
+            fix: 'Run c3spec workspace relink <name> <path> for each linked repo or folder on this machine.',
           }
         )
       );
@@ -502,7 +502,7 @@ export async function loadWorkspaceForDoctor(
         'Workspace planning path does not exist.',
         {
           target: 'workspace.planning_path',
-          fix: `Create ${planningPath} or recreate the workspace with openspec workspace setup.`,
+          fix: `Create ${planningPath} or recreate the workspace with c3spec workspace setup.`,
         }
       )
     );
@@ -528,7 +528,7 @@ export async function loadWorkspaceForDoctor(
           'Local path is recorded without a shared workspace link.',
           {
             target: `links.${linkName}`,
-            fix: `Add a shared link with openspec workspace link ${linkName} ${localPath ?? '/path/to/folder'} or remove the local-only path from .openspec-workspace/local.yaml.`,
+            fix: `Add a shared link with c3spec workspace link ${linkName} ${localPath ?? '/path/to/folder'} or remove the local-only path from .c3spec-workspace/local.yaml.`,
           }
         )
       );
@@ -542,7 +542,7 @@ export async function loadWorkspaceForDoctor(
           'Shared link does not have a local path on this machine.',
           {
             target: `links.${linkName}.path`,
-            fix: `openspec workspace relink ${linkName} /path/to/${linkName}`,
+            fix: `c3spec workspace relink ${linkName} /path/to/${linkName}`,
           }
         )
       );
@@ -550,13 +550,13 @@ export async function loadWorkspaceForDoctor(
 
     if (localPath) {
       if (await directoryExists(localPath)) {
-        const candidateSpecsPath = path.join(localPath, 'openspec', 'specs');
+        const candidateSpecsPath = path.join(localPath, 'c3spec', 'specs');
         repoSpecsPath = (await directoryExists(candidateSpecsPath)) ? candidateSpecsPath : null;
       } else {
         linkStatus.push(
           makeStatus('error', 'linked_path_missing', 'Linked path does not exist.', {
             target: `links.${linkName}.path`,
-            fix: `openspec workspace relink ${linkName} /path/to/${linkName}`,
+            fix: `c3spec workspace relink ${linkName} /path/to/${linkName}`,
           })
         );
       }
@@ -591,7 +591,7 @@ export async function readWorkspaceForMutation(
       'selected_workspace_root_missing',
       {
         target: 'workspace.root',
-        fix: 'Run openspec workspace list to inspect known workspaces.',
+        fix: 'Run c3spec workspace list to inspect known workspaces.',
       }
     );
   }
@@ -688,7 +688,7 @@ export async function updateWorkspaceLink(
   if (!sharedState.links[linkName]) {
     throw new WorkspaceCliError(`Unknown workspace link '${linkName}'.`, 'unknown_link_name', {
       target: `links.${linkName}`,
-      fix: 'Run openspec workspace doctor to see linked repos or folders.',
+      fix: 'Run c3spec workspace doctor to see linked repos or folders.',
     });
   }
 

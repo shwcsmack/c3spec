@@ -1,5 +1,5 @@
 /**
- * Legacy cleanup module for detecting and removing OpenSpec artifacts
+ * Legacy cleanup module for detecting and removing c3spec artifacts
  * from previous init versions during the migration to the skill-based workflow.
  */
 
@@ -7,11 +7,11 @@ import path from 'path';
 import { promises as fs } from 'fs';
 import chalk from 'chalk';
 import { FileSystemUtils, removeMarkerBlock as removeMarkerBlockUtil } from '../utils/file-system.js';
-import { OPENSPEC_MARKERS } from './config.js';
+import { C3SPEC_MARKERS } from './config.js';
 
 /**
  * Legacy config file names from the old ToolRegistry.
- * These were config files created at project root with OpenSpec markers.
+ * These were config files created at project root with C3Spec markers.
  */
 export const LEGACY_CONFIG_FILES = [
   'CLAUDE.md',
@@ -20,7 +20,7 @@ export const LEGACY_CONFIG_FILES = [
   'COSTRICT.md',
   'QODER.md',
   'IFLOW.md',
-  'AGENTS.md', // root AGENTS.md (not openspec/AGENTS.md)
+  'AGENTS.md', // root AGENTS.md (not c3spec/AGENTS.md)
   'QWEN.md',
 ] as const;
 
@@ -30,33 +30,33 @@ export const LEGACY_CONFIG_FILES = [
  * Some tools used a directory structure, others used individual files.
  */
 export const LEGACY_SLASH_COMMAND_PATHS: Record<string, LegacySlashCommandPattern> = {
-  // Directory-based: .tooldir/commands/openspec/ or .tooldir/commands/openspec/*.md
-  'claude': { type: 'directory', path: '.claude/commands/openspec' },
-  'codebuddy': { type: 'directory', path: '.codebuddy/commands/openspec' },
-  'qoder': { type: 'directory', path: '.qoder/commands/openspec' },
-  'lingma': { type: 'directory', path: '.lingma/commands/openspec' },
-  'crush': { type: 'directory', path: '.crush/commands/openspec' },
-  'gemini': { type: 'directory', path: '.gemini/commands/openspec' },
-  'costrict': { type: 'directory', path: '.cospec/openspec/commands' },
+  // Directory-based: .tooldir/commands/c3spec/ or .tooldir/commands/c3spec/*.md
+  'claude': { type: 'directory', path: '.claude/commands/c3spec' },
+  'codebuddy': { type: 'directory', path: '.codebuddy/commands/c3spec' },
+  'qoder': { type: 'directory', path: '.qoder/commands/c3spec' },
+  'lingma': { type: 'directory', path: '.lingma/commands/c3spec' },
+  'crush': { type: 'directory', path: '.crush/commands/c3spec' },
+  'gemini': { type: 'directory', path: '.gemini/commands/c3spec' },
+  'costrict': { type: 'directory', path: '.cospec/c3spec/commands' },
 
-  // File-based: individual openspec-*.md files in a commands/workflows/prompts folder
-  'cursor': { type: 'files', pattern: '.cursor/commands/openspec-*.md' },
-  'windsurf': { type: 'files', pattern: '.windsurf/workflows/openspec-*.md' },
-  'kilocode': { type: 'files', pattern: '.kilocode/workflows/openspec-*.md' },
-  'kiro': { type: 'files', pattern: '.kiro/prompts/openspec-*.prompt.md' },
-  'github-copilot': { type: 'files', pattern: '.github/prompts/openspec-*.prompt.md' },
-  'amazon-q': { type: 'files', pattern: '.amazonq/prompts/openspec-*.md' },
-  'cline': { type: 'files', pattern: '.clinerules/workflows/openspec-*.md' },
-  'roocode': { type: 'files', pattern: '.roo/commands/openspec-*.md' },
-  'auggie': { type: 'files', pattern: '.augment/commands/openspec-*.md' },
-  'factory': { type: 'files', pattern: '.factory/commands/openspec-*.md' },
-  'opencode': { type: 'files', pattern: ['.opencode/command/opsx-*.md', '.opencode/command/openspec-*.md'] },
-  'continue': { type: 'files', pattern: '.continue/prompts/openspec-*.prompt' },
-  'antigravity': { type: 'files', pattern: '.agent/workflows/openspec-*.md' },
-  'iflow': { type: 'files', pattern: '.iflow/commands/openspec-*.md' },
-  'junie': { type: 'files', pattern: ['.junie/commands/opsx-*.md', '.junie/commands/openspec-*.md'] },
-  'qwen': { type: 'files', pattern: '.qwen/commands/openspec-*.toml' },
-  'codex': { type: 'files', pattern: '.codex/prompts/openspec-*.md' },
+  // File-based: individual c3spec-*.md files in a commands/workflows/prompts folder
+  'cursor': { type: 'files', pattern: '.cursor/commands/c3spec-*.md' },
+  'windsurf': { type: 'files', pattern: '.windsurf/workflows/c3spec-*.md' },
+  'kilocode': { type: 'files', pattern: '.kilocode/workflows/c3spec-*.md' },
+  'kiro': { type: 'files', pattern: '.kiro/prompts/c3spec-*.prompt.md' },
+  'github-copilot': { type: 'files', pattern: '.github/prompts/c3spec-*.prompt.md' },
+  'amazon-q': { type: 'files', pattern: '.amazonq/prompts/c3spec-*.md' },
+  'cline': { type: 'files', pattern: '.clinerules/workflows/c3spec-*.md' },
+  'roocode': { type: 'files', pattern: '.roo/commands/c3spec-*.md' },
+  'auggie': { type: 'files', pattern: '.augment/commands/c3spec-*.md' },
+  'factory': { type: 'files', pattern: '.factory/commands/c3spec-*.md' },
+  'opencode': { type: 'files', pattern: ['.opencode/command/opsx-*.md', '.opencode/command/c3spec-*.md'] },
+  'continue': { type: 'files', pattern: '.continue/prompts/c3spec-*.prompt' },
+  'antigravity': { type: 'files', pattern: '.agent/workflows/c3spec-*.md' },
+  'iflow': { type: 'files', pattern: '.iflow/commands/c3spec-*.md' },
+  'junie': { type: 'files', pattern: ['.junie/commands/opsx-*.md', '.junie/commands/c3spec-*.md'] },
+  'qwen': { type: 'files', pattern: '.qwen/commands/c3spec-*.toml' },
+  'codex': { type: 'files', pattern: '.codex/prompts/c3spec-*.md' },
 };
 
 /**
@@ -72,7 +72,7 @@ export interface LegacySlashCommandPattern {
  * Result of legacy artifact detection
  */
 export interface LegacyDetectionResult {
-  /** Config files with OpenSpec markers detected */
+  /** Config files with c3spec markers detected */
   configFiles: string[];
   /** Config files to update (remove markers only, never delete) */
   configFilesToUpdate: string[];
@@ -80,18 +80,18 @@ export interface LegacyDetectionResult {
   slashCommandDirs: string[];
   /** Legacy slash command files found (for file-based tools) */
   slashCommandFiles: string[];
-  /** Whether openspec/AGENTS.md exists */
+  /** Whether c3spec/AGENTS.md exists */
   hasOpenspecAgents: boolean;
-  /** Whether openspec/project.md exists (preserved, migration hint only) */
+  /** Whether c3spec/project.md exists (preserved, migration hint only) */
   hasProjectMd: boolean;
-  /** Whether root AGENTS.md has OpenSpec markers */
+  /** Whether root AGENTS.md has c3spec markers */
   hasRootAgentsWithMarkers: boolean;
   /** Whether any legacy artifacts were found */
   hasLegacyArtifacts: boolean;
 }
 
 /**
- * Detects all legacy OpenSpec artifacts in a project.
+ * Detects all legacy c3spec artifacts in a project.
  *
  * @param projectPath - The root path of the project
  * @returns Detection result with all found legacy artifacts
@@ -139,7 +139,7 @@ export async function detectLegacyArtifacts(
 }
 
 /**
- * Detects legacy config files with OpenSpec markers.
+ * Detects legacy config files with c3spec markers.
  * All config files with markers are candidates for update (marker removal only).
  * Config files are NEVER deleted - they belong to the user's project root.
  *
@@ -161,7 +161,7 @@ export async function detectLegacyConfigFiles(
     if (await FileSystemUtils.fileExists(filePath)) {
       const content = await FileSystemUtils.readFile(filePath);
 
-      if (hasOpenSpecMarkers(content)) {
+      if (hasC3SpecMarkers(content)) {
         allFiles.push(fileName);
         filesToUpdate.push(fileName); // Always update, never delete config files
       }
@@ -209,7 +209,7 @@ export async function detectLegacySlashCommands(
  * Finds legacy slash command files matching a glob pattern.
  *
  * @param projectPath - The root path of the project
- * @param pattern - Glob pattern like '.cursor/commands/openspec-*.md'
+ * @param pattern - Glob pattern like '.cursor/commands/c3spec-*.md'
  * @returns Array of matching file paths relative to projectPath
  */
 async function findLegacySlashCommandFiles(
@@ -236,9 +236,9 @@ async function findLegacySlashCommandFiles(
     const entries = await fs.readdir(dirPath);
 
     // Convert glob pattern to regex
-    // openspec-*.md -> /^openspec-.*\.md$/
-    // openspec-*.prompt.md -> /^openspec-.*\.prompt\.md$/
-    // openspec-*.toml -> /^openspec-.*\.toml$/
+    // c3spec-*.md -> /^c3spec-.*\.md$/
+    // c3spec-*.prompt.md -> /^c3spec-.*\.prompt\.md$/
+    // c3spec-*.toml -> /^c3spec-.*\.toml$/
     const regexPattern = filePart
       .replace(/[.+^${}()|[\]\\]/g, '\\$&') // Escape regex special chars except *
       .replace(/\*/g, '.*'); // Replace * with .*
@@ -259,7 +259,7 @@ async function findLegacySlashCommandFiles(
 }
 
 /**
- * Detects legacy OpenSpec structure files (AGENTS.md and project.md).
+ * Detects legacy c3spec structure files (AGENTS.md and project.md).
  *
  * @param projectPath - The root path of the project
  * @returns Object with detection results for structure files
@@ -275,66 +275,66 @@ export async function detectLegacyStructureFiles(
   let hasProjectMd = false;
   let hasRootAgentsWithMarkers = false;
 
-  // Check for openspec/AGENTS.md
-  const openspecAgentsPath = FileSystemUtils.joinPath(projectPath, 'openspec', 'AGENTS.md');
-  hasOpenspecAgents = await FileSystemUtils.fileExists(openspecAgentsPath);
+  // Check for c3spec/AGENTS.md
+  const c3specAgentsPath = FileSystemUtils.joinPath(projectPath, 'c3spec', 'AGENTS.md');
+  hasOpenspecAgents = await FileSystemUtils.fileExists(c3specAgentsPath);
 
-  // Check for openspec/project.md (for migration messaging, not deleted)
-  const projectMdPath = FileSystemUtils.joinPath(projectPath, 'openspec', 'project.md');
+  // Check for c3spec/project.md (for migration messaging, not deleted)
+  const projectMdPath = FileSystemUtils.joinPath(projectPath, 'c3spec', 'project.md');
   hasProjectMd = await FileSystemUtils.fileExists(projectMdPath);
 
-  // Check for root AGENTS.md with OpenSpec markers
+  // Check for root AGENTS.md with c3spec markers
   const rootAgentsPath = FileSystemUtils.joinPath(projectPath, 'AGENTS.md');
   if (await FileSystemUtils.fileExists(rootAgentsPath)) {
     const content = await FileSystemUtils.readFile(rootAgentsPath);
-    hasRootAgentsWithMarkers = hasOpenSpecMarkers(content);
+    hasRootAgentsWithMarkers = hasC3SpecMarkers(content);
   }
 
   return { hasOpenspecAgents, hasProjectMd, hasRootAgentsWithMarkers };
 }
 
 /**
- * Checks if content contains OpenSpec markers.
+ * Checks if content contains c3spec markers.
  *
  * @param content - File content to check
  * @returns True if both start and end markers are present
  */
-export function hasOpenSpecMarkers(content: string): boolean {
+export function hasC3SpecMarkers(content: string): boolean {
   return (
-    content.includes(OPENSPEC_MARKERS.start) && content.includes(OPENSPEC_MARKERS.end)
+    content.includes(C3SPEC_MARKERS.start) && content.includes(C3SPEC_MARKERS.end)
   );
 }
 
 /**
- * Checks if file content is 100% OpenSpec content (only markers and whitespace outside).
+ * Checks if file content is 100% c3spec content (only markers and whitespace outside).
  *
  * @param content - File content to check
  * @returns True if content outside markers is only whitespace
  */
-export function isOnlyOpenSpecContent(content: string): boolean {
-  const startIndex = content.indexOf(OPENSPEC_MARKERS.start);
-  const endIndex = content.indexOf(OPENSPEC_MARKERS.end);
+export function isOnlyC3SpecContent(content: string): boolean {
+  const startIndex = content.indexOf(C3SPEC_MARKERS.start);
+  const endIndex = content.indexOf(C3SPEC_MARKERS.end);
 
   if (startIndex === -1 || endIndex === -1 || endIndex <= startIndex) {
     return false;
   }
 
   const before = content.substring(0, startIndex);
-  const after = content.substring(endIndex + OPENSPEC_MARKERS.end.length);
+  const after = content.substring(endIndex + C3SPEC_MARKERS.end.length);
 
   return before.trim() === '' && after.trim() === '';
 }
 
 /**
- * Removes the OpenSpec marker block from file content.
+ * Removes the c3spec marker block from file content.
  * Only removes markers that are on their own lines (ignores inline mentions).
  * Cleans up double blank lines that may result from removal.
  *
- * @param content - File content with OpenSpec markers
+ * @param content - File content with c3spec markers
  * @returns Content with marker block removed
  */
 export function removeMarkerBlock(content: string): string {
-  return removeMarkerBlockUtil(content, OPENSPEC_MARKERS.start, OPENSPEC_MARKERS.end);
+  return removeMarkerBlockUtil(content, C3SPEC_MARKERS.start, C3SPEC_MARKERS.end);
 }
 
 /**
@@ -354,8 +354,8 @@ export interface CleanupResult {
 }
 
 /**
- * Cleans up legacy OpenSpec artifacts from a project.
- * Preserves openspec/project.md (shows migration hint instead of deleting).
+ * Cleans up legacy c3spec artifacts from a project.
+ * Preserves c3spec/project.md (shows migration hint instead of deleting).
  *
  * @param projectPath - The root path of the project
  * @param detection - Detection result from detectLegacyArtifacts
@@ -388,7 +388,7 @@ export async function cleanupLegacyArtifacts(
     }
   }
 
-  // Delete legacy slash command directories (these are 100% OpenSpec-managed)
+  // Delete legacy slash command directories (these are 100% c3spec-managed)
   for (const dirPath of detection.slashCommandDirs) {
     const fullPath = FileSystemUtils.joinPath(projectPath, dirPath);
     try {
@@ -399,7 +399,7 @@ export async function cleanupLegacyArtifacts(
     }
   }
 
-  // Delete legacy slash command files (these are 100% OpenSpec-managed)
+  // Delete legacy slash command files (these are 100% c3spec-managed)
   for (const filePath of detection.slashCommandFiles) {
     const fullPath = FileSystemUtils.joinPath(projectPath, filePath);
     try {
@@ -410,20 +410,20 @@ export async function cleanupLegacyArtifacts(
     }
   }
 
-  // Delete openspec/AGENTS.md (this is inside openspec/, it's OpenSpec-managed)
+  // Delete c3spec/AGENTS.md (this is inside c3spec/, it's c3spec-managed)
   if (detection.hasOpenspecAgents) {
-    const agentsPath = FileSystemUtils.joinPath(projectPath, 'openspec', 'AGENTS.md');
+    const agentsPath = FileSystemUtils.joinPath(projectPath, 'c3spec', 'AGENTS.md');
     if (await FileSystemUtils.fileExists(agentsPath)) {
       try {
         await fs.unlink(agentsPath);
-        result.deletedFiles.push('openspec/AGENTS.md');
+        result.deletedFiles.push('c3spec/AGENTS.md');
       } catch (error: any) {
-        result.errors.push(`Failed to delete openspec/AGENTS.md: ${error.message}`);
+        result.errors.push(`Failed to delete c3spec/AGENTS.md: ${error.message}`);
       }
     }
   }
 
-  // Handle root AGENTS.md with OpenSpec markers - remove markers only, NEVER delete
+  // Handle root AGENTS.md with c3spec markers - remove markers only, NEVER delete
   // Note: Root AGENTS.md is handled via configFilesToUpdate above (it's in LEGACY_CONFIG_FILES)
   // This hasRootAgentsWithMarkers flag is just for detection, cleanup happens via configFilesToUpdate
 
@@ -451,7 +451,7 @@ export function formatCleanupSummary(result: CleanupResult): string {
     }
 
     for (const file of result.modifiedFiles) {
-      lines.push(`  ✓ Removed OpenSpec markers from ${file}`);
+      lines.push(`  ✓ Removed C3Spec markers from ${file}`);
     }
   }
 
@@ -477,7 +477,7 @@ export function formatCleanupSummary(result: CleanupResult): string {
 
 /**
  * Build list of files to be removed with explanations.
- * Only includes OpenSpec-managed files (slash commands, openspec/AGENTS.md).
+ * Only includes c3spec-managed files (slash commands, c3spec/AGENTS.md).
  * Config files like CLAUDE.md, AGENTS.md are NEVER deleted.
  *
  * @param detection - Detection result from detectLegacyArtifacts
@@ -486,21 +486,21 @@ export function formatCleanupSummary(result: CleanupResult): string {
 function buildRemovalsList(detection: LegacyDetectionResult): Array<{ path: string; explanation: string }> {
   const removals: Array<{ path: string; explanation: string }> = [];
 
-  // Slash command directories (these are 100% OpenSpec-managed)
+  // Slash command directories (these are 100% c3spec-managed)
   for (const dir of detection.slashCommandDirs) {
     // Split on both forward and backward slashes for Windows compatibility
     const toolDir = dir.split(/[\/\\]/)[0];
     removals.push({ path: dir + '/', explanation: `replaced by ${toolDir}/skills/` });
   }
 
-  // Slash command files (these are 100% OpenSpec-managed)
+  // Slash command files (these are 100% c3spec-managed)
   for (const file of detection.slashCommandFiles) {
     removals.push({ path: file, explanation: 'replaced by skills/' });
   }
 
-  // openspec/AGENTS.md (inside openspec/, it's OpenSpec-managed)
+  // c3spec/AGENTS.md (inside c3spec/, it's c3spec-managed)
   if (detection.hasOpenspecAgents) {
-    removals.push({ path: 'openspec/AGENTS.md', explanation: 'obsolete workflow file' });
+    removals.push({ path: 'c3spec/AGENTS.md', explanation: 'obsolete workflow file' });
   }
 
   // Note: Config files (CLAUDE.md, AGENTS.md, etc.) are NEVER in the removals list
@@ -521,7 +521,7 @@ function buildUpdatesList(detection: LegacyDetectionResult): Array<{ path: strin
 
   // All config files with markers get updated (markers removed, file preserved)
   for (const file of detection.configFilesToUpdate) {
-    updates.push({ path: file, explanation: 'removing OpenSpec markers' });
+    updates.push({ path: file, explanation: 'removing c3spec markers' });
   }
 
   return updates;
@@ -546,9 +546,9 @@ export function formatDetectionSummary(detection: LegacyDetectionResult): string
   }
 
   // Header - welcoming upgrade message
-  lines.push(chalk.bold('Upgrading to the new OpenSpec'));
+  lines.push(chalk.bold('Upgrading to the new C3Spec'));
   lines.push('');
-  lines.push('OpenSpec now uses agent skills, the emerging standard across coding');
+  lines.push('c3spec now uses agent skills, the emerging standard across coding');
   lines.push('agents. This simplifies your setup while keeping everything working');
   lines.push('as before.');
   lines.push('');
@@ -566,7 +566,7 @@ export function formatDetectionSummary(detection: LegacyDetectionResult): string
   if (updates.length > 0) {
     if (removals.length > 0) lines.push('');
     lines.push(chalk.bold('Files to update'));
-    lines.push(chalk.dim('OpenSpec markers will be removed, your content preserved:'));
+    lines.push(chalk.dim('c3spec markers will be removed, your content preserved:'));
     for (const { path } of updates) {
       lines.push(`  • ${path}`);
     }
@@ -608,7 +608,7 @@ export function getToolsFromLegacyArtifacts(detection: LegacyDetectionResult): s
     for (const [toolId, pattern] of Object.entries(LEGACY_SLASH_COMMAND_PATHS)) {
       if (pattern.type === 'files' && pattern.pattern) {
         // Convert glob pattern to regex for matching
-        // e.g., '.cursor/commands/openspec-*.md' -> /^\.cursor\/commands\/openspec-.*\.md$/
+        // e.g., '.cursor/commands/c3spec-*.md' -> /^\.cursor\/commands\/c3spec-.*\.md$/
         const patterns = Array.isArray(pattern.pattern) ? pattern.pattern : [pattern.pattern];
         let matched = false;
         for (const p of patterns) {
@@ -639,11 +639,11 @@ export function getToolsFromLegacyArtifacts(detection: LegacyDetectionResult): s
 export function formatProjectMdMigrationHint(): string {
   const lines: string[] = [];
   lines.push(chalk.yellow.bold('Needs your attention'));
-  lines.push('  • openspec/project.md');
+  lines.push('  • c3spec/project.md');
   lines.push(chalk.dim('    We won\'t delete this file. It may contain useful project context.'));
   lines.push('');
-  lines.push(chalk.dim('    The new openspec/config.yaml has a "context:" section for planning'));
-  lines.push(chalk.dim('    context. This is included in every OpenSpec request and works more'));
+  lines.push(chalk.dim('    The new c3spec/config.yaml has a "context:" section for planning'));
+  lines.push(chalk.dim('    context. This is included in every C3Spec request and works more'));
   lines.push(chalk.dim('    reliably than the old project.md approach.'));
   lines.push('');
   lines.push(chalk.dim('    Review project.md, move any useful content to config.yaml\'s context'));

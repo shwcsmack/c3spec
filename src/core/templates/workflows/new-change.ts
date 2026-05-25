@@ -8,8 +8,8 @@ import type { SkillTemplate, CommandTemplate } from '../types.js';
 
 export function getNewChangeSkillTemplate(): SkillTemplate {
   return {
-    name: 'openspec-new-change',
-    description: 'Start a new OpenSpec change using the experimental artifact workflow. Use when the user wants to create a new feature, fix, or modification with a structured step-by-step approach.',
+    name: 'c3spec-new-change',
+    description: 'Start a new C3Spec change using the experimental artifact workflow. Use when the user wants to create a new feature, fix, or modification with a structured step-by-step approach.',
     instructions: `Start a new change using the experimental artifact-driven approach.
 
 **Input**: The user's request should include a change name (kebab-case) OR a description of what they want to build.
@@ -31,20 +31,20 @@ export function getNewChangeSkillTemplate(): SkillTemplate {
 
    **Use a different schema only if the user mentions:**
    - A specific schema name → use \`--schema <name>\`
-   - "show workflows" or "what workflows" → run \`openspec schemas --json\` and let them choose
+   - "show workflows" or "what workflows" → run \`c3spec schemas --json\` and let them choose
 
    **Otherwise**: Omit \`--schema\` to use the default.
 
 3. **Create the change directory**
    \`\`\`bash
-   openspec new change "<name>"
+   c3spec new change "<name>"
    \`\`\`
    Add \`--schema <name>\` only if the user requested a specific workflow.
    This creates a scaffolded change in the planning home resolved by the CLI.
 
 4. **Show the artifact status**
    \`\`\`bash
-   openspec status --change "<name>" --json
+   c3spec status --change "<name>" --json
    \`\`\`
    Use the returned \`planningHome\`, \`changeRoot\`, \`artifactPaths\`, and \`nextSteps\` instead of assuming repo-local paths.
 
@@ -52,7 +52,7 @@ export function getNewChangeSkillTemplate(): SkillTemplate {
    The first artifact depends on the schema (e.g., \`proposal\` for spec-driven).
    Check the status output to find the first artifact with status "ready".
    \`\`\`bash
-   openspec instructions <first-artifact-id> --change "<name>"
+   c3spec instructions <first-artifact-id> --change "<name>"
    \`\`\`
    This outputs the template and context for creating the first artifact.
 
@@ -74,8 +74,8 @@ After completing the steps, summarize:
 - If a change with that name already exists, suggest continuing that change instead
 - Pass --schema if using a non-default workflow`,
     license: 'MIT',
-    compatibility: 'Requires openspec CLI.',
-    metadata: { author: 'openspec', version: '1.0' },
+    compatibility: 'Requires c3spec CLI.',
+    metadata: { author: 'c3spec', version: '1.0' },
   };
 }
 
@@ -106,27 +106,27 @@ export function getOpsxNewCommandTemplate(): CommandTemplate {
 
    **Use a different schema only if the user mentions:**
    - A specific schema name → use \`--schema <name>\`
-   - "show workflows" or "what workflows" → run \`openspec schemas --json\` and let them choose
+   - "show workflows" or "what workflows" → run \`c3spec schemas --json\` and let them choose
 
    **Otherwise**: Omit \`--schema\` to use the default.
 
 3. **Create the change directory**
    \`\`\`bash
-   openspec new change "<name>"
+   c3spec new change "<name>"
    \`\`\`
    Add \`--schema <name>\` only if the user requested a specific workflow.
    This creates a scaffolded change in the planning home resolved by the CLI.
 
 4. **Show the artifact status**
    \`\`\`bash
-   openspec status --change "<name>" --json
+   c3spec status --change "<name>" --json
    \`\`\`
    Use the returned \`planningHome\`, \`changeRoot\`, \`artifactPaths\`, and \`nextSteps\` instead of assuming repo-local paths.
 
 5. **Get instructions for the first artifact**
    The first artifact depends on the schema. Check the status output to find the first artifact with status "ready".
    \`\`\`bash
-   openspec instructions <first-artifact-id> --change "<name>"
+   c3spec instructions <first-artifact-id> --change "<name>"
    \`\`\`
    This outputs the template and context for creating the first artifact.
 

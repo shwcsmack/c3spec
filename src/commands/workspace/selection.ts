@@ -69,11 +69,11 @@ export async function selectWorkspaceRootForCommand(
 
   if (!currentWorkspaceRoot) {
     throw new WorkspaceCliError(
-      `No OpenSpec workspace found at '${workspaceRoot}'.`,
+      `No C3Spec workspace found at '${workspaceRoot}'.`,
       'workspace_not_found',
       {
         target: 'workspace.root',
-        fix: 'Pass a path inside an OpenSpec workspace.',
+        fix: 'Pass a path inside an C3Spec workspace.',
       }
     );
   }
@@ -94,11 +94,11 @@ export async function selectWorkspaceForCommand(
 
     if (!registryRoot) {
       throw new WorkspaceCliError(
-        `Unknown OpenSpec workspace '${workspaceName}'.`,
+        `Unknown C3Spec workspace '${workspaceName}'.`,
         'workspace_not_found',
         {
           target: 'workspace.name',
-          fix: 'Run openspec workspace list to see known workspaces.',
+          fix: 'Run c3spec workspace list to see known workspaces.',
         }
       );
     }
@@ -121,11 +121,11 @@ export async function selectWorkspaceForCommand(
 
   if (entries.length === 0) {
     throw new WorkspaceCliError(
-      "No known OpenSpec workspaces. Run 'openspec workspace setup' first.\nAfter at least one workspace is known locally, you can also pass --workspace <name>.",
+      "No known C3Spec workspaces. Run 'c3spec workspace setup' first.\nAfter at least one workspace is known locally, you can also pass --workspace <name>.",
       'no_known_workspaces',
       {
         target: 'workspace.name',
-        fix: 'openspec workspace setup',
+        fix: 'c3spec workspace setup',
       }
     );
   }
@@ -145,13 +145,13 @@ export async function selectWorkspaceForCommand(
     const knownNames = entries.map((entry) => entry.name).join(', ');
     const usesPositionalName = selectionOptions.preferPositionalName;
     const fix = usesPositionalName
-      ? `openspec workspace ${commandName} <name>`
-      : `openspec workspace ${commandName} --workspace <name>`;
+      ? `c3spec workspace ${commandName} <name>`
+      : `c3spec workspace ${commandName} --workspace <name>`;
 
     throw new WorkspaceCliError(
       usesPositionalName
-        ? `Multiple OpenSpec workspaces are known. Known workspaces: ${knownNames}. Pass a workspace name.`
-        : `Multiple OpenSpec workspaces are known. Known workspaces: ${knownNames}. Pass --workspace <name>.`,
+        ? `Multiple C3Spec workspaces are known. Known workspaces: ${knownNames}. Pass a workspace name.`
+        : `Multiple C3Spec workspaces are known. Known workspaces: ${knownNames}. Pass --workspace <name>.`,
       'workspace_selection_ambiguous',
       {
         target: 'workspace.name',

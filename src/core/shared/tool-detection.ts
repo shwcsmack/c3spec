@@ -9,26 +9,26 @@ import * as fs from 'fs';
 import { AI_TOOLS } from '../config.js';
 
 /**
- * Names of skill directories created by openspec init.
+ * Names of skill directories created by c3spec init.
  */
 export const SKILL_NAMES = [
-  'openspec-explore',
-  'openspec-new-change',
-  'openspec-continue-change',
-  'openspec-apply-change',
-  'openspec-ff-change',
-  'openspec-sync-specs',
-  'openspec-archive-change',
-  'openspec-bulk-archive-change',
-  'openspec-verify-change',
-  'openspec-onboard',
-  'openspec-propose',
+  'c3spec-explore',
+  'c3spec-new-change',
+  'c3spec-continue-change',
+  'c3spec-apply-change',
+  'c3spec-ff-change',
+  'c3spec-sync-specs',
+  'c3spec-archive-change',
+  'c3spec-bulk-archive-change',
+  'c3spec-verify-change',
+  'c3spec-onboard',
+  'c3spec-propose',
 ] as const;
 
 export type SkillName = (typeof SKILL_NAMES)[number];
 
 /**
- * IDs of command templates created by openspec init.
+ * IDs of command templates created by c3spec init.
  */
 export const COMMAND_IDS = [
   'explore',
@@ -138,7 +138,7 @@ export function extractGeneratedByVersion(skillFilePath: string): string | null 
     // ---
     // ...
     // metadata:
-    //   author: openspec
+    //   author: c3spec
     //   version: "1.0"
     //   generatedBy: "0.23.0"
     // ---

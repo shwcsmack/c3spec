@@ -24,17 +24,17 @@ describe('skill-generation', () => {
       const templates = getSkillTemplates();
       const dirNames = templates.map(t => t.dirName);
 
-      expect(dirNames).toContain('openspec-explore');
-      expect(dirNames).toContain('openspec-new-change');
-      expect(dirNames).toContain('openspec-continue-change');
-      expect(dirNames).toContain('openspec-apply-change');
-      expect(dirNames).toContain('openspec-ff-change');
-      expect(dirNames).toContain('openspec-sync-specs');
-      expect(dirNames).toContain('openspec-archive-change');
-      expect(dirNames).toContain('openspec-bulk-archive-change');
-      expect(dirNames).toContain('openspec-verify-change');
-      expect(dirNames).toContain('openspec-onboard');
-      expect(dirNames).toContain('openspec-propose');
+      expect(dirNames).toContain('c3spec-explore');
+      expect(dirNames).toContain('c3spec-new-change');
+      expect(dirNames).toContain('c3spec-continue-change');
+      expect(dirNames).toContain('c3spec-apply-change');
+      expect(dirNames).toContain('c3spec-ff-change');
+      expect(dirNames).toContain('c3spec-sync-specs');
+      expect(dirNames).toContain('c3spec-archive-change');
+      expect(dirNames).toContain('c3spec-bulk-archive-change');
+      expect(dirNames).toContain('c3spec-verify-change');
+      expect(dirNames).toContain('c3spec-onboard');
+      expect(dirNames).toContain('c3spec-propose');
     });
 
     it('should have valid template structure', () => {
@@ -83,7 +83,7 @@ describe('skill-generation', () => {
       const filtered = getSkillTemplates(['propose']);
       expect(filtered).toHaveLength(1);
       expect(filtered[0].workflowId).toBe('propose');
-      expect(filtered[0].dirName).toBe('openspec-propose');
+      expect(filtered[0].dirName).toBe('c3spec-propose');
     });
   });
 
@@ -221,8 +221,8 @@ describe('skill-generation', () => {
       const content = generateSkillContent(template, '0.24.0');
 
       expect(content).toContain('license: MIT');
-      expect(content).toContain('compatibility: Requires openspec CLI.');
-      expect(content).toContain('author: openspec');
+      expect(content).toContain('compatibility: Requires c3spec CLI.');
+      expect(content).toContain('author: c3spec');
       expect(content).toContain('version: "1.0"');
       expect(content).toContain('generatedBy: "0.24.0"');
     });
