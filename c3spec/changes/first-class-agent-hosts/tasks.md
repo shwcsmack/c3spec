@@ -17,12 +17,12 @@
 
 ## 3. Build host renderers
 
-- [ ] 3.1 Create a host generation adapter contract
-- [ ] 3.2 Implement Cursor renderer for `.cursor/agents/` and `.cursor/hooks.json`
-- [ ] 3.3 Implement Claude renderer for `.claude/skills/`, `.claude/agents/`, `.claude/settings.json`, and `CLAUDE.md`
-- [ ] 3.4 Implement Codex renderer for `.codex/agents/*.toml`, `.codex/config.toml`, `.codex/hooks.json`, and `AGENTS.md`
-- [ ] 3.5 Add generated-file sentinel/hash support
-- [ ] 3.6 Add parser tests for generated JSON, TOML, markdown frontmatter, and sentinels
+- [x] 3.1 Create a host generation adapter contract
+- [x] 3.2 Implement Cursor renderer for `.cursor/agents/` and `.cursor/hooks.json`
+- [x] 3.3 Implement Claude renderer for `.claude/skills/`, `.claude/agents/`, `.claude/settings.json`, and `CLAUDE.md`
+- [x] 3.4 Implement Codex renderer for `.codex/agents/*.toml`, `.codex/config.toml`, `.codex/hooks.json`, and `AGENTS.md`
+- [x] 3.5 Add generated-file sentinel/hash support
+- [x] 3.6 Add parser tests for generated JSON, TOML, markdown frontmatter, and sentinels
 
 ## 4. Wire generation into commands
 

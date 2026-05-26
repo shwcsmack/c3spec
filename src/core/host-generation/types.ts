@@ -64,3 +64,17 @@ export interface CanonicalValidationError {
   path: string;
   message: string;
 }
+
+export type SentinelFormat = 'markdown' | 'json' | 'toml';
+
+export interface GeneratedHostFile {
+  path: string;
+  content: string;
+  source: string;
+  generated: true;
+}
+
+export interface HostRenderer {
+  hostId: SupportedHostId;
+  render(input: CanonicalHostArtifacts): GeneratedHostFile[];
+}
