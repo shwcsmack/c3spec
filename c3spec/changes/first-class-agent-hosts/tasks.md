@@ -1,0 +1,45 @@
+## 1. Remove unsupported host surface
+
+- [ ] 1.1 Trim `AI_TOOLS` to `cursor`, `claude`, and `codex`
+- [ ] 1.2 Delete non-Cursor/Claude/Codex command adapter files
+- [ ] 1.3 Remove stale adapter exports and registry entries
+- [ ] 1.4 Update interactive and non-interactive tool selection tests for the three-host list
+- [ ] 1.5 Update documentation and error copy that lists supported tools
+
+## 2. Add canonical `.agents/` artifact model
+
+- [ ] 2.1 Define canonical skill metadata and required skill names
+- [ ] 2.2 Define canonical agent manifest schema and parser
+- [ ] 2.3 Define canonical hook manifest schema and parser
+- [ ] 2.4 Add bundled canonical skill templates for `c3spec-start`, `c3spec-tier1-fix`, `c3spec-tier2-feature`, `c3spec-subagent-dev`, and `c3spec-host-adapter`
+- [ ] 2.5 Add bundled canonical agent manifests for `implementer`, `spec-reviewer`, and `quality-reviewer`
+- [ ] 2.6 Add bundled canonical memory-scan hook source
+
+## 3. Build host renderers
+
+- [ ] 3.1 Create a host generation adapter contract
+- [ ] 3.2 Implement Cursor renderer for `.cursor/agents/` and `.cursor/hooks.json`
+- [ ] 3.3 Implement Claude renderer for `.claude/skills/`, `.claude/agents/`, `.claude/settings.json`, and `CLAUDE.md`
+- [ ] 3.4 Implement Codex renderer for `.codex/agents/*.toml`, `.codex/config.toml`, `.codex/hooks.json`, and `AGENTS.md`
+- [ ] 3.5 Add generated-file sentinel/hash support
+- [ ] 3.6 Add parser tests for generated JSON, TOML, markdown frontmatter, and sentinels
+
+## 4. Wire generation into commands
+
+- [ ] 4.1 Replace init's skill/command generation path with the shared host generation pipeline
+- [ ] 4.2 Update `c3spec sync` to regenerate host outputs from `.agents/`
+- [ ] 4.3 Update `c3spec update` to refresh canonical artifacts and then regenerate host outputs
+- [ ] 4.4 Preserve remote skill fetch fallback behavior for canonical skills
+- [ ] 4.5 Add force/confirmation behavior for canonical edits and hand-edited generated files
+- [ ] 4.6 Update success output to summarize canonical artifacts and generated host artifacts instead of skills/commands
+
+## 5. Dogfood and verify
+
+- [ ] 5.1 Regenerate this repository into the new canonical `.agents/` layout
+- [ ] 5.2 Ensure no `.cursor/skills/` mirror is generated
+- [ ] 5.3 Ensure `.claude/skills/` is generated from `.agents/skills/`
+- [ ] 5.4 Ensure `.codex/agents/*.toml` parses and config pins `max_depth = 1`
+- [ ] 5.5 Run focused generation tests
+- [ ] 5.6 Run `pnpm build`
+- [ ] 5.7 Run `pnpm test`
+- [ ] 5.8 Write verification and retrospective artifacts
