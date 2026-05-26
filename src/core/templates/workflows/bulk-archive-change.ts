@@ -6,6 +6,7 @@
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
 
+// BEGIN:GENERATED_SKILL
 export function getBulkArchiveChangeSkillTemplate(): SkillTemplate {
   return {
     name: 'c3spec-bulk-archive-change',
@@ -252,6 +253,7 @@ No active changes found. Create a new change to get started.
     metadata: { author: 'c3spec', version: '1.0' },
   };
 }
+// END:GENERATED_SKILL
 
 export function getOpsxBulkArchiveCommandTemplate(): CommandTemplate {
   return {

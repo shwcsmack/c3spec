@@ -6,6 +6,7 @@
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
 
+// BEGIN:GENERATED_SKILL
 export function getSyncSpecsSkillTemplate(): SkillTemplate {
   return {
     name: 'c3spec-sync-specs',
@@ -151,6 +152,7 @@ Main specs are now updated. The change remains active - archive when implementat
     metadata: { author: 'c3spec', version: '1.0' },
   };
 }
+// END:GENERATED_SKILL
 
 export function getOpsxSyncCommandTemplate(): CommandTemplate {
   return {
@@ -162,7 +164,7 @@ export function getOpsxSyncCommandTemplate(): CommandTemplate {
 
 This is an **agent-driven** operation - you will read delta specs and directly edit main specs to apply the changes. This allows intelligent merging (e.g., adding a scenario without copying the entire requirement).
 
-**Input**: Optionally specify a change name after \`/opsx:sync\` (e.g., \`/opsx:sync add-auth\`). If omitted, check if it can be inferred from conversation context. If vague or ambiguous you MUST prompt for available changes.
+**Input**: Optionally specify a change name after \`/c3spec:sync\` (e.g., \`/c3spec:sync add-auth\`). If omitted, check if it can be inferred from conversation context. If vague or ambiguous you MUST prompt for available changes.
 
 **Steps**
 

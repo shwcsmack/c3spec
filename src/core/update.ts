@@ -25,6 +25,7 @@ import {
   getToolsWithSkillsDir,
   type ToolVersionStatus,
 } from './shared/index.js';
+import { fetchRemoteSkills } from './shared/remote-skill-fetch.js';
 import {
   detectLegacyArtifacts,
   cleanupLegacyArtifacts,
@@ -169,8 +170,26 @@ export class UpdateCommand {
     console.log();
 
     // 9. Determine what to generate based on delivery
-    const skillTemplates = shouldGenerateSkills ? getSkillTemplates(desiredWorkflows) : [];
+    const bundledSkillTemplates = shouldGenerateSkills ? getSkillTemplates(desiredWorkflows) : [];
     const commandContents = shouldGenerateCommands ? getCommandContents(desiredWorkflows) : [];
+
+    // Attempt to fetch latest skill instructions from GitHub (parallel, 5 s timeout per skill).
+    // Falls back silently to the bundled template for any skill that fails.
+    let skillTemplates = bundledSkillTemplates;
+    let remoteFallbackWarned = false;
+    if (bundledSkillTemplates.length > 0) {
+      const fetchResults = await fetchRemoteSkills(bundledSkillTemplates);
+      const fallbackCount = fetchResults.filter((r) => !r.usedRemote).length;
+      skillTemplates = fetchResults.map((r) => r.entry);
+      if (fallbackCount > 0 && fallbackCount < bundledSkillTemplates.length) {
+        remoteFallbackWarned = true;
+        console.log(chalk.dim(`  Note: ${fallbackCount} skill(s) used bundled fallback (remote fetch unavailable)`));
+      } else if (fallbackCount === bundledSkillTemplates.length && bundledSkillTemplates.length > 0) {
+        remoteFallbackWarned = true;
+        console.log(chalk.dim('  Note: Using bundled skill templates (remote fetch unavailable)'));
+      }
+    }
+    void remoteFallbackWarned;
 
     // 10. Update tools (all if force, otherwise only those needing update)
     const toolsToUpdate = this.force ? configuredTools : [...toolsToUpdateSet];

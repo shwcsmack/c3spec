@@ -41,6 +41,7 @@
   ],
   "scripts": {
     "lint": "eslint src/",
+    "check:codegen": "node scripts/generate-templates.js && git diff --exit-code src/core/templates/workflows/ || (echo 'ERROR: TypeScript templates are out of sync with skills/. Run: node scripts/generate-templates.js' && exit 1)",
     "build": "node build.js",
     "dev": "tsc --watch",
     "dev:cli": "pnpm build && node bin/openspec.js",

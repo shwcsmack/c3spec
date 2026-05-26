@@ -6,6 +6,7 @@
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
 
+// BEGIN:GENERATED_SKILL
 export function getArchiveChangeSkillTemplate(): SkillTemplate {
   return {
     name: 'c3spec-archive-change',
@@ -121,6 +122,7 @@ All artifacts complete. All tasks complete.
     metadata: { author: 'c3spec', version: '1.0' },
   };
 }
+// END:GENERATED_SKILL
 
 export function getOpsxArchiveCommandTemplate(): CommandTemplate {
   return {
@@ -130,7 +132,7 @@ export function getOpsxArchiveCommandTemplate(): CommandTemplate {
     tags: ['workflow', 'archive', 'experimental'],
     content: `Archive a completed change in the experimental workflow.
 
-**Input**: Optionally specify a change name after \`/opsx:archive\` (e.g., \`/opsx:archive add-auth\`). If omitted, check if it can be inferred from conversation context. If vague or ambiguous you MUST prompt for available changes.
+**Input**: Optionally specify a change name after \`/c3spec:archive\` (e.g., \`/c3spec:archive add-auth\`). If omitted, check if it can be inferred from conversation context. If vague or ambiguous you MUST prompt for available changes.
 
 **Steps**
 
