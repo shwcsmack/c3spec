@@ -142,9 +142,9 @@ describe('c3spec CLI e2e basics', () => {
 
       // Check that skills were created for multiple tools
       const claudeSkillPath = path.join(emptyProjectDir, '.claude/skills/c3spec-explore/SKILL.md');
-      const cursorSkillPath = path.join(emptyProjectDir, '.cursor/skills/c3spec-explore/SKILL.md');
+      const agentsSkillPath = path.join(emptyProjectDir, '.agents/skills/c3spec-explore/SKILL.md');
       expect(await fileExists(claudeSkillPath)).toBe(true);
-      expect(await fileExists(cursorSkillPath)).toBe(true);
+      expect(await fileExists(agentsSkillPath)).toBe(true);
     }, 25000);
 
     it('initializes with --tools list option', async () => {
@@ -159,9 +159,9 @@ describe('c3spec CLI e2e basics', () => {
 
       // New init creates skills, not CLAUDE.md
       const claudeSkillPath = path.join(emptyProjectDir, '.claude/skills/c3spec-explore/SKILL.md');
-      const cursorSkillPath = path.join(emptyProjectDir, '.cursor/skills/c3spec-explore/SKILL.md');
+      const agentsSkillPath = path.join(emptyProjectDir, '.agents/skills/c3spec-explore/SKILL.md');
       expect(await fileExists(claudeSkillPath)).toBe(true);
-      expect(await fileExists(cursorSkillPath)).toBe(false); // Not selected
+      expect(await fileExists(agentsSkillPath)).toBe(false); // Not selected
     });
 
     it('initializes with --tools none option', async () => {
@@ -175,10 +175,10 @@ describe('c3spec CLI e2e basics', () => {
 
       // With --tools none, no tool skills should be created
       const claudeSkillPath = path.join(emptyProjectDir, '.claude/skills/c3spec-explore/SKILL.md');
-      const cursorSkillPath = path.join(emptyProjectDir, '.cursor/skills/c3spec-explore/SKILL.md');
+      const agentsSkillPath = path.join(emptyProjectDir, '.agents/skills/c3spec-explore/SKILL.md');
 
       expect(await fileExists(claudeSkillPath)).toBe(false);
-      expect(await fileExists(cursorSkillPath)).toBe(false);
+      expect(await fileExists(agentsSkillPath)).toBe(false);
     });
 
     it('returns error for invalid tool names', async () => {

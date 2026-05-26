@@ -15,16 +15,15 @@ describe('command-generation/registry', () => {
       expect(adapter?.toolId).toBe('cursor');
     });
 
-    it('should return Windsurf adapter for "windsurf"', () => {
-      const adapter = CommandAdapterRegistry.get('windsurf');
+    it('should return Codex adapter for "codex"', () => {
+      const adapter = CommandAdapterRegistry.get('codex');
       expect(adapter).toBeDefined();
-      expect(adapter?.toolId).toBe('windsurf');
+      expect(adapter?.toolId).toBe('codex');
     });
 
-    it('should return Junie adapter for "junie"', () => {
-      const adapter = CommandAdapterRegistry.get('junie');
-      expect(adapter).toBeDefined();
-      expect(adapter?.toolId).toBe('junie');
+    it('should return undefined for removed hosts', () => {
+      expect(CommandAdapterRegistry.get('windsurf')).toBeUndefined();
+      expect(CommandAdapterRegistry.get('gemini')).toBeUndefined();
     });
 
     it('should return undefined for unregistered tool', () => {
@@ -39,31 +38,27 @@ describe('command-generation/registry', () => {
   });
 
   describe('getAll', () => {
-    it('should return array of all registered adapters', () => {
+    it('should return exactly three registered adapters', () => {
       const adapters = CommandAdapterRegistry.getAll();
-      expect(Array.isArray(adapters)).toBe(true);
-      expect(adapters.length).toBeGreaterThanOrEqual(3); // At least Claude, Cursor, Windsurf
+      expect(adapters).toHaveLength(3);
     });
 
-    it('should include Claude, Cursor, and Windsurf adapters', () => {
-      const adapters = CommandAdapterRegistry.getAll();
-      const toolIds = adapters.map((a) => a.toolId);
+    it('should include Claude, Cursor, and Codex adapters', () => {
+      const toolIds = CommandAdapterRegistry.getAll().map((a) => a.toolId);
 
-      expect(toolIds).toContain('claude');
-      expect(toolIds).toContain('cursor');
-      expect(toolIds).toContain('windsurf');
+      expect(toolIds).toEqual(['claude', 'codex', 'cursor']);
     });
   });
 
   describe('has', () => {
-    it('should return true for registered tools', () => {
+    it('should return true for supported hosts', () => {
       expect(CommandAdapterRegistry.has('claude')).toBe(true);
       expect(CommandAdapterRegistry.has('cursor')).toBe(true);
-      expect(CommandAdapterRegistry.has('windsurf')).toBe(true);
-      expect(CommandAdapterRegistry.has('junie')).toBe(true);
+      expect(CommandAdapterRegistry.has('codex')).toBe(true);
     });
 
-    it('should return false for unregistered tools', () => {
+    it('should return false for removed and unknown tools', () => {
+      expect(CommandAdapterRegistry.has('windsurf')).toBe(false);
       expect(CommandAdapterRegistry.has('unknown')).toBe(false);
       expect(CommandAdapterRegistry.has('')).toBe(false);
     });
@@ -73,11 +68,11 @@ describe('command-generation/registry', () => {
     it('registered adapters should have working getFilePath', () => {
       const claudeAdapter = CommandAdapterRegistry.get('claude');
       const cursorAdapter = CommandAdapterRegistry.get('cursor');
-      const windsurfAdapter = CommandAdapterRegistry.get('windsurf');
+      const codexAdapter = CommandAdapterRegistry.get('codex');
 
       expect(claudeAdapter?.getFilePath('test')).toContain('.claude');
       expect(cursorAdapter?.getFilePath('test')).toContain('.cursor');
-      expect(windsurfAdapter?.getFilePath('test')).toContain('.windsurf');
+      expect(codexAdapter?.getFilePath('test')).toContain('prompts');
     });
 
     it('registered adapters should have working formatFile', () => {
@@ -90,18 +85,10 @@ describe('command-generation/registry', () => {
         body: 'Body content',
       };
 
-      // Tools that don't use YAML frontmatter (markdown headers or TOML or plain)
-      const noYamlFrontmatter = ['cline', 'kilocode', 'roocode', 'gemini', 'qwen'];
-
-      const adapters = CommandAdapterRegistry.getAll();
-      for (const adapter of adapters) {
+      for (const adapter of CommandAdapterRegistry.getAll()) {
         const output = adapter.formatFile(content);
-        // All adapters should include the body content
         expect(output).toContain('Body content');
-        // Only check for YAML frontmatter for tools that use it
-        if (!noYamlFrontmatter.includes(adapter.toolId)) {
-          expect(output).toContain('---');
-        }
+        expect(output).toContain('---');
       }
     });
   });

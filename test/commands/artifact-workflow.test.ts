@@ -803,14 +803,13 @@ artifacts:
       expect(output).toContain('Invalid tool(s): unknown-tool');
     });
 
-    it('errors for tool without skillsDir', async () => {
-      // Using 'agents' which doesn't have skillsDir configured
-      const result = await runCLI(['experimental', '--tool', 'agents'], {
+    it('errors for removed hosts', async () => {
+      const result = await runCLI(['experimental', '--tool', 'windsurf'], {
         cwd: tempDir,
       });
       expect(result.exitCode).toBe(1);
       const output = getOutput(result);
-      expect(output).toContain('Invalid tool(s): agents');
+      expect(output).toContain('Invalid tool(s): windsurf');
     });
 
     it('creates skills for Claude tool', async () => {
@@ -835,30 +834,27 @@ artifacts:
       expect(result.exitCode).toBe(0);
       const output = normalizePaths(getOutput(result));
       expect(output).toContain('Cursor');
-      expect(output).toContain('.cursor/');
+      expect(output).toContain('.agents/');
 
-      // Verify skill files were created
-      const skillFile = path.join(tempDir, '.cursor', 'skills', 'c3spec-explore', 'SKILL.md');
+      const skillFile = path.join(tempDir, '.agents', 'skills', 'c3spec-explore', 'SKILL.md');
       const stat = await fs.stat(skillFile);
       expect(stat.isFile()).toBe(true);
 
-      // Verify commands were created with Cursor format
       const commandFile = path.join(tempDir, '.cursor', 'commands', 'opsx-explore.md');
       const content = await fs.readFile(commandFile, 'utf-8');
       expect(content).toContain('name: /opsx-explore');
     });
 
-    it('creates skills for Windsurf tool', async () => {
-      const result = await runCLI(['experimental', '--tool', 'windsurf'], {
+    it('creates skills for Codex tool', async () => {
+      const result = await runCLI(['experimental', '--tool', 'codex'], {
         cwd: tempDir,
       });
       expect(result.exitCode).toBe(0);
       const output = normalizePaths(getOutput(result));
-      expect(output).toContain('Windsurf');
-      expect(output).toContain('.windsurf/');
+      expect(output).toContain('Codex');
+      expect(output).toContain('.agents/');
 
-      // Verify skill files were created
-      const skillFile = path.join(tempDir, '.windsurf', 'skills', 'c3spec-explore', 'SKILL.md');
+      const skillFile = path.join(tempDir, '.agents', 'skills', 'c3spec-explore', 'SKILL.md');
       const stat = await fs.stat(skillFile);
       expect(stat.isFile()).toBe(true);
     });

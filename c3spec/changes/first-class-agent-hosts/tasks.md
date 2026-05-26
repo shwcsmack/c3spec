@@ -1,10 +1,10 @@
 ## 1. Remove unsupported host surface
 
-- [ ] 1.1 Trim `AI_TOOLS` to `cursor`, `claude`, and `codex`
-- [ ] 1.2 Delete non-Cursor/Claude/Codex command adapter files
-- [ ] 1.3 Remove stale adapter exports and registry entries
-- [ ] 1.4 Update interactive and non-interactive tool selection tests for the three-host list
-- [ ] 1.5 Update documentation and error copy that lists supported tools
+- [x] 1.1 Trim `AI_TOOLS` to `cursor`, `claude`, and `codex`
+- [x] 1.2 Delete non-Cursor/Claude/Codex command adapter files
+- [x] 1.3 Remove stale adapter exports and registry entries
+- [x] 1.4 Update interactive and non-interactive tool selection tests for the three-host list
+- [x] 1.5 Update documentation and error copy that lists supported tools
 
 ## 2. Add canonical `.agents/` artifact model
 

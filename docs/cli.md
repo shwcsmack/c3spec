@@ -96,7 +96,7 @@ openspec init [path] [options]
 
 `--profile custom` uses whatever workflows are currently selected in global config (`openspec config profile`).
 
-**Supported tool IDs (`--tools`):** `amazon-q`, `antigravity`, `auggie`, `bob`, `claude`, `cline`, `codex`, `forgecode`, `codebuddy`, `continue`, `costrict`, `crush`, `cursor`, `factory`, `gemini`, `github-copilot`, `iflow`, `junie`, `kilocode`, `kimi`, `kiro`, `opencode`, `pi`, `qoder`, `lingma`, `qwen`, `roocode`, `trae`, `windsurf`
+**Supported tool IDs (`--tools`):** `claude`, `codex`, `cursor`
 
 **Examples:**
 
@@ -129,9 +129,9 @@ openspec/
 └── config.yaml         # Project configuration
 
 .claude/skills/         # Claude Code skills (if claude selected)
-.cursor/skills/         # Cursor skills (if cursor selected)
+.agents/skills/         # Canonical skills for Cursor and Codex (if cursor or codex selected)
 .cursor/commands/       # Cursor OPSX commands (if delivery includes commands)
-... (other tool configs)
+... (other host-specific configs)
 ```
 
 ---

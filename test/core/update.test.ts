@@ -41,11 +41,16 @@ function resetMockConfig() {
 describe('UpdateCommand', () => {
   let testDir: string;
   let updateCommand: UpdateCommand;
+  let previousCodexHome: string | undefined;
 
   beforeEach(async () => {
     // Create a temporary test directory
     testDir = path.join(os.tmpdir(), `c3spec-test-${randomUUID()}`);
     await fs.mkdir(testDir, { recursive: true });
+
+    previousCodexHome = process.env.CODEX_HOME;
+    process.env.CODEX_HOME = path.join(testDir, '.codex-home');
+    await fs.mkdir(process.env.CODEX_HOME, { recursive: true });
 
     // Create c3spec directory
     const c3specDir = path.join(testDir, 'c3spec');
@@ -63,6 +68,12 @@ describe('UpdateCommand', () => {
   afterEach(async () => {
     // Restore all mocks after each test
     vi.restoreAllMocks();
+
+    if (previousCodexHome === undefined) {
+      delete process.env.CODEX_HOME;
+    } else {
+      process.env.CODEX_HOME = previousCodexHome;
+    }
 
     // Clean up test directory
     await fs.rm(testDir, { recursive: true, force: true });
@@ -265,13 +276,13 @@ Old instructions content
         'old'
       );
 
-      // Set up Cursor
-      const cursorSkillsDir = path.join(testDir, '.cursor', 'skills');
-      await fs.mkdir(path.join(cursorSkillsDir, 'c3spec-explore'), {
+      // Set up Cursor via canonical .agents/skills/
+      const agentsSkillsDir = path.join(testDir, '.agents', 'skills');
+      await fs.mkdir(path.join(agentsSkillsDir, 'c3spec-explore'), {
         recursive: true,
       });
       await fs.writeFile(
-        path.join(cursorSkillsDir, 'c3spec-explore', 'SKILL.md'),
+        path.join(agentsSkillsDir, 'c3spec-explore', 'SKILL.md'),
         'old'
       );
 
@@ -281,7 +292,7 @@ Old instructions content
 
       // Both tools should be updated
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Updating 2 tool(s)')
+        expect.stringContaining('Updating 3 tool(s)')
       );
 
       // Verify Claude skills updated
@@ -291,68 +302,70 @@ Old instructions content
       );
       expect(claudeSkill).toContain('name: c3spec-explore');
 
-      // Verify Cursor skills updated
-      const cursorSkill = await fs.readFile(
-        path.join(cursorSkillsDir, 'c3spec-explore', 'SKILL.md'),
+      // Verify Cursor skills updated via canonical .agents/skills/
+      const agentsSkill = await fs.readFile(
+        path.join(agentsSkillsDir, 'c3spec-explore', 'SKILL.md'),
         'utf-8'
       );
-      expect(cursorSkill).toContain('name: c3spec-explore');
+      expect(agentsSkill).toContain('name: c3spec-explore');
 
       consoleSpy.mockRestore();
     });
 
-    it('should update Qwen tool with correct command format', async () => {
-      // Set up Qwen
-      const qwenSkillsDir = path.join(testDir, '.qwen', 'skills');
-      await fs.mkdir(path.join(qwenSkillsDir, 'c3spec-explore'), {
-        recursive: true,
-      });
-      await fs.writeFile(
-        path.join(qwenSkillsDir, 'c3spec-explore', 'SKILL.md'),
-        'old'
-      );
+    it('should update Codex tool with correct command format', async () => {
+      const codexHome = path.join(testDir, '.codex-home');
+      const previousHome = process.env.CODEX_HOME;
+      process.env.CODEX_HOME = codexHome;
 
-      await updateCommand.execute(testDir);
+      try {
+        const agentsSkillsDir = path.join(testDir, '.agents', 'skills');
+        await fs.mkdir(path.join(agentsSkillsDir, 'c3spec-explore'), {
+          recursive: true,
+        });
+        await fs.writeFile(
+          path.join(agentsSkillsDir, 'c3spec-explore', 'SKILL.md'),
+          'old'
+        );
 
-      // Check Qwen command format (TOML) - Qwen uses flat path structure: opsx-<id>.toml
-      const qwenCmd = path.join(
-        testDir,
-        '.qwen',
-        'commands',
-        'opsx-explore.toml'
-      );
-      const exists = await FileSystemUtils.fileExists(qwenCmd);
-      expect(exists).toBe(true);
+        await updateCommand.execute(testDir);
 
-      const content = await fs.readFile(qwenCmd, 'utf-8');
-      expect(content).toContain('description =');
-      expect(content).toContain('prompt =');
+        const codexCmd = path.join(codexHome, 'prompts', 'opsx-explore.md');
+        const exists = await FileSystemUtils.fileExists(codexCmd);
+        expect(exists).toBe(true);
+
+        const content = await fs.readFile(codexCmd, 'utf-8');
+        expect(content).toContain('description:');
+      } finally {
+        if (previousHome === undefined) {
+          delete process.env.CODEX_HOME;
+        } else {
+          process.env.CODEX_HOME = previousHome;
+        }
+      }
     });
 
-    it('should update Windsurf tool with correct command format', async () => {
-      // Set up Windsurf
-      const windsurfSkillsDir = path.join(testDir, '.windsurf', 'skills');
-      await fs.mkdir(path.join(windsurfSkillsDir, 'c3spec-explore'), {
+    it('should update Cursor tool with correct command format', async () => {
+      const agentsSkillsDir = path.join(testDir, '.agents', 'skills');
+      await fs.mkdir(path.join(agentsSkillsDir, 'c3spec-explore'), {
         recursive: true,
       });
       await fs.writeFile(
-        path.join(windsurfSkillsDir, 'c3spec-explore', 'SKILL.md'),
+        path.join(agentsSkillsDir, 'c3spec-explore', 'SKILL.md'),
         'old'
       );
 
       await updateCommand.execute(testDir);
 
-      // Check Windsurf command format
-      const windsurfCmd = path.join(
+      const cursorCmd = path.join(
         testDir,
-        '.windsurf',
-        'workflows',
+        '.cursor',
+        'commands',
         'opsx-explore.md'
       );
-      const exists = await FileSystemUtils.fileExists(windsurfCmd);
+      const exists = await FileSystemUtils.fileExists(cursorCmd);
       expect(exists).toBe(true);
 
-      const content = await fs.readFile(windsurfCmd, 'utf-8');
+      const content = await fs.readFile(cursorCmd, 'utf-8');
       expect(content).toContain('---');
       expect(content).toContain('name:');
     });
@@ -406,12 +419,13 @@ Old instructions content
         'old'
       );
 
-      const cursorSkillsDir = path.join(testDir, '.cursor', 'skills');
-      await fs.mkdir(path.join(cursorSkillsDir, 'c3spec-explore'), {
+      // Set up Cursor via canonical .agents/skills/
+      const agentsSkillsDir = path.join(testDir, '.agents', 'skills');
+      await fs.mkdir(path.join(agentsSkillsDir, 'c3spec-explore'), {
         recursive: true,
       });
       await fs.writeFile(
-        path.join(cursorSkillsDir, 'c3spec-explore', 'SKILL.md'),
+        path.join(agentsSkillsDir, 'c3spec-explore', 'SKILL.md'),
         'old'
       );
 
@@ -430,9 +444,9 @@ Old instructions content
 
       await updateCommand.execute(testDir);
 
-      // Cursor should still be updated - check the actual format from ora spinner
+      // Cursor and Codex should still be updated
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Updated: Cursor')
+        expect.stringContaining('Updated: Codex, Cursor')
       );
 
       // Claude should be reported as failed
@@ -772,11 +786,11 @@ metadata:
 `
       );
 
-      // Set up Cursor with old version
-      const cursorSkillDir = path.join(testDir, '.cursor', 'skills', 'c3spec-explore');
-      await fs.mkdir(cursorSkillDir, { recursive: true });
+      // Set up Cursor with old version via canonical .agents/skills/
+      const agentsSkillDir = path.join(testDir, '.agents', 'skills', 'c3spec-explore');
+      await fs.mkdir(agentsSkillDir, { recursive: true });
       await fs.writeFile(
-        path.join(cursorSkillDir, 'SKILL.md'),
+        path.join(agentsSkillDir, 'SKILL.md'),
         `---
 metadata:
   generatedBy: "0.1.0"
@@ -789,9 +803,9 @@ metadata:
       const forceUpdateCommand = new UpdateCommand({ force: true });
       await forceUpdateCommand.execute(testDir);
 
-      // Should show both tools being force updated
+      // Should show all configured tools being force updated
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Force updating 2 tool(s)')
+        expect.stringContaining('Force updating 3 tool(s)')
       );
 
       consoleSpy.mockRestore();
@@ -840,15 +854,16 @@ metadata:
 
       await updateCommand.execute(testDir);
 
-      // Should show only Claude being updated
+      // Claude needs a version refresh; Codex needs command artifacts generated
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Updating 1 tool(s)')
+        expect.stringContaining('Updating 2 tool(s)')
       );
 
-      // Should mention Cursor is already up to date
-      expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Already up to date: cursor')
+      // Should mention canonical hosts that share the up-to-date .agents skills
+      const calls = consoleSpy.mock.calls.map(call =>
+        call.map(arg => String(arg)).join(' ')
       );
+      expect(calls.some(call => call.includes('Already up to date:') && call.includes('cursor'))).toBe(true);
 
       consoleSpy.mockRestore();
     });
@@ -1184,10 +1199,10 @@ More user content after markers.
 
       // Both tools should have skills created
       const claudeSkillFile = path.join(testDir, '.claude', 'skills', 'c3spec-explore', 'SKILL.md');
-      const cursorSkillFile = path.join(testDir, '.cursor', 'skills', 'c3spec-explore', 'SKILL.md');
+      const agentsSkillFile = path.join(testDir, '.agents', 'skills', 'c3spec-explore', 'SKILL.md');
 
       expect(await FileSystemUtils.fileExists(claudeSkillFile)).toBe(true);
-      expect(await FileSystemUtils.fileExists(cursorSkillFile)).toBe(true);
+      expect(await FileSystemUtils.fileExists(agentsSkillFile)).toBe(true);
 
       consoleSpy.mockRestore();
     });
@@ -1270,9 +1285,9 @@ More user content after markers.
         expect.stringContaining('Tools detected from legacy artifacts')
       );
 
-      // Cursor skills should be created
-      const cursorSkillFile = path.join(testDir, '.cursor', 'skills', 'c3spec-explore', 'SKILL.md');
-      expect(await FileSystemUtils.fileExists(cursorSkillFile)).toBe(true);
+      // Cursor skills should be created in canonical .agents/skills/
+      const agentsSkillFile = path.join(testDir, '.agents', 'skills', 'c3spec-explore', 'SKILL.md');
+      expect(await FileSystemUtils.fileExists(agentsSkillFile)).toBe(true);
 
       // Should show "Getting started" for newly configured Cursor
       expect(consoleSpy).toHaveBeenCalledWith(
@@ -1512,30 +1527,14 @@ More user content after markers.
       )).toBe(false);
     });
 
-    it('should remove skills for configured tools without command adapters in commands-only delivery', async () => {
-      setMockConfig({
-        featureFlags: {},
-        profile: 'core',
-        delivery: 'commands',
-      });
-
+    it('should register command adapters for all supported hosts', async () => {
       const { AI_TOOLS } = await import('../../src/core/config.js');
       const { CommandAdapterRegistry } = await import('../../src/core/command-generation/index.js');
-      const adapterlessTool = AI_TOOLS.find((tool) => tool.skillsDir && !CommandAdapterRegistry.get(tool.value));
-      expect(adapterlessTool).toBeDefined();
-      if (!adapterlessTool?.skillsDir) {
-        return;
+
+      for (const tool of AI_TOOLS) {
+        if (!tool.skillsDir) continue;
+        expect(CommandAdapterRegistry.get(tool.value)).toBeDefined();
       }
-
-      const skillsDir = path.join(testDir, adapterlessTool.skillsDir, 'skills');
-      await fs.mkdir(path.join(skillsDir, 'c3spec-explore'), { recursive: true });
-      await fs.writeFile(path.join(skillsDir, 'c3spec-explore', 'SKILL.md'), 'old');
-
-      await expect(updateCommand.execute(testDir)).resolves.toBeUndefined();
-
-      expect(await FileSystemUtils.fileExists(
-        path.join(skillsDir, 'c3spec-explore', 'SKILL.md')
-      )).toBe(false);
     });
 
     it('should apply config sync when templates are up to date', async () => {
@@ -1654,19 +1653,18 @@ content
       await fs.mkdir(path.join(claudeSkillsDir, 'c3spec-explore'), { recursive: true });
       await fs.writeFile(path.join(claudeSkillsDir, 'c3spec-explore', 'SKILL.md'), 'old');
 
-      // Create a Cursor directory (not configured — no skills)
-      await fs.mkdir(path.join(testDir, '.cursor'), { recursive: true });
+      // Create a canonical .agents directory (not configured — no skills)
+      await fs.mkdir(path.join(testDir, '.agents'), { recursive: true });
 
       const consoleSpy = vi.spyOn(console, 'log');
 
       await updateCommand.execute(testDir);
 
-      // Should detect Cursor as a new tool
       const calls = consoleSpy.mock.calls.map(call =>
         call.map(arg => String(arg)).join(' ')
       );
       const hasNewToolMessage = calls.some(call =>
-        call.includes("Detected new tool: Cursor. Run 'c3spec init' to add it.")
+        call.includes('Detected new tools:') && call.includes('Codex') && call.includes('Cursor')
       );
       expect(hasNewToolMessage).toBe(true);
 
@@ -1679,10 +1677,8 @@ content
       await fs.mkdir(path.join(claudeSkillsDir, 'c3spec-explore'), { recursive: true });
       await fs.writeFile(path.join(claudeSkillsDir, 'c3spec-explore', 'SKILL.md'), 'old');
 
-      // Create two unconfigured tool directories
-      await fs.mkdir(path.join(testDir, '.github'), { recursive: true });
-      await fs.writeFile(path.join(testDir, '.github', 'copilot-instructions.md'), '');
-      await fs.mkdir(path.join(testDir, '.windsurf'), { recursive: true });
+      // Create an unconfigured canonical .agents directory
+      await fs.mkdir(path.join(testDir, '.agents'), { recursive: true });
 
       const consoleSpy = vi.spyOn(console, 'log');
 
@@ -1696,8 +1692,8 @@ content
         call.includes('Detected new tools:')
       );
       expect(consolidatedCalls).toHaveLength(1);
-      expect(consolidatedCalls[0]).toContain('GitHub Copilot');
-      expect(consolidatedCalls[0]).toContain('Windsurf');
+      expect(consolidatedCalls[0]).toContain('Codex');
+      expect(consolidatedCalls[0]).toContain('Cursor');
       expect(consolidatedCalls[0]).toContain("Run 'c3spec init' to add them.");
 
       const repeatedSingularCalls = calls.filter(call =>
@@ -1751,10 +1747,10 @@ content
       await fs.mkdir(path.join(claudeSkillsDir, 'c3spec-explore'), { recursive: true });
       await fs.writeFile(path.join(claudeSkillsDir, 'c3spec-explore', 'SKILL.md'), 'content');
 
-      // Cursor has apply
-      const cursorSkillsDir = path.join(testDir, '.cursor', 'skills');
-      await fs.mkdir(path.join(cursorSkillsDir, 'c3spec-apply-change'), { recursive: true });
-      await fs.writeFile(path.join(cursorSkillsDir, 'c3spec-apply-change', 'SKILL.md'), 'content');
+      // Cursor has apply via canonical .agents/skills/
+      const agentsSkillsDir = path.join(testDir, '.agents', 'skills');
+      await fs.mkdir(path.join(agentsSkillsDir, 'c3spec-apply-change'), { recursive: true });
+      await fs.writeFile(path.join(agentsSkillsDir, 'c3spec-apply-change', 'SKILL.md'), 'content');
 
       const workflows = scanInstalledWorkflows(testDir, ['claude', 'cursor']);
       expect(workflows).toContain('explore');

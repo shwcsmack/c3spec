@@ -11,7 +11,6 @@ import ora from 'ora';
 import * as fs from 'fs';
 import { createRequire } from 'module';
 import { FileSystemUtils } from '../utils/file-system.js';
-import { transformToHyphenCommands } from '../utils/command-references.js';
 import {
   AI_TOOLS,
   C3SPEC_DIR_NAME,
@@ -542,9 +541,7 @@ export class InitCommand {
             const skillFile = path.join(skillDir, 'SKILL.md');
 
             // Generate SKILL.md content with YAML frontmatter including generatedBy
-            // Use hyphen-based command references for tools where filename = command name
-            const transformer = (tool.value === 'opencode' || tool.value === 'pi') ? transformToHyphenCommands : undefined;
-            const skillContent = generateSkillContent(template, C3SPEC_VERSION, transformer);
+            const skillContent = generateSkillContent(template, C3SPEC_VERSION);
 
             // Write the skill file
             await FileSystemUtils.writeFile(skillFile, skillContent);

@@ -150,46 +150,22 @@ describe('InitCommand', () => {
       }
     });
 
-    it('should create skills in Cursor skills directory', async () => {
+    it('should create skills in canonical .agents directory for Cursor', async () => {
       const initCommand = new InitCommand({ tools: 'cursor', force: true });
 
       await initCommand.execute(testDir);
 
-      const skillFile = path.join(testDir, '.cursor', 'skills', 'c3spec-explore', 'SKILL.md');
+      const skillFile = path.join(testDir, '.agents', 'skills', 'c3spec-explore', 'SKILL.md');
       expect(await fileExists(skillFile)).toBe(true);
     });
 
-    it('should create skills in Windsurf skills directory', async () => {
-      const initCommand = new InitCommand({ tools: 'windsurf', force: true });
+    it('should create skills in canonical .agents directory for Codex', async () => {
+      const initCommand = new InitCommand({ tools: 'codex', force: true });
 
       await initCommand.execute(testDir);
 
-      const skillFile = path.join(testDir, '.windsurf', 'skills', 'c3spec-explore', 'SKILL.md');
+      const skillFile = path.join(testDir, '.agents', 'skills', 'c3spec-explore', 'SKILL.md');
       expect(await fileExists(skillFile)).toBe(true);
-    });
-
-    it('should support Kimi CLI as an adapterless skills-only tool', async () => {
-      saveGlobalConfig({
-        featureFlags: {},
-        profile: 'core',
-        delivery: 'both',
-      });
-
-      const initCommand = new InitCommand({ tools: 'kimi', force: true });
-      await initCommand.execute(testDir);
-
-      const skillFile = path.join(testDir, '.kimi', 'skills', 'c3spec-explore', 'SKILL.md');
-      expect(await fileExists(skillFile)).toBe(true);
-
-      const commandsDir = path.join(testDir, '.kimi', 'commands');
-      expect(await directoryExists(commandsDir)).toBe(false);
-
-      const logCalls = (console.log as unknown as { mock: { calls: unknown[][] } }).mock.calls.flat().map(String);
-      expect(
-        logCalls.some(
-          (entry) => entry.includes('Commands skipped for: kimi') && entry.includes('(no adapter)'),
-        ),
-      ).toBe(true);
     });
 
     it('should create skills for multiple tools at once', async () => {
@@ -198,10 +174,10 @@ describe('InitCommand', () => {
       await initCommand.execute(testDir);
 
       const claudeSkill = path.join(testDir, '.claude', 'skills', 'c3spec-explore', 'SKILL.md');
-      const cursorSkill = path.join(testDir, '.cursor', 'skills', 'c3spec-explore', 'SKILL.md');
+      const agentsSkill = path.join(testDir, '.agents', 'skills', 'c3spec-explore', 'SKILL.md');
 
       expect(await fileExists(claudeSkill)).toBe(true);
-      expect(await fileExists(cursorSkill)).toBe(true);
+      expect(await fileExists(agentsSkill)).toBe(true);
     });
 
     it('should select all tools with --tools all option', async () => {
@@ -209,14 +185,11 @@ describe('InitCommand', () => {
 
       await initCommand.execute(testDir);
 
-      // Check a few representative tools
       const claudeSkill = path.join(testDir, '.claude', 'skills', 'c3spec-explore', 'SKILL.md');
-      const cursorSkill = path.join(testDir, '.cursor', 'skills', 'c3spec-explore', 'SKILL.md');
-      const windsurfSkill = path.join(testDir, '.windsurf', 'skills', 'c3spec-explore', 'SKILL.md');
+      const agentsSkill = path.join(testDir, '.agents', 'skills', 'c3spec-explore', 'SKILL.md');
 
       expect(await fileExists(claudeSkill)).toBe(true);
-      expect(await fileExists(cursorSkill)).toBe(true);
-      expect(await fileExists(windsurfSkill)).toBe(true);
+      expect(await fileExists(agentsSkill)).toBe(true);
     });
 
     it('should skip tool configuration with --tools none option', async () => {
@@ -245,10 +218,10 @@ describe('InitCommand', () => {
       await initCommand.execute(testDir);
 
       const claudeSkill = path.join(testDir, '.claude', 'skills', 'c3spec-explore', 'SKILL.md');
-      const cursorSkill = path.join(testDir, '.cursor', 'skills', 'c3spec-explore', 'SKILL.md');
+      const agentsSkill = path.join(testDir, '.agents', 'skills', 'c3spec-explore', 'SKILL.md');
 
       expect(await fileExists(claudeSkill)).toBe(true);
-      expect(await fileExists(cursorSkill)).toBe(true);
+      expect(await fileExists(agentsSkill)).toBe(true);
     });
 
     it('should reject combining reserved keywords with explicit tool ids', async () => {
@@ -294,10 +267,10 @@ describe('InitCommand', () => {
 
       // Both tools should have skills
       const claudeSkill = path.join(testDir, '.claude', 'skills', 'c3spec-explore', 'SKILL.md');
-      const cursorSkill = path.join(testDir, '.cursor', 'skills', 'c3spec-explore', 'SKILL.md');
+      const agentsSkill = path.join(testDir, '.agents', 'skills', 'c3spec-explore', 'SKILL.md');
 
       expect(await fileExists(claudeSkill)).toBe(true);
-      expect(await fileExists(cursorSkill)).toBe(true);
+      expect(await fileExists(agentsSkill)).toBe(true);
     });
 
     it('should refresh skills on re-run for the same tool', async () => {
@@ -437,52 +410,24 @@ describe('InitCommand', () => {
   });
 
   describe('tool-specific adapters', () => {
-    it('should generate Gemini CLI commands as TOML files', async () => {
-      const initCommand = new InitCommand({ tools: 'gemini', force: true });
-      await initCommand.execute(testDir);
+    it('should generate Codex commands in CODEX_HOME', async () => {
+      const codexHome = path.join(testDir, '.codex-home');
+      const previousHome = process.env.CODEX_HOME;
+      process.env.CODEX_HOME = codexHome;
 
-      const cmdFile = path.join(testDir, '.gemini', 'commands', 'opsx', 'explore.toml');
-      expect(await fileExists(cmdFile)).toBe(true);
+      try {
+        const initCommand = new InitCommand({ tools: 'codex', force: true });
+        await initCommand.execute(testDir);
 
-      const content = await fs.readFile(cmdFile, 'utf-8');
-      expect(content).toContain('description =');
-      expect(content).toContain('prompt =');
-    });
-
-    it('should generate Windsurf commands', async () => {
-      const initCommand = new InitCommand({ tools: 'windsurf', force: true });
-      await initCommand.execute(testDir);
-
-      const cmdFile = path.join(testDir, '.windsurf', 'workflows', 'opsx-explore.md');
-      expect(await fileExists(cmdFile)).toBe(true);
-    });
-
-    it('should generate Continue prompt files', async () => {
-      const initCommand = new InitCommand({ tools: 'continue', force: true });
-      await initCommand.execute(testDir);
-
-      const cmdFile = path.join(testDir, '.continue', 'prompts', 'opsx-explore.prompt');
-      expect(await fileExists(cmdFile)).toBe(true);
-
-      const content = await fs.readFile(cmdFile, 'utf-8');
-      expect(content).toContain('name: opsx-explore');
-      expect(content).toContain('invokable: true');
-    });
-
-    it('should generate Cline workflow files', async () => {
-      const initCommand = new InitCommand({ tools: 'cline', force: true });
-      await initCommand.execute(testDir);
-
-      const cmdFile = path.join(testDir, '.clinerules', 'workflows', 'opsx-explore.md');
-      expect(await fileExists(cmdFile)).toBe(true);
-    });
-
-    it('should generate GitHub Copilot prompt files', async () => {
-      const initCommand = new InitCommand({ tools: 'github-copilot', force: true });
-      await initCommand.execute(testDir);
-
-      const cmdFile = path.join(testDir, '.github', 'prompts', 'opsx-explore.prompt.md');
-      expect(await fileExists(cmdFile)).toBe(true);
+        const cmdFile = path.join(codexHome, 'prompts', 'opsx-explore.md');
+        expect(await fileExists(cmdFile)).toBe(true);
+      } finally {
+        if (previousHome === undefined) {
+          delete process.env.CODEX_HOME;
+        } else {
+          process.env.CODEX_HOME = previousHome;
+        }
+      }
     });
   });
 });
@@ -560,24 +505,6 @@ describe('InitCommand - profile and detection features', () => {
     expect(await fileExists(skillFile)).toBe(true);
   });
 
-  it('should auto-cleanup legacy artifacts in non-interactive mode without --force', async () => {
-    // Create legacy OpenCode command files (singular 'command' path)
-    const legacyDir = path.join(testDir, '.opencode', 'command');
-    await fs.mkdir(legacyDir, { recursive: true });
-    await fs.writeFile(path.join(legacyDir, 'opsx-propose.md'), 'legacy content');
-
-    // Run init in non-interactive mode without --force
-    const initCommand = new InitCommand({ tools: 'opencode' });
-    await initCommand.execute(testDir);
-
-    // Legacy files should be cleaned up automatically
-    expect(await fileExists(path.join(legacyDir, 'opsx-propose.md'))).toBe(false);
-
-    // New commands should be at the correct plural path
-    const newCommandsDir = path.join(testDir, '.opencode', 'commands');
-    expect(await directoryExists(newCommandsDir)).toBe(true);
-  });
-
   it('should preselect configured tools but not directory-detected tools in extend mode', async () => {
     // Simulate existing C3Spec project (extend mode).
     await fs.mkdir(path.join(testDir, 'c3spec'), { recursive: true });
@@ -588,8 +515,7 @@ describe('InitCommand - profile and detection features', () => {
     await fs.writeFile(path.join(claudeSkillDir, 'SKILL.md'), 'configured');
 
     // Directory detected only (not configured with C3Spec)
-    await fs.mkdir(path.join(testDir, '.github'), { recursive: true });
-    await fs.writeFile(path.join(testDir, '.github', 'copilot-instructions.md'), '');
+    await fs.mkdir(path.join(testDir, '.agents'), { recursive: true });
 
     searchableMultiSelectMock.mockResolvedValue(['claude']);
 
@@ -602,19 +528,18 @@ describe('InitCommand - profile and detection features', () => {
     const [{ choices }] = searchableMultiSelectMock.mock.calls[0] as [{ choices: Array<{ value: string; preSelected?: boolean; detected?: boolean }> }];
 
     const claude = choices.find((choice) => choice.value === 'claude');
-    const githubCopilot = choices.find((choice) => choice.value === 'github-copilot');
+    const cursor = choices.find((choice) => choice.value === 'cursor');
 
     expect(claude?.preSelected).toBe(true);
-    expect(githubCopilot?.preSelected).toBe(false);
-    expect(githubCopilot?.detected).toBe(true);
+    expect(cursor?.preSelected).toBe(false);
+    expect(cursor?.detected).toBe(true);
   });
 
   it('should preselect detected tools for first-time interactive setup', async () => {
     // First-time init: no c3spec/ directory and no configured C3Spec skills.
-    await fs.mkdir(path.join(testDir, '.github'), { recursive: true });
-    await fs.writeFile(path.join(testDir, '.github', 'copilot-instructions.md'), '');
+    await fs.mkdir(path.join(testDir, '.agents'), { recursive: true });
 
-    searchableMultiSelectMock.mockResolvedValue(['github-copilot']);
+    searchableMultiSelectMock.mockResolvedValue(['cursor']);
 
     const initCommand = new InitCommand({ force: true });
     vi.spyOn(initCommand as any, 'canPromptInteractively').mockReturnValue(true);
@@ -623,9 +548,9 @@ describe('InitCommand - profile and detection features', () => {
 
     expect(searchableMultiSelectMock).toHaveBeenCalledTimes(1);
     const [{ choices }] = searchableMultiSelectMock.mock.calls[0] as [{ choices: Array<{ value: string; preSelected?: boolean }> }];
-    const githubCopilot = choices.find((choice) => choice.value === 'github-copilot');
+    const cursor = choices.find((choice) => choice.value === 'cursor');
 
-    expect(githubCopilot?.preSelected).toBe(true);
+    expect(cursor?.preSelected).toBe(true);
   });
 
   it('should respect custom profile from global config', async () => {

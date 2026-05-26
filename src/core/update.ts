@@ -11,7 +11,6 @@ import ora from 'ora';
 import * as fs from 'fs';
 import { createRequire } from 'module';
 import { FileSystemUtils } from '../utils/file-system.js';
-import { transformToHyphenCommands } from '../utils/command-references.js';
 import { AI_TOOLS, C3SPEC_DIR_NAME } from './config.js';
 import {
   generateCommands,
@@ -215,9 +214,7 @@ export class UpdateCommand {
             const skillDir = path.join(skillsDir, dirName);
             const skillFile = path.join(skillDir, 'SKILL.md');
 
-            // Use hyphen-based command references for OpenCode
-            const transformer = (tool.value === 'opencode' || tool.value === 'pi') ? transformToHyphenCommands : undefined;
-            const skillContent = generateSkillContent(template, C3SPEC_VERSION, transformer);
+            const skillContent = generateSkillContent(template, C3SPEC_VERSION);
             await FileSystemUtils.writeFile(skillFile, skillContent);
           }
 
@@ -709,9 +706,7 @@ export class UpdateCommand {
             const skillDir = path.join(skillsDir, dirName);
             const skillFile = path.join(skillDir, 'SKILL.md');
 
-            // Use hyphen-based command references for OpenCode
-            const transformer = (tool.value === 'opencode' || tool.value === 'pi') ? transformToHyphenCommands : undefined;
-            const skillContent = generateSkillContent(template, C3SPEC_VERSION, transformer);
+            const skillContent = generateSkillContent(template, C3SPEC_VERSION);
             await FileSystemUtils.writeFile(skillFile, skillContent);
           }
         }

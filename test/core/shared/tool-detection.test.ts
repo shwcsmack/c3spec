@@ -44,12 +44,9 @@ describe('tool-detection', () => {
   });
 
   describe('getToolsWithSkillsDir', () => {
-    it('should return tools that have skillsDir configured', () => {
+    it('should return the three supported hosts in display order', () => {
       const tools = getToolsWithSkillsDir();
-      expect(tools).toContain('claude');
-      expect(tools).toContain('cursor');
-      expect(tools).toContain('windsurf');
-      expect(tools.length).toBeGreaterThan(0);
+      expect(tools).toEqual(['claude', 'codex', 'cursor']);
     });
   });
 
@@ -281,15 +278,16 @@ Content here
       await fs.mkdir(claudeSkillDir, { recursive: true });
       await fs.writeFile(path.join(claudeSkillDir, 'SKILL.md'), 'content');
 
-      // Setup Cursor
-      const cursorSkillDir = path.join(testDir, '.cursor', 'skills', 'c3spec-explore');
-      await fs.mkdir(cursorSkillDir, { recursive: true });
-      await fs.writeFile(path.join(cursorSkillDir, 'SKILL.md'), 'content');
+      // Setup Cursor and Codex (shared canonical .agents/skills/)
+      const agentsSkillDir = path.join(testDir, '.agents', 'skills', 'c3spec-explore');
+      await fs.mkdir(agentsSkillDir, { recursive: true });
+      await fs.writeFile(path.join(agentsSkillDir, 'SKILL.md'), 'content');
 
       const tools = getConfiguredTools(testDir);
       expect(tools).toContain('claude');
       expect(tools).toContain('cursor');
-      expect(tools).toHaveLength(2);
+      expect(tools).toContain('codex');
+      expect(tools).toHaveLength(3);
     });
   });
 
@@ -309,17 +307,17 @@ metadata:
 ---
 `);
 
-      // Setup Cursor with current version
-      const cursorSkillDir = path.join(testDir, '.cursor', 'skills', 'c3spec-explore');
-      await fs.mkdir(cursorSkillDir, { recursive: true });
-      await fs.writeFile(path.join(cursorSkillDir, 'SKILL.md'), `---
+      // Setup Cursor and Codex via canonical .agents/skills/
+      const agentsSkillDir = path.join(testDir, '.agents', 'skills', 'c3spec-explore');
+      await fs.mkdir(agentsSkillDir, { recursive: true });
+      await fs.writeFile(path.join(agentsSkillDir, 'SKILL.md'), `---
 metadata:
   generatedBy: "0.23.0"
 ---
 `);
 
       const statuses = getAllToolVersionStatus(testDir, '0.23.0');
-      expect(statuses).toHaveLength(2);
+      expect(statuses).toHaveLength(3);
 
       const claudeStatus = statuses.find(s => s.toolId === 'claude');
       expect(claudeStatus?.generatedByVersion).toBe('0.22.0');
@@ -328,6 +326,10 @@ metadata:
       const cursorStatus = statuses.find(s => s.toolId === 'cursor');
       expect(cursorStatus?.generatedByVersion).toBe('0.23.0');
       expect(cursorStatus?.needsUpdate).toBe(false);
+
+      const codexStatus = statuses.find(s => s.toolId === 'codex');
+      expect(codexStatus?.generatedByVersion).toBe('0.23.0');
+      expect(codexStatus?.needsUpdate).toBe(false);
     });
   });
 });

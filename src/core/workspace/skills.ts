@@ -2,7 +2,6 @@ import * as nodeFs from 'node:fs';
 import { createRequire } from 'node:module';
 
 import { FileSystemUtils } from '../../utils/file-system.js';
-import { transformToHyphenCommands } from '../../utils/command-references.js';
 import { AI_TOOLS, type AIToolOption } from '../config.js';
 import { getGlobalConfig, type Delivery, type Profile } from '../global-config.js';
 import { getProfileWorkflows } from '../profiles.js';
@@ -353,12 +352,9 @@ export async function generateWorkspaceAgentSkills(
 
     try {
       const skillsDir = getWorkspaceSkillDirectoryForTool(workspaceRoot, tool);
-      const transformer =
-        tool.value === 'opencode' || tool.value === 'pi' ? transformToHyphenCommands : undefined;
-
       for (const { template, dirName } of skillTemplates) {
         const skillFile = FileSystemUtils.joinPath(skillsDir, dirName, 'SKILL.md');
-        const skillContent = generateSkillContent(template, C3SPEC_VERSION, transformer);
+        const skillContent = generateSkillContent(template, C3SPEC_VERSION);
         await FileSystemUtils.writeFile(skillFile, skillContent);
       }
 
@@ -465,12 +461,9 @@ export async function updateWorkspaceAgentSkills(
 
     try {
       const skillsDir = getWorkspaceSkillDirectoryForTool(workspaceRoot, tool);
-      const transformer =
-        tool.value === 'opencode' || tool.value === 'pi' ? transformToHyphenCommands : undefined;
-
       for (const { template, dirName } of skillTemplates) {
         const skillFile = FileSystemUtils.joinPath(skillsDir, dirName, 'SKILL.md');
-        const skillContent = generateSkillContent(template, C3SPEC_VERSION, transformer);
+        const skillContent = generateSkillContent(template, C3SPEC_VERSION);
         await FileSystemUtils.writeFile(skillFile, skillContent);
       }
 
