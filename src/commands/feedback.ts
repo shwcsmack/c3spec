@@ -98,7 +98,7 @@ function formatBody(bodyText?: string): string {
  * Generate a pre-filled GitHub issue URL for manual submission
  */
 function generateManualSubmissionUrl(title: string, body: string): string {
-  const repo = 'Fission-AI/C3Spec';
+  const repo = 'shwcsmack/c3spec';
   const encodedTitle = encodeURIComponent(title);
   const encodedBody = encodeURIComponent(body);
   const encodedLabels = encodeURIComponent('feedback');
@@ -130,7 +130,7 @@ function submitViaGhCli(title: string, body: string): void {
         'issue',
         'create',
         '--repo',
-        'Fission-AI/C3Spec',
+        'shwcsmack/c3spec',
         '--title',
         title,
         '--body',

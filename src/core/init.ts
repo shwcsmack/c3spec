@@ -718,8 +718,8 @@ export class InitCommand {
 
     // Links
     console.log();
-    console.log(`Learn more: ${chalk.cyan('https://github.com/Fission-AI/C3Spec')}`);
-    console.log(`Feedback:   ${chalk.cyan('https://github.com/Fission-AI/C3Spec/issues')}`);
+    console.log(`Learn more: ${chalk.cyan('https://github.com/shwcsmack/c3spec')}`);
+    console.log(`Feedback:   ${chalk.cyan('https://github.com/shwcsmack/c3spec/issues')}`);
 
     // Restart instruction if any tools were configured
     if (results.createdTools.length > 0 || results.refreshedTools.length > 0) {

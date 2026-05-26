@@ -274,7 +274,7 @@ export class UpdateCommand {
       console.log('  /opsx:continue  Create the next artifact');
       console.log('  /opsx:apply     Implement tasks');
       console.log();
-      console.log(`Learn more: ${chalk.cyan('https://github.com/Fission-AI/C3Spec')}`);
+      console.log(`Learn more: ${chalk.cyan('https://github.com/shwcsmack/c3spec')}`);
     }
 
     const configuredAndNewTools = [...new Set([...configuredTools, ...newlyConfiguredTools])];
