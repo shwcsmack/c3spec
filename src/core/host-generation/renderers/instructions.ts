@@ -21,8 +21,8 @@ All development work enters through the \`c3spec-start\` skill. Do not pick a ti
 | Tier | When | Entry |
 | --- | --- | --- |
 | T1 Spec-Aware Fix | Bug fix, investigation, config tweak | Inline fix workflow |
-| T2 Lightweight Feature | New capability, clear scope | \`c3spec-propose\` then apply |
-| T3 Full Workflow | Design uncertainty, architecture, breaking change | Brainstorm, propose, then apply |
+| T2 Lightweight Feature | New capability, clear scope | \`c3spec-tier2-feature\` |
+| T3 Full Workflow | Design uncertainty, architecture, breaking change | Full brainstorm, proposal, design, specs, tasks, and apply flow |
 
 ## Subagent roles
 

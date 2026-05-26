@@ -12,4 +12,4 @@ One line per entry. Load this index at the start of every `/opsx:start` session 
 <!-- entries added here as constraints are discovered -->
 
 ## Design Decisions
-<!-- entries added here as design decisions are captured from cycles -->
+- [First-Class Host JSON Sidecars](design-decisions/first-class-agent-host-json-sidecars.md) — host-generation, json, drift-detection, cursor, claude, codex

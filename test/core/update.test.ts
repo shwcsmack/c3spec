@@ -96,10 +96,11 @@ describe('UpdateCommand', () => {
       await initHostProject(testDir, 'claude');
 
       const consoleSpy = vi.spyOn(console, 'log');
-      await updateCommand.execute(testDir);
+      const forceUpdate = new UpdateCommand({ force: true });
+      await forceUpdate.execute(testDir);
 
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Updating host artifacts for: claude')
+        expect.stringContaining('Force updating host artifacts for: claude')
       );
 
       for (const skillName of CANONICAL_SKILL_NAMES) {

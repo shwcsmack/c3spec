@@ -819,10 +819,10 @@ artifacts:
       expect(result.exitCode).toBe(0);
       const output = normalizePaths(getOutput(result));
       expect(output).toContain('Claude Code');
-      expect(output).toContain('.claude/');
+      expect(output).toContain('.agents/');
 
       // Verify skill files were created
-      const skillFile = path.join(tempDir, '.claude', 'skills', 'c3spec-explore', 'SKILL.md');
+      const skillFile = path.join(tempDir, '.claude', 'skills', 'c3spec-start', 'SKILL.md');
       const stat = await fs.stat(skillFile);
       expect(stat.isFile()).toBe(true);
     });
@@ -836,13 +836,13 @@ artifacts:
       expect(output).toContain('Cursor');
       expect(output).toContain('.agents/');
 
-      const skillFile = path.join(tempDir, '.agents', 'skills', 'c3spec-explore', 'SKILL.md');
+      const skillFile = path.join(tempDir, '.agents', 'skills', 'c3spec-start', 'SKILL.md');
       const stat = await fs.stat(skillFile);
       expect(stat.isFile()).toBe(true);
 
-      const commandFile = path.join(tempDir, '.cursor', 'commands', 'opsx-explore.md');
-      const content = await fs.readFile(commandFile, 'utf-8');
-      expect(content).toContain('name: /opsx-explore');
+      const agentFile = path.join(tempDir, '.cursor', 'agents', 'implementer.md');
+      const agentStat = await fs.stat(agentFile);
+      expect(agentStat.isFile()).toBe(true);
     });
 
     it('creates skills for Codex tool', async () => {
@@ -854,9 +854,13 @@ artifacts:
       expect(output).toContain('Codex');
       expect(output).toContain('.agents/');
 
-      const skillFile = path.join(tempDir, '.agents', 'skills', 'c3spec-explore', 'SKILL.md');
+      const skillFile = path.join(tempDir, '.agents', 'skills', 'c3spec-start', 'SKILL.md');
       const stat = await fs.stat(skillFile);
       expect(stat.isFile()).toBe(true);
+      const agentFile = path.join(tempDir, '.codex', 'agents', 'implementer.toml');
+      const configFile = path.join(tempDir, '.codex', 'config.toml');
+      expect((await fs.stat(agentFile)).isFile()).toBe(true);
+      expect(await fs.readFile(configFile, 'utf-8')).toContain('max_depth = 1');
     });
   });
 

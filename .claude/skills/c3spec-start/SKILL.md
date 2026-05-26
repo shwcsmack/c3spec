@@ -1,6 +1,6 @@
 ---
 name: c3spec-start
-description: Single front door for all development work. Interview the user, classify the tier, and route to the correct workflow. Replaces /c3spec:new, /c3spec:ff, and the manual "direct PR vs c3spec" decision.
+description: "Single front door for all development work. Interview the user, classify the tier, and route to the correct workflow. Replaces /c3spec:new, /c3spec:ff, and the manual \"direct PR vs c3spec\" decision."
 ---
 
 # C3Spec Start — Interview, Route, Execute
@@ -83,7 +83,11 @@ When the change could go either way, lean toward the lighter tier and say so exp
 After confirmation:
 
 **Tier 1:** Invoke `c3spec-tier1-fix` skill
-**Tier 2:** Invoke `c3spec-tier2-feature` skill  
-**Tier 3:** Use `/c3spec:continue` to begin the superpowers-bridge flow from the brainstorm artifact (create the change directory first: `c3spec new change "<name>"`)
+**Tier 2:** Invoke `c3spec-tier2-feature` skill
+**Tier 3:** Begin the full superpowers-bridge flow from the brainstorm artifact after creating the change directory with `c3spec new change "<name>"`. Continue through proposal, design, specs, tasks, and plan using the relevant c3spec skills by description rather than slash commands.
 
 Carry forward everything from the interview as context into the tier skill — the user should not repeat themselves.
+
+<!-- c3spec-generated: true
+c3spec-source: /Users/shayne/code/c3spec/.worktrees/first-class-agent-hosts/.agents/skills/c3spec-start/SKILL.md
+c3spec-hash: 141aaf14e9b7fb40391ffbd7939ceb187c3202eb931c656433465c5ef6b6f2b2 -->

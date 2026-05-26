@@ -488,10 +488,10 @@ export function formatHostGenerationSummary(
     summary.canonical.created.length + summary.canonical.updated.length;
   if (canonicalCount > 0) {
     lines.push(
-      `Canonical: ${summary.canonical.created.length} created, ${summary.canonical.updated.length} refreshed`
+      `Canonical (.agents/): ${summary.canonical.created.length} created, ${summary.canonical.updated.length} refreshed`
     );
   } else if (summary.canonical.skipped.length > 0) {
-    lines.push(`Canonical: ${summary.canonical.skipped.length} unchanged`);
+    lines.push(`Canonical (.agents/): ${summary.canonical.skipped.length} unchanged`);
   }
 
   if (summary.hosts.written.length > 0) {

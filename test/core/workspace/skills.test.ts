@@ -45,10 +45,10 @@ describe('workspace skill helpers', () => {
 
   it('builds workspace-root skill paths with the workspace path style', () => {
     expect(getWorkspaceSkillDirectory('/repos/platform-workspace', 'codex')).toBe(
-      '/repos/platform-workspace/.codex/skills'
+      '/repos/platform-workspace/.agents/skills'
     );
     expect(getWorkspaceSkillDirectory('D:\\repos\\platform-workspace', 'codex')).toBe(
-      'D:\\repos\\platform-workspace\\.codex\\skills'
+      'D:\\repos\\platform-workspace\\.agents\\skills'
     );
   });
 

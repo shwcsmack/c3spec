@@ -115,7 +115,7 @@ The plan for Tier 2 is structured with stage declarations for independent tasks:
 ### Task 1.1: [name]
 [what to do, which files, test approach — no inline code]
 
-### Task 1.2: [name]  
+### Task 1.2: [name]
 [what to do, which files, test approach — no inline code]
 
 ## Stage 2 — Sequential
@@ -133,6 +133,8 @@ Invoke `c3spec-subagent-dev` skill with:
 - **Tier: 2** (skip final whole-implementation code review)
 - **Plan:** `c3spec/changes/tier2-<name>/plan.md`
 - **Memory context:** from c3spec-start memory scan
+
+Consult `c3spec-host-adapter` when dispatching named agents.
 
 ---
 
@@ -159,10 +161,6 @@ Four sections:
 2. **What worked** — 2-3 bullets with evidence citations
 3. **What didn't** — 1-2 bullets (if any)
 4. **Learning** — one learning worth capturing to memory (or "none that generalizes")
-
-```html
-<!-- Rich HTML: two-column layout, evidence in sidebar, analysis in main column -->
-```
 
 **Immediately after writing:**
 ```
@@ -193,3 +191,7 @@ superpowers:finishing-a-development-branch
 ```
 
 PR is last. PR description should reference the proposal and any memory entries created.
+
+<!-- c3spec-generated: true
+c3spec-source: /Users/shayne/code/c3spec/.worktrees/first-class-agent-hosts/.agents/skills/c3spec-tier2-feature/SKILL.md
+c3spec-hash: 7c335c3f2d20cb0526d005508f94fbf056e471b14c3979090e6b28b71014d254 -->

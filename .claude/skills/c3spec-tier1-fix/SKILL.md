@@ -1,6 +1,6 @@
 ---
 name: c3spec-tier1-fix
-description: Execute a Tier 1 Spec-Aware Fix. Use after c3spec-start routes here. Covers bugs, investigations, simple changes. No change directory. Fast worktree → mini plan → subagent execution → spec impact → micro-retro → memory capture.
+description: "Execute a Tier 1 Spec-Aware Fix. Use after c3spec-start routes here. Covers bugs, investigations, simple changes. No change directory. Fast worktree → mini plan → subagent execution → spec impact → micro-retro → memory capture."
 ---
 
 # Tier 1 — Spec-Aware Fix
@@ -61,7 +61,7 @@ Run [specific test command]. Confirm test passes. Run full suite.
 [which spec files describe behavior touched by this fix — list them]
 ```
 
-Keep it tight. The implementer subagent should be able to act on each task without ambiguity. Do not include inline code — the implementer reads the actual files.
+Keep it tight. The implementer agent should be able to act on each task without ambiguity. Do not include inline code — the implementer reads the actual files.
 
 ---
 
@@ -73,6 +73,8 @@ Invoke `c3spec-subagent-dev` skill with:
 - **Memory context:** already loaded from c3spec-start memory scan
 
 The subagent-dev skill handles: implementer dispatch, spec reviewer, quality reviewer, checkbox discipline, HTML file path rule.
+
+Consult `c3spec-host-adapter` when dispatching named agents.
 
 ---
 
@@ -121,11 +123,7 @@ Choose the most actionable option:
 - A spec addition that would have made the contract explicit
 - A lint rule or type constraint
 - A memory entry (if the learning generalizes beyond this bug)
-- A constraint to add to the implementer prompt template
-
-```html
-<!-- Rich HTML: three sections, evidence citations, code snippets with syntax highlighting -->
-```
+- A constraint to add to the implementer agent manifest
 
 **Immediately after writing the file, print:**
 ```
@@ -187,3 +185,7 @@ This confirms tests are green, opens the PR, cleans up the worktree. PR descript
 - Do not skip the spec impact report even if the fix seems obviously localized
 - Do not skip memory capture if the bug class generalizes
 - Do not re-interview the user — carry forward context from c3spec-start
+
+<!-- c3spec-generated: true
+c3spec-source: /Users/shayne/code/c3spec/.worktrees/first-class-agent-hosts/.agents/skills/c3spec-tier1-fix/SKILL.md
+c3spec-hash: dbe1ce962afbd4facba55e70b9717b54e0f482ba1a601b1521167fdf57f68133 -->

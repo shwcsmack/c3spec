@@ -931,13 +931,12 @@ ${C3SPEC_MARKERS.end}`);
       });
     });
 
-    it('should only include legacy tool IDs that are present in the CommandAdapterRegistry', () => {
+    it('should keep cleanup paths for legacy tools even after adapters are removed', () => {
       const registeredTools = new Set(CommandAdapterRegistry.getAll().map(adapter => adapter.toolId));
 
-      // Verify all legacy map entries correspond to known adapters
-      for (const tool of Object.keys(LEGACY_SLASH_COMMAND_PATHS)) {
-        expect(registeredTools.has(tool)).toBe(true);
-      }
+      expect(registeredTools).toEqual(new Set(['claude', 'codex', 'cursor']));
+      expect(LEGACY_SLASH_COMMAND_PATHS).toHaveProperty('windsurf');
+      expect(LEGACY_SLASH_COMMAND_PATHS).toHaveProperty('opencode');
 
       // Pi was never a pre-1.0 legacy tool
       expect(LEGACY_SLASH_COMMAND_PATHS).not.toHaveProperty('pi');

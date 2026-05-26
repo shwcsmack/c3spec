@@ -1,0 +1,7 @@
+# c3spec-generated: true
+# c3spec-source: c3spec/host-generation/codex-config
+# c3spec-hash: b29e973bbba4a05769f443bb6bb4e34a52513e2dc27aaa21373712dceaed033c
+
+[agents]
+max_threads = 6
+max_depth = 1

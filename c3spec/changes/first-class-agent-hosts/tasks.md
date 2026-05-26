@@ -35,11 +35,11 @@
 
 ## 5. Dogfood and verify
 
-- [ ] 5.1 Regenerate this repository into the new canonical `.agents/` layout
-- [ ] 5.2 Ensure no `.cursor/skills/` mirror is generated
-- [ ] 5.3 Ensure `.claude/skills/` is generated from `.agents/skills/`
-- [ ] 5.4 Ensure `.codex/agents/*.toml` parses and config pins `max_depth = 1`
-- [ ] 5.5 Run focused generation tests
-- [ ] 5.6 Run `pnpm build`
-- [ ] 5.7 Run `pnpm test`
-- [ ] 5.8 Write verification and retrospective artifacts
+- [x] 5.1 Regenerate this repository into the new canonical `.agents/` layout
+- [x] 5.2 Ensure no `.cursor/skills/` mirror is generated
+- [x] 5.3 Ensure `.claude/skills/` is generated from `.agents/skills/`
+- [x] 5.4 Ensure `.codex/agents/*.toml` parses and config pins `max_depth = 1`
+- [x] 5.5 Run focused generation tests
+- [x] 5.6 Run `pnpm build`
+- [x] 5.7 Run `pnpm test`
+- [x] 5.8 Write verification and retrospective artifacts

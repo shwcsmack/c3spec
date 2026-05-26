@@ -1,11 +1,13 @@
 ---
 name: c3spec-subagent-dev
-description: Execute an implementation plan using staged parallel subagents with two-stage review per task. Project-local replacement for superpowers:subagent-driven-development. Use when executing Tier 1, 2, or 3 plans from /c3spec:start.
+description: "Execute an implementation plan using staged parallel subagents with two-stage review per task. Project-local replacement for superpowers:subagent-driven-development. Use when executing Tier 1, 2, or 3 plans from c3spec-start."
 ---
 
 # C3Spec Subagent-Driven Development
 
 Execute a plan by dispatching fresh subagents per task, with stage-based parallelism for independent task groups and two-stage review (spec compliance → code quality) per task.
+
+Consult `c3spec-host-adapter` for host-specific invocation details whenever dispatching named agents.
 
 ## Key differences from superpowers:subagent-driven-development
 
@@ -50,12 +52,12 @@ cat c3spec/memory/<category>/<slug>.md
 Read plan → extract all stages and tasks → create TodoWrite
 
 For each stage (sequential):
-  Dispatch all implementer subagents in stage simultaneously (background tasks)
+  Dispatch the implementer agent for all tasks in the stage simultaneously
   Wait for all implementers in stage to complete
   For each completed implementation (sequential within stage):
-    Dispatch spec compliance reviewer
+    Dispatch the spec-reviewer agent
     If issues → implementer fixes → re-review (loop)
-    After spec ✅ → dispatch code quality reviewer
+    After spec ✅ → dispatch the quality-reviewer agent
     If issues → implementer fixes → re-review (loop)
     After quality ✅ → mark task [x] in tasks.md (controller only)
 
@@ -64,17 +66,19 @@ After all stages complete:
   Proceed to verify / retro / archive per tier
 ```
 
-## Dispatching implementer subagents
+## Dispatching implementer agents
 
-Use `./implementer-prompt.md` template. For parallel stage dispatch, launch each as a background Agent task. Wait for all before proceeding to review.
+Dispatch the **implementer** agent for each task in the active stage. Provide the full task text, context, and relevant memory entries in the dispatch prompt.
+
+For parallel stage dispatch, launch all implementer agents in the stage simultaneously. Wait for all before proceeding to review.
 
 **Never** dispatch two implementers that touch the same file simultaneously. If a stage accidentally contains tasks with overlapping files, treat them as sequential within that stage.
 
-## Dispatching reviewer subagents
+## Dispatching reviewer agents
 
-Use `./spec-reviewer-prompt.md` and `./code-quality-reviewer-prompt.md`. These are always sequential per task (spec first, quality after spec passes).
+Dispatch the **spec-reviewer** agent first, then the **quality-reviewer** agent after spec compliance passes. These are always sequential per task.
 
-**Optimization:** For Tier 2/3 tasks where spec compliance is very likely (simple mechanical tasks), you may dispatch spec and quality reviewers simultaneously and discard the quality result if spec fails. Only do this when the task is clearly mechanical — never for integration or multi-file tasks.
+**Optimization:** For Tier 2/3 tasks where spec compliance is very likely (simple mechanical tasks), you may dispatch spec-reviewer and quality-reviewer agents simultaneously and discard the quality result if spec fails. Only do this when the task is clearly mechanical — never for integration or multi-file tasks.
 
 ## Model selection
 
@@ -93,7 +97,7 @@ Use `./spec-reviewer-prompt.md` and `./code-quality-reviewer-prompt.md`. These a
 
 ## Checkbox discipline
 
-The controller marks tasks.md checkboxes — never the implementer subagent. Mark `[ ]` → `[x]` only after both spec compliance ✅ and code quality ✅. If a task needs re-implementation, the checkbox stays `[ ]` throughout.
+The controller marks tasks.md checkboxes — never the implementer agent. Mark `[ ]` → `[x]` only after both spec compliance ✅ and code quality ✅. If a task needs re-implementation, the checkbox stays `[ ]` throughout.
 
 ## HTML file path rule
 
@@ -119,7 +123,7 @@ This is mandatory. The user works exclusively from the command line.
 **Tier 3:**
 - Stage declarations required for plans with 15+ tasks
 - Run final whole-implementation code review (most capable model)
-- After all tasks: full verify.md, full retro with §6 → memory direct capture
+- After all tasks: full verify.md, full retro with memory direct capture
 
 ## Red flags (never do)
 
@@ -129,3 +133,7 @@ This is mandatory. The user works exclusively from the command line.
 - Proceed past a reviewer finding issues without re-implementing and re-reviewing
 - Produce an HTML file without printing its file:/// path
 - Start implementation without loading c3spec/memory/MEMORY.md for context
+
+<!-- c3spec-generated: true
+c3spec-source: /Users/shayne/code/c3spec/.worktrees/first-class-agent-hosts/.agents/skills/c3spec-subagent-dev/SKILL.md
+c3spec-hash: 721c4f4dc8d6aab00ca901d2860dea006183a513ee4d438f00bf8d77cda9a0d5 -->

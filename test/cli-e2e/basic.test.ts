@@ -140,11 +140,15 @@ describe('c3spec CLI e2e basics', () => {
       expect(result.exitCode).toBe(0);
       expect(result.stdout).toContain('C3Spec Setup Complete');
 
-      // Check that skills were created for multiple tools
-      const claudeSkillPath = path.join(emptyProjectDir, '.claude/skills/c3spec-explore/SKILL.md');
-      const agentsSkillPath = path.join(emptyProjectDir, '.agents/skills/c3spec-explore/SKILL.md');
+      // Check that canonical skills and host-native artifacts were created
+      const claudeSkillPath = path.join(emptyProjectDir, '.claude/skills/c3spec-start/SKILL.md');
+      const agentsSkillPath = path.join(emptyProjectDir, '.agents/skills/c3spec-start/SKILL.md');
+      const cursorAgentPath = path.join(emptyProjectDir, '.cursor/agents/implementer.md');
+      const codexAgentPath = path.join(emptyProjectDir, '.codex/agents/implementer.toml');
       expect(await fileExists(claudeSkillPath)).toBe(true);
       expect(await fileExists(agentsSkillPath)).toBe(true);
+      expect(await fileExists(cursorAgentPath)).toBe(true);
+      expect(await fileExists(codexAgentPath)).toBe(true);
     }, 25000);
 
     it('initializes with --tools list option', async () => {
@@ -157,11 +161,13 @@ describe('c3spec CLI e2e basics', () => {
       expect(result.stdout).toContain('C3Spec Setup Complete');
       expect(result.stdout).toContain('Claude Code');
 
-      // New init creates skills, not CLAUDE.md
-      const claudeSkillPath = path.join(emptyProjectDir, '.claude/skills/c3spec-explore/SKILL.md');
-      const agentsSkillPath = path.join(emptyProjectDir, '.agents/skills/c3spec-explore/SKILL.md');
+      // Init always creates canonical skills and selected host-native artifacts.
+      const claudeSkillPath = path.join(emptyProjectDir, '.claude/skills/c3spec-start/SKILL.md');
+      const agentsSkillPath = path.join(emptyProjectDir, '.agents/skills/c3spec-start/SKILL.md');
+      const cursorAgentPath = path.join(emptyProjectDir, '.cursor/agents/implementer.md');
       expect(await fileExists(claudeSkillPath)).toBe(true);
-      expect(await fileExists(agentsSkillPath)).toBe(false); // Not selected
+      expect(await fileExists(agentsSkillPath)).toBe(true);
+      expect(await fileExists(cursorAgentPath)).toBe(false); // Not selected
     });
 
     it('initializes with --tools none option', async () => {

@@ -418,6 +418,19 @@ describe('InitCommand - profile and detection features', () => {
     expect(await fileExists(skillFile)).toBe(true);
   });
 
+  it('should let host generation own CLAUDE.md without legacy scaffold fragments', async () => {
+    const initCommand = new InitCommand({ tools: 'all', force: true });
+    await initCommand.execute(testDir);
+
+    const claudeMd = await fs.readFile(path.join(testDir, 'CLAUDE.md'), 'utf-8');
+    expect(claudeMd.match(/C3SPEC:START/g)).toHaveLength(1);
+    expect(claudeMd).toContain('c3spec-generated: true');
+    expect(claudeMd).not.toContain('opsx:start');
+    expect(claudeMd).not.toContain('openspec/memory/MEMORY.md');
+
+    expect(await fileExists(path.join(testDir, '.cursor', 'skills', 'c3spec-start', 'SKILL.md'))).toBe(false);
+  });
+
   it('should preselect configured tools but not directory-detected tools in extend mode', async () => {
     await fs.mkdir(path.join(testDir, 'c3spec'), { recursive: true });
 
