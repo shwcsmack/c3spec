@@ -9,7 +9,7 @@ import { fileURLToPath } from 'url';
 
 const MEMORY_MD_CONTENT = `# Memory Index
 
-One line per entry. Load this index at the start of every \`/opsx:start\` session.
+One line per entry. Load this index at the start of every \`/c3spec:start\` session.
 
 ## Bug Patterns
 <!-- entries added here as bug patterns are captured from cycles -->

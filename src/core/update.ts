@@ -270,9 +270,9 @@ export class UpdateCommand {
     if (newlyConfiguredTools.length > 0) {
       console.log();
       console.log(chalk.bold('Getting started:'));
-      console.log('  /opsx:new       Start a new change');
-      console.log('  /opsx:continue  Create the next artifact');
-      console.log('  /opsx:apply     Implement tasks');
+      console.log('  /c3spec:new       Start a new change');
+      console.log('  /c3spec:continue  Create the next artifact');
+      console.log('  /c3spec:apply     Implement tasks');
       console.log();
       console.log(`Learn more: ${chalk.cyan('https://github.com/shwcsmack/c3spec')}`);
     }

@@ -31,7 +31,7 @@ export const LEGACY_CONFIG_FILES = [
  */
 export const LEGACY_SLASH_COMMAND_PATHS: Record<string, LegacySlashCommandPattern> = {
   // Directory-based: .tooldir/commands/c3spec/ or .tooldir/commands/c3spec/*.md
-  'claude': { type: 'directory', path: '.claude/commands/c3spec' },
+  'claude': { type: 'directory', path: '.claude/commands/opsx' },
   'codebuddy': { type: 'directory', path: '.codebuddy/commands/c3spec' },
   'qoder': { type: 'directory', path: '.qoder/commands/c3spec' },
   'lingma': { type: 'directory', path: '.lingma/commands/c3spec' },
@@ -447,7 +447,7 @@ export function formatCleanupSummary(result: CleanupResult): string {
     }
 
     for (const dir of result.deletedDirs) {
-      lines.push(`  ✓ Removed ${dir}/ (replaced by /opsx:*)`);
+      lines.push(`  ✓ Removed ${dir}/ (replaced by /c3spec:*)`);
     }
 
     for (const file of result.modifiedFiles) {

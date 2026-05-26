@@ -18,3 +18,11 @@
 export function transformToHyphenCommands(text: string): string {
   return text.replace(/\/opsx:/g, '/opsx-');
 }
+
+/**
+ * Transforms canonical `/opsx:` command references to Claude Code's `/c3spec:` namespace.
+ * Used by the Claude adapter since commands live under `.claude/commands/c3spec/`.
+ */
+export function transformToC3specCommands(text: string): string {
+  return text.replace(/\/opsx:/g, '/c3spec:');
+}

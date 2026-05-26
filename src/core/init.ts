@@ -1,7 +1,7 @@
 /**
  * Init Command
  *
- * Sets up C3Spec with Agent Skills and /opsx:* slash commands.
+ * Sets up C3Spec with Agent Skills and /c3spec:* slash commands.
  * This is the unified setup command that replaces both the old init and experimental commands.
  */
 
@@ -708,10 +708,10 @@ export class InitCommand {
     console.log();
     if (activeWorkflows.includes('propose')) {
       console.log(chalk.bold('Getting started:'));
-      console.log('  Start your first change: /opsx:propose "your idea"');
+      console.log('  Start your first change: /c3spec:propose "your idea"');
     } else if (activeWorkflows.includes('new')) {
       console.log(chalk.bold('Getting started:'));
-      console.log('  Start your first change: /opsx:new "your idea"');
+      console.log('  Start your first change: /c3spec:new "your idea"');
     } else {
       console.log("Done. Run 'c3spec config profile' to configure your workflows.");
     }

@@ -6,6 +6,7 @@
 
 import path from 'path';
 import type { CommandContent, ToolCommandAdapter } from '../types.js';
+import { transformToC3specCommands } from '../../../utils/command-references.js';
 
 /**
  * Escapes a string value for safe YAML output.
@@ -32,25 +33,27 @@ function formatTagsArray(tags: string[]): string {
 
 /**
  * Claude Code adapter for command generation.
- * File path: .claude/commands/opsx/<id>.md
+ * File path: .claude/commands/c3spec/<id>.md
  * Frontmatter: name, description, category, tags
  */
 export const claudeAdapter: ToolCommandAdapter = {
   toolId: 'claude',
 
   getFilePath(commandId: string): string {
-    return path.join('.claude', 'commands', 'opsx', `${commandId}.md`);
+    return path.join('.claude', 'commands', 'c3spec', `${commandId}.md`);
   },
 
   formatFile(content: CommandContent): string {
+    const name = content.name.replace(/^OPSX:/i, 'C3Spec:');
+    const body = transformToC3specCommands(content.body);
     return `---
-name: ${escapeYamlValue(content.name)}
+name: ${escapeYamlValue(name)}
 description: ${escapeYamlValue(content.description)}
 category: ${escapeYamlValue(content.category)}
 tags: ${formatTagsArray(content.tags)}
 ---
 
-${content.body}
+${body}
 `;
   },
 };
