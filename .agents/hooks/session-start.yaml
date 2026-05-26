@@ -1,0 +1,4 @@
+name: c3spec-memory-scan
+event: session-start
+command: node .agents/hooks/memory-scan.js
+description: Load the c3spec memory index at session start.

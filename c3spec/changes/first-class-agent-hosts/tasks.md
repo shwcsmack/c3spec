@@ -8,12 +8,12 @@
 
 ## 2. Add canonical `.agents/` artifact model
 
-- [ ] 2.1 Define canonical skill metadata and required skill names
-- [ ] 2.2 Define canonical agent manifest schema and parser
-- [ ] 2.3 Define canonical hook manifest schema and parser
-- [ ] 2.4 Add bundled canonical skill templates for `c3spec-start`, `c3spec-tier1-fix`, `c3spec-tier2-feature`, `c3spec-subagent-dev`, and `c3spec-host-adapter`
-- [ ] 2.5 Add bundled canonical agent manifests for `implementer`, `spec-reviewer`, and `quality-reviewer`
-- [ ] 2.6 Add bundled canonical memory-scan hook source
+- [x] 2.1 Define canonical skill metadata and required skill names
+- [x] 2.2 Define canonical agent manifest schema and parser
+- [x] 2.3 Define canonical hook manifest schema and parser
+- [x] 2.4 Add bundled canonical skill templates for `c3spec-start`, `c3spec-tier1-fix`, `c3spec-tier2-feature`, `c3spec-subagent-dev`, and `c3spec-host-adapter`
+- [x] 2.5 Add bundled canonical agent manifests for `implementer`, `spec-reviewer`, and `quality-reviewer`
+- [x] 2.6 Add bundled canonical memory-scan hook source
 
 ## 3. Build host renderers
 
