@@ -1,15 +1,13 @@
 /**
  * Init Command
  *
- * Sets up C3Spec with Agent Skills and /c3spec:* slash commands.
- * This is the unified setup command that replaces both the old init and experimental commands.
+ * Sets up C3Spec with canonical `.agents/` artifacts and generated host-native outputs.
  */
 
 import path from 'path';
 import chalk from 'chalk';
 import ora from 'ora';
 import * as fs from 'fs';
-import { createRequire } from 'module';
 import { FileSystemUtils } from '../utils/file-system.js';
 import {
   AI_TOOLS,
@@ -21,10 +19,6 @@ import { PALETTE } from './styles/palette.js';
 import { isInteractive } from '../utils/interactive.js';
 import { serializeConfig } from './config-prompts.js';
 import {
-  generateCommands,
-  CommandAdapterRegistry,
-} from './command-generation/index.js';
-import {
   detectLegacyArtifacts,
   cleanupLegacyArtifacts,
   formatCleanupSummary,
@@ -32,22 +26,20 @@ import {
   type LegacyDetectionResult,
 } from './legacy-cleanup.js';
 import {
-  SKILL_NAMES,
   getToolsWithSkillsDir,
   getToolSkillStatus,
   getToolStates,
-  getSkillTemplates,
-  getCommandContents,
-  generateSkillContent,
   type ToolSkillStatus,
 } from './shared/index.js';
-import { getGlobalConfig, type Delivery, type Profile } from './global-config.js';
-import { getProfileWorkflows, CORE_WORKFLOWS, ALL_WORKFLOWS } from './profiles.js';
+import { getGlobalConfig, type Profile } from './global-config.js';
+import {
+  applyHostGenerationPipeline,
+  formatHostGenerationSummary,
+  resolveHostIdsFromToolSelection,
+} from './host-generation/apply.js';
+import type { SupportedHostId } from './host-generation/types.js';
 import { getAvailableTools } from './available-tools.js';
 import { migrateIfNeeded } from './migration.js';
-
-const require = createRequire(import.meta.url);
-const { version: C3SPEC_VERSION } = require('../../package.json');
 
 // -----------------------------------------------------------------------------
 // Constants
@@ -58,20 +50,6 @@ const DEFAULT_SCHEMA = 'superpowers-bridge';
 const PROGRESS_SPINNER = {
   interval: 80,
   frames: ['░░░', '▒░░', '▒▒░', '▒▒▒', '▓▒▒', '▓▓▒', '▓▓▓', '▒▓▓', '░▒▓'],
-};
-
-const WORKFLOW_TO_SKILL_DIR: Record<string, string> = {
-  'explore': 'c3spec-explore',
-  'new': 'c3spec-new-change',
-  'continue': 'c3spec-continue-change',
-  'apply': 'c3spec-apply-change',
-  'ff': 'c3spec-ff-change',
-  'sync': 'c3spec-sync-specs',
-  'archive': 'c3spec-archive-change',
-  'bulk-archive': 'c3spec-bulk-archive-change',
-  'verify': 'c3spec-verify-change',
-  'onboard': 'c3spec-onboard',
-  'propose': 'c3spec-propose',
 };
 
 // -----------------------------------------------------------------------------
@@ -144,8 +122,8 @@ export class InitCommand {
     // Create directory structure and config
     await this.createDirectoryStructure(c3specPath, extendMode);
 
-    // Generate skills and commands for each tool
-    const results = await this.generateSkillsAndCommands(projectPath, validatedTools);
+    const hostIds = resolveHostIdsFromToolSelection(validatedTools.map((t) => t.value));
+    const results = await this.generateHostArtifacts(projectPath, hostIds, validatedTools);
 
     // Create config.yaml if needed
     const configStatus = await this.createConfig(c3specPath, extendMode);
@@ -492,105 +470,103 @@ export class InitCommand {
   }
 
   // ═══════════════════════════════════════════════════════════
-  // SKILL & COMMAND GENERATION
+  // HOST GENERATION
   // ═══════════════════════════════════════════════════════════
 
-  private async generateSkillsAndCommands(
+  private async generateHostArtifacts(
     projectPath: string,
+    hostIds: SupportedHostId[],
     tools: Array<{ value: string; name: string; skillsDir: string; wasConfigured: boolean }>
   ): Promise<{
     createdTools: typeof tools;
     refreshedTools: typeof tools;
     failedTools: Array<{ name: string; error: Error }>;
-    commandsSkipped: string[];
-    removedCommandCount: number;
-    removedSkillCount: number;
+    generationSummary: string[];
+    driftWarnings: string[];
+    validationErrors: Array<{ path: string; message: string }>;
   }> {
     const createdTools: typeof tools = [];
     const refreshedTools: typeof tools = [];
     const failedTools: Array<{ name: string; error: Error }> = [];
-    const commandsSkipped: string[] = [];
-    let removedCommandCount = 0;
-    let removedSkillCount = 0;
 
-    // Read global config for profile and delivery settings (use --profile override if set)
-    const globalConfig = getGlobalConfig();
-    const profile: Profile = this.resolveProfileOverride() ?? globalConfig.profile ?? 'core';
-    const delivery: Delivery = globalConfig.delivery ?? 'both';
-    const workflows = getProfileWorkflows(profile, globalConfig.workflows);
+    if (hostIds.length === 0) {
+      return {
+        createdTools,
+        refreshedTools,
+        failedTools,
+        generationSummary: [],
+        driftWarnings: [],
+        validationErrors: [],
+      };
+    }
 
-    // Get skill and command templates filtered by profile workflows
-    const shouldGenerateSkills = delivery !== 'commands';
-    const shouldGenerateCommands = delivery !== 'skills';
-    const skillTemplates = shouldGenerateSkills ? getSkillTemplates(workflows) : [];
-    const commandContents = shouldGenerateCommands ? getCommandContents(workflows) : [];
+    const spinner = ora('Generating canonical and host artifacts...').start();
 
-    // Process each tool
-    for (const tool of tools) {
-      const spinner = ora(`Setting up ${tool.name}...`).start();
+    try {
+      const summary = await applyHostGenerationPipeline(projectPath, hostIds, {
+        force: this.force,
+        ensureCanonical: true,
+        refreshCanonical: false,
+        fetchRemoteCanonicalSkills: false,
+      });
 
-      try {
-        // Generate skill files if delivery includes skills
-        if (shouldGenerateSkills) {
-          // Use tool-specific skillsDir
-          const skillsDir = path.join(projectPath, tool.skillsDir, 'skills');
+      if (summary.validationErrors.length > 0) {
+        spinner.fail('Host generation failed');
+        return {
+          createdTools,
+          refreshedTools,
+          failedTools: [
+            {
+              name: 'host-generation',
+              error: new Error(
+                summary.validationErrors.map((e) => `${e.path}: ${e.message}`).join('; ')
+              ),
+            },
+          ],
+          generationSummary: [],
+          driftWarnings: [],
+          validationErrors: summary.validationErrors,
+        };
+      }
 
-          // Create skill directories and SKILL.md files
-          for (const { template, dirName } of skillTemplates) {
-            const skillDir = path.join(skillsDir, dirName);
-            const skillFile = path.join(skillDir, 'SKILL.md');
+      spinner.succeed('Host artifacts generated');
 
-            // Generate SKILL.md content with YAML frontmatter including generatedBy
-            const skillContent = generateSkillContent(template, C3SPEC_VERSION);
-
-            // Write the skill file
-            await FileSystemUtils.writeFile(skillFile, skillContent);
-          }
-        }
-        if (!shouldGenerateSkills) {
-          const skillsDir = path.join(projectPath, tool.skillsDir, 'skills');
-          removedSkillCount += await this.removeSkillDirs(skillsDir);
-        }
-
-        // Generate commands if delivery includes commands
-        if (shouldGenerateCommands) {
-          const adapter = CommandAdapterRegistry.get(tool.value);
-          if (adapter) {
-            const generatedCommands = generateCommands(commandContents, adapter);
-
-            for (const cmd of generatedCommands) {
-              const commandFile = path.isAbsolute(cmd.path) ? cmd.path : path.join(projectPath, cmd.path);
-              await FileSystemUtils.writeFile(commandFile, cmd.fileContent);
-            }
-          } else {
-            commandsSkipped.push(tool.value);
-          }
-        }
-        if (!shouldGenerateCommands) {
-          removedCommandCount += await this.removeCommandFiles(projectPath, tool.value);
-        }
-
-        spinner.succeed(`Setup complete for ${tool.name}`);
-
+      for (const tool of tools) {
         if (tool.wasConfigured) {
           refreshedTools.push(tool);
         } else {
           createdTools.push(tool);
         }
-      } catch (error) {
-        spinner.fail(`Failed for ${tool.name}`);
-        failedTools.push({ name: tool.name, error: error as Error });
       }
-    }
 
-    return {
-      createdTools,
-      refreshedTools,
-      failedTools,
-      commandsSkipped,
-      removedCommandCount,
-      removedSkillCount,
-    };
+      const driftWarnings = [
+        ...summary.canonical.driftWarnings,
+        ...summary.hosts.driftWarnings,
+      ];
+
+      return {
+        createdTools,
+        refreshedTools,
+        failedTools,
+        generationSummary: formatHostGenerationSummary(hostIds, summary),
+        driftWarnings,
+        validationErrors: [],
+      };
+    } catch (error) {
+      spinner.fail('Host generation failed');
+      failedTools.push({
+        name: 'host-generation',
+        error: error as Error,
+      });
+      return {
+        createdTools,
+        refreshedTools,
+        failedTools,
+        generationSummary: [],
+        driftWarnings: [],
+        validationErrors: [],
+      };
+    }
   }
 
   // ═══════════════════════════════════════════════════════════
@@ -632,9 +608,9 @@ export class InitCommand {
       createdTools: typeof tools;
       refreshedTools: typeof tools;
       failedTools: Array<{ name: string; error: Error }>;
-      commandsSkipped: string[];
-      removedCommandCount: number;
-      removedSkillCount: number;
+      generationSummary: string[];
+      driftWarnings: string[];
+      validationErrors: Array<{ path: string; message: string }>;
     },
     configStatus: 'created' | 'exists' | 'skipped'
   ): void {
@@ -650,22 +626,9 @@ export class InitCommand {
       console.log(`Refreshed: ${results.refreshedTools.map((t) => t.name).join(', ')}`);
     }
 
-    // Show counts (respecting profile filter)
-    const successfulTools = [...results.createdTools, ...results.refreshedTools];
-    if (successfulTools.length > 0) {
-      const globalConfig = getGlobalConfig();
-      const profile: Profile = (this.profileOverride as Profile) ?? globalConfig.profile ?? 'core';
-      const delivery: Delivery = globalConfig.delivery ?? 'both';
-      const workflows = getProfileWorkflows(profile, globalConfig.workflows);
-      const toolDirs = [...new Set(successfulTools.map((t) => t.skillsDir))].join(', ');
-      const skillCount = delivery !== 'commands' ? getSkillTemplates(workflows).length : 0;
-      const commandCount = delivery !== 'skills' ? getCommandContents(workflows).length : 0;
-      if (skillCount > 0 && commandCount > 0) {
-        console.log(`${skillCount} skills and ${commandCount} commands in ${toolDirs}/`);
-      } else if (skillCount > 0) {
-        console.log(`${skillCount} skills in ${toolDirs}/`);
-      } else if (commandCount > 0) {
-        console.log(`${commandCount} commands in ${toolDirs}/`);
+    if (results.generationSummary.length > 0) {
+      for (const line of results.generationSummary) {
+        console.log(line);
       }
     }
 
@@ -674,15 +637,12 @@ export class InitCommand {
       console.log(chalk.red(`Failed: ${results.failedTools.map((f) => `${f.name} (${f.error.message})`).join(', ')}`));
     }
 
-    // Show skipped commands
-    if (results.commandsSkipped.length > 0) {
-      console.log(chalk.dim(`Commands skipped for: ${results.commandsSkipped.join(', ')} (no adapter)`));
-    }
-    if (results.removedCommandCount > 0) {
-      console.log(chalk.dim(`Removed: ${results.removedCommandCount} command files (delivery: skills)`));
-    }
-    if (results.removedSkillCount > 0) {
-      console.log(chalk.dim(`Removed: ${results.removedSkillCount} skill directories (delivery: commands)`));
+    if (results.driftWarnings.length > 0) {
+      console.log(
+        chalk.yellow(
+          `${results.driftWarnings.length} file(s) skipped due to local edits (use --force to overwrite)`
+        )
+      );
     }
 
     // Config status
@@ -698,30 +658,19 @@ export class InitCommand {
       console.log(chalk.dim(`Config: skipped (non-interactive mode)`));
     }
 
-    // Getting started (task 7.6: show propose if in profile)
-    const globalCfg = getGlobalConfig();
-    const activeProfile: Profile = (this.profileOverride as Profile) ?? globalCfg.profile ?? 'core';
-    const activeWorkflows = [...getProfileWorkflows(activeProfile, globalCfg.workflows)];
     console.log();
-    if (activeWorkflows.includes('propose')) {
-      console.log(chalk.bold('Getting started:'));
-      console.log('  Start your first change: /c3spec:propose "your idea"');
-    } else if (activeWorkflows.includes('new')) {
-      console.log(chalk.bold('Getting started:'));
-      console.log('  Start your first change: /c3spec:new "your idea"');
-    } else {
-      console.log("Done. Run 'c3spec config profile' to configure your workflows.");
-    }
+    console.log(chalk.bold('Getting started:'));
+    console.log('  Ask your agent to use c3spec to plan and implement your next change.');
+    console.log(chalk.dim('  Example: "Use c3spec to propose a change for …"'));
 
     // Links
     console.log();
     console.log(`Learn more: ${chalk.cyan('https://github.com/shwcsmack/c3spec')}`);
     console.log(`Feedback:   ${chalk.cyan('https://github.com/shwcsmack/c3spec/issues')}`);
 
-    // Restart instruction if any tools were configured
     if (results.createdTools.length > 0 || results.refreshedTools.length > 0) {
       console.log();
-      console.log(chalk.white('Restart your IDE for slash commands to take effect.'));
+      console.log(chalk.white('Restart your IDE so host skills and agents reload.'));
     }
 
     console.log();
@@ -736,46 +685,4 @@ export class InitCommand {
     }).start();
   }
 
-  private async removeSkillDirs(skillsDir: string): Promise<number> {
-    let removed = 0;
-
-    for (const workflow of ALL_WORKFLOWS) {
-      const dirName = WORKFLOW_TO_SKILL_DIR[workflow];
-      if (!dirName) continue;
-
-      const skillDir = path.join(skillsDir, dirName);
-      try {
-        if (fs.existsSync(skillDir)) {
-          await fs.promises.rm(skillDir, { recursive: true, force: true });
-          removed++;
-        }
-      } catch {
-        // Ignore errors
-      }
-    }
-
-    return removed;
-  }
-
-  private async removeCommandFiles(projectPath: string, toolId: string): Promise<number> {
-    let removed = 0;
-    const adapter = CommandAdapterRegistry.get(toolId);
-    if (!adapter) return 0;
-
-    for (const workflow of ALL_WORKFLOWS) {
-      const cmdPath = adapter.getFilePath(workflow);
-      const fullPath = path.isAbsolute(cmdPath) ? cmdPath : path.join(projectPath, cmdPath);
-
-      try {
-        if (fs.existsSync(fullPath)) {
-          await fs.promises.unlink(fullPath);
-          removed++;
-        }
-      } catch {
-        // Ignore errors
-      }
-    }
-
-    return removed;
-  }
 }

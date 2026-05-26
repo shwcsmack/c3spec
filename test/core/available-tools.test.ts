@@ -24,7 +24,8 @@ describe('available-tools', () => {
     });
 
     it('should detect a single tool directory', async () => {
-      await fs.mkdir(path.join(testDir, '.claude'), { recursive: true });
+      await fs.mkdir(path.join(testDir, '.claude', 'skills', 'c3spec-start'), { recursive: true });
+      await fs.writeFile(path.join(testDir, '.claude', 'skills', 'c3spec-start', 'SKILL.md'), '');
 
       const tools = getAvailableTools(testDir);
       expect(tools).toHaveLength(1);
@@ -34,8 +35,12 @@ describe('available-tools', () => {
     });
 
     it('should detect multiple tool directories', async () => {
-      await fs.mkdir(path.join(testDir, '.claude'), { recursive: true });
-      await fs.mkdir(path.join(testDir, '.agents'), { recursive: true });
+      await fs.mkdir(path.join(testDir, '.claude', 'skills', 'c3spec-start'), { recursive: true });
+      await fs.writeFile(path.join(testDir, '.claude', 'skills', 'c3spec-start', 'SKILL.md'), '');
+      await fs.mkdir(path.join(testDir, '.cursor', 'agents'), { recursive: true });
+      await fs.writeFile(path.join(testDir, '.cursor', 'agents', 'implementer.md'), '');
+      await fs.mkdir(path.join(testDir, '.codex', 'agents'), { recursive: true });
+      await fs.writeFile(path.join(testDir, '.codex', 'agents', 'implementer.toml'), '');
 
       const tools = getAvailableTools(testDir);
       const toolValues = tools.map((t) => t.value);
@@ -53,7 +58,10 @@ describe('available-tools', () => {
     });
 
     it('should return full AIToolOption objects', async () => {
-      await fs.mkdir(path.join(testDir, '.agents'), { recursive: true });
+      await fs.mkdir(path.join(testDir, '.cursor', 'agents'), { recursive: true });
+      await fs.writeFile(path.join(testDir, '.cursor', 'agents', 'implementer.md'), '');
+      await fs.mkdir(path.join(testDir, '.codex', 'agents'), { recursive: true });
+      await fs.writeFile(path.join(testDir, '.codex', 'agents', 'implementer.toml'), '');
 
       const tools = getAvailableTools(testDir);
       expect(tools).toHaveLength(2);
@@ -74,7 +82,8 @@ describe('available-tools', () => {
     it('should handle paths with spaces', async () => {
       const spacedDir = path.join(testDir, 'path with spaces');
       await fs.mkdir(spacedDir, { recursive: true });
-      await fs.mkdir(path.join(spacedDir, '.claude'), { recursive: true });
+      await fs.mkdir(path.join(spacedDir, '.claude', 'skills', 'c3spec-start'), { recursive: true });
+      await fs.writeFile(path.join(spacedDir, '.claude', 'skills', 'c3spec-start', 'SKILL.md'), '');
 
       const tools = getAvailableTools(spacedDir);
       expect(tools).toHaveLength(1);

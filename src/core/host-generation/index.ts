@@ -95,3 +95,24 @@ export async function generateHostFilesFromProject(
 export function getRegisteredHostRenderers(): HostRenderer[] {
   return listHostRenderers();
 }
+
+export {
+  applyHostGenerationPipeline,
+  formatHostGenerationSummary,
+  getHostConfiguredTools,
+  hostGenerationNeedsUpdate,
+  loadBundledCanonicalFiles,
+  loadCanonicalTargetsWithRemote,
+  resolveHostIdsFromToolSelection,
+  writeCanonicalArtifacts,
+  writeGeneratedHostFiles,
+} from './apply.js';
+
+export type {
+  ApplyHostGenerationOptions,
+  BundledCanonicalFile,
+  CanonicalWriteResult,
+  HostGenerationApplySummary,
+  HostWriteResult,
+  RemoteCanonicalSkillFetchSummary,
+} from './apply.js';

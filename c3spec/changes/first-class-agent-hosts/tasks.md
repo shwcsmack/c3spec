@@ -26,12 +26,12 @@
 
 ## 4. Wire generation into commands
 
-- [ ] 4.1 Replace init's skill/command generation path with the shared host generation pipeline
-- [ ] 4.2 Update `c3spec sync` to regenerate host outputs from `.agents/`
-- [ ] 4.3 Update `c3spec update` to refresh canonical artifacts and then regenerate host outputs
-- [ ] 4.4 Preserve remote skill fetch fallback behavior for canonical skills
-- [ ] 4.5 Add force/confirmation behavior for canonical edits and hand-edited generated files
-- [ ] 4.6 Update success output to summarize canonical artifacts and generated host artifacts instead of skills/commands
+- [x] 4.1 Replace init's skill/command generation path with the shared host generation pipeline
+- [x] 4.2 Update `c3spec sync` to regenerate host outputs from `.agents/`
+- [x] 4.3 Update `c3spec update` to refresh canonical artifacts and then regenerate host outputs
+- [x] 4.4 Preserve remote skill fetch fallback behavior for canonical skills
+- [x] 4.5 Add force/confirmation behavior for canonical edits and hand-edited generated files
+- [x] 4.6 Update success output to summarize canonical artifacts and generated host artifacts instead of skills/commands
 
 ## 5. Dogfood and verify
 

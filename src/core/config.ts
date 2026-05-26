@@ -19,7 +19,28 @@ export interface AIToolOption {
 }
 
 export const AI_TOOLS: AIToolOption[] = [
-  { name: 'Claude Code', value: 'claude', available: true, successLabel: 'Claude Code', skillsDir: '.claude' },
-  { name: 'Codex', value: 'codex', available: true, successLabel: 'Codex', skillsDir: '.agents' },
-  { name: 'Cursor', value: 'cursor', available: true, successLabel: 'Cursor', skillsDir: '.agents' },
+  {
+    name: 'Claude Code',
+    value: 'claude',
+    available: true,
+    successLabel: 'Claude Code',
+    skillsDir: '.claude',
+    detectionPaths: ['.claude/skills/c3spec-start/SKILL.md'],
+  },
+  {
+    name: 'Codex',
+    value: 'codex',
+    available: true,
+    successLabel: 'Codex',
+    skillsDir: '.agents',
+    detectionPaths: ['.codex/agents/implementer.toml'],
+  },
+  {
+    name: 'Cursor',
+    value: 'cursor',
+    available: true,
+    successLabel: 'Cursor',
+    skillsDir: '.agents',
+    detectionPaths: ['.cursor/agents/implementer.md'],
+  },
 ];

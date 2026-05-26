@@ -160,8 +160,24 @@ program
   });
 
 program
+  .command('sync [path]')
+  .description('Regenerate host artifacts from canonical .agents/ content')
+  .option('--force', 'Overwrite hand-edited generated files')
+  .action(async (targetPath = '.', options?: { force?: boolean }) => {
+    try {
+      const { SyncCommand } = await import('../core/sync.js');
+      const syncCommand = new SyncCommand({ force: options?.force });
+      await syncCommand.execute(targetPath);
+    } catch (error) {
+      console.log();
+      ora().fail(`Error: ${(error as Error).message}`);
+      process.exit(1);
+    }
+  });
+
+program
   .command('update [path]')
-  .description('Update c3spec instruction files')
+  .description('Update canonical .agents/ artifacts and regenerate host outputs')
   .option('--force', 'Force update even when tools are up to date')
   .action(async (targetPath = '.', options?: { force?: boolean }) => {
     try {

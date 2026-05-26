@@ -84,25 +84,49 @@ export function getToolsWithSkillsDir(): string[] {
 /**
  * Checks which skill files exist for a tool.
  */
+const HOST_GENERATION_SKILL_NAMES = [
+  'c3spec-start',
+  'c3spec-tier1-fix',
+  'c3spec-tier2-feature',
+  'c3spec-subagent-dev',
+  'c3spec-host-adapter',
+] as const;
+
 export function getToolSkillStatus(projectRoot: string, toolId: string): ToolSkillStatus {
   const tool = AI_TOOLS.find((t) => t.value === toolId);
   if (!tool?.skillsDir) {
     return { configured: false, fullyConfigured: false, skillCount: 0 };
   }
 
+  const hostMarker = path.join(projectRoot, '.agents', 'skills', 'c3spec-start', 'SKILL.md');
+  if (toolId === 'cursor' || toolId === 'codex') {
+    if (fs.existsSync(hostMarker)) {
+      return { configured: true, fullyConfigured: true, skillCount: HOST_GENERATION_SKILL_NAMES.length };
+    }
+  }
+
+  if (toolId === 'claude') {
+    const claudeMarker = path.join(projectRoot, '.claude', 'skills', 'c3spec-start', 'SKILL.md');
+    if (fs.existsSync(claudeMarker)) {
+      return { configured: true, fullyConfigured: true, skillCount: HOST_GENERATION_SKILL_NAMES.length };
+    }
+  }
+
   const skillsDir = path.join(projectRoot, tool.skillsDir, 'skills');
   let skillCount = 0;
 
-  for (const skillName of SKILL_NAMES) {
+  for (const skillName of [...HOST_GENERATION_SKILL_NAMES, ...SKILL_NAMES]) {
     const skillFile = path.join(skillsDir, skillName, 'SKILL.md');
     if (fs.existsSync(skillFile)) {
       skillCount++;
     }
   }
 
+  const expectedCount = HOST_GENERATION_SKILL_NAMES.length;
+
   return {
     configured: skillCount > 0,
-    fullyConfigured: skillCount === SKILL_NAMES.length,
+    fullyConfigured: skillCount >= expectedCount,
     skillCount,
   };
 }

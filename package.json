@@ -33,6 +33,7 @@
   "files": [
     "dist",
     "bin",
+    ".agents",
     "schemas",
     "scripts/postinstall.js",
     "!dist/**/*.test.js",

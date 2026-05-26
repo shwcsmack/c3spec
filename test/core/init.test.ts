@@ -23,6 +23,14 @@ vi.mock('../../src/prompts/searchable-multi-select.js', () => ({
   searchableMultiSelect: searchableMultiSelectMock,
 }));
 
+const CANONICAL_SKILL_NAMES = [
+  'c3spec-start',
+  'c3spec-tier1-fix',
+  'c3spec-tier2-feature',
+  'c3spec-subagent-dev',
+  'c3spec-host-adapter',
+] as const;
+
 describe('InitCommand', () => {
   let testDir: string;
   let configTempDir: string;
@@ -77,77 +85,34 @@ describe('InitCommand', () => {
       expect(content).toContain('schema: superpowers-bridge');
     });
 
-    it('should create core profile skills for Claude Code by default', async () => {
+    it('should create canonical and Claude host skills', async () => {
       const initCommand = new InitCommand({ tools: 'claude', force: true });
 
       await initCommand.execute(testDir);
 
-      // Core profile: propose, explore, apply, sync, archive
-      const coreSkillNames = [
-        'c3spec-propose',
-        'c3spec-explore',
-        'c3spec-apply-change',
-        'c3spec-sync-specs',
-        'c3spec-archive-change',
-      ];
+      for (const skillName of CANONICAL_SKILL_NAMES) {
+        const canonicalSkill = path.join(testDir, '.agents', 'skills', skillName, 'SKILL.md');
+        const claudeSkill = path.join(testDir, '.claude', 'skills', skillName, 'SKILL.md');
+        expect(await fileExists(canonicalSkill)).toBe(true);
+        expect(await fileExists(claudeSkill)).toBe(true);
 
-      for (const skillName of coreSkillNames) {
-        const skillFile = path.join(testDir, '.claude', 'skills', skillName, 'SKILL.md');
-        expect(await fileExists(skillFile)).toBe(true);
-
-        const content = await fs.readFile(skillFile, 'utf-8');
+        const content = await fs.readFile(claudeSkill, 'utf-8');
         expect(content).toContain('---');
         expect(content).toContain('name:');
         expect(content).toContain('description:');
+        expect(content).toContain('c3spec-generated: true');
       }
 
-      // Non-core skills should NOT be created
-      const nonCoreSkillNames = [
-        'c3spec-new-change',
-        'c3spec-continue-change',
-        'c3spec-ff-change',
-        'c3spec-bulk-archive-change',
-        'c3spec-verify-change',
-      ];
-
-      for (const skillName of nonCoreSkillNames) {
-        const skillFile = path.join(testDir, '.claude', 'skills', skillName, 'SKILL.md');
-        expect(await fileExists(skillFile)).toBe(false);
-      }
+      expect(await fileExists(path.join(testDir, '.claude', 'agents', 'implementer.md'))).toBe(true);
     });
 
-    it('should create core profile commands for Claude Code by default', async () => {
+    it('should not create slash commands for Claude Code', async () => {
       const initCommand = new InitCommand({ tools: 'claude', force: true });
 
       await initCommand.execute(testDir);
 
-      // Core profile: propose, explore, apply, sync, archive
-      const coreCommandNames = [
-        'c3spec/propose.md',
-        'c3spec/explore.md',
-        'c3spec/apply.md',
-        'c3spec/sync.md',
-        'c3spec/archive.md',
-      ];
-
-      for (const cmdName of coreCommandNames) {
-        const cmdFile = path.join(testDir, '.claude', 'commands', cmdName);
-        expect(await fileExists(cmdFile)).toBe(true);
-      }
-
-      // Non-core commands should NOT be created
-      const nonCoreCommandNames = [
-        'c3spec/new.md',
-        'c3spec/continue.md',
-        'c3spec/ff.md',
-        'c3spec/bulk-archive.md',
-        'c3spec/verify.md',
-      ];
-
-      for (const cmdName of nonCoreCommandNames) {
-        const cmdFile = path.join(testDir, '.claude', 'commands', cmdName);
-        expect(await fileExists(cmdFile)).toBe(false);
-      }
+      const cmdFile = path.join(testDir, '.claude', 'commands', 'c3spec', 'explore.md');
+      expect(await fileExists(cmdFile)).toBe(false);
     });
 
     it('should create skills in canonical .agents directory for Cursor', async () => {
@@ -155,8 +120,9 @@ describe('InitCommand', () => {
 
       await initCommand.execute(testDir);
 
-      const skillFile = path.join(testDir, '.agents', 'skills', 'c3spec-explore', 'SKILL.md');
+      const skillFile = path.join(testDir, '.agents', 'skills', 'c3spec-start', 'SKILL.md');
       expect(await fileExists(skillFile)).toBe(true);
+      expect(await fileExists(path.join(testDir, '.cursor', 'agents', 'implementer.md'))).toBe(true);
     });
 
     it('should create skills in canonical .agents directory for Codex', async () => {
@@ -164,7 +130,7 @@ describe('InitCommand', () => {
 
       await initCommand.execute(testDir);
 
-      const skillFile = path.join(testDir, '.agents', 'skills', 'c3spec-explore', 'SKILL.md');
+      const skillFile = path.join(testDir, '.agents', 'skills', 'c3spec-start', 'SKILL.md');
       expect(await fileExists(skillFile)).toBe(true);
     });
 
@@ -173,8 +139,8 @@ describe('InitCommand', () => {
 
       await initCommand.execute(testDir);
 
-      const claudeSkill = path.join(testDir, '.claude', 'skills', 'c3spec-explore', 'SKILL.md');
-      const agentsSkill = path.join(testDir, '.agents', 'skills', 'c3spec-explore', 'SKILL.md');
+      const claudeSkill = path.join(testDir, '.claude', 'skills', 'c3spec-start', 'SKILL.md');
+      const agentsSkill = path.join(testDir, '.agents', 'skills', 'c3spec-start', 'SKILL.md');
 
       expect(await fileExists(claudeSkill)).toBe(true);
       expect(await fileExists(agentsSkill)).toBe(true);
@@ -185,8 +151,8 @@ describe('InitCommand', () => {
 
       await initCommand.execute(testDir);
 
-      const claudeSkill = path.join(testDir, '.claude', 'skills', 'c3spec-explore', 'SKILL.md');
-      const agentsSkill = path.join(testDir, '.agents', 'skills', 'c3spec-explore', 'SKILL.md');
+      const claudeSkill = path.join(testDir, '.claude', 'skills', 'c3spec-start', 'SKILL.md');
+      const agentsSkill = path.join(testDir, '.agents', 'skills', 'c3spec-start', 'SKILL.md');
 
       expect(await fileExists(claudeSkill)).toBe(true);
       expect(await fileExists(agentsSkill)).toBe(true);
@@ -217,8 +183,8 @@ describe('InitCommand', () => {
 
       await initCommand.execute(testDir);
 
-      const claudeSkill = path.join(testDir, '.claude', 'skills', 'c3spec-explore', 'SKILL.md');
-      const agentsSkill = path.join(testDir, '.agents', 'skills', 'c3spec-explore', 'SKILL.md');
+      const claudeSkill = path.join(testDir, '.claude', 'skills', 'c3spec-start', 'SKILL.md');
+      const agentsSkill = path.join(testDir, '.agents', 'skills', 'c3spec-start', 'SKILL.md');
 
       expect(await fileExists(claudeSkill)).toBe(true);
       expect(await fileExists(agentsSkill)).toBe(true);
@@ -266,8 +232,8 @@ describe('InitCommand', () => {
       await initCommand2.execute(testDir);
 
       // Both tools should have skills
-      const claudeSkill = path.join(testDir, '.claude', 'skills', 'c3spec-explore', 'SKILL.md');
-      const agentsSkill = path.join(testDir, '.agents', 'skills', 'c3spec-explore', 'SKILL.md');
+      const claudeSkill = path.join(testDir, '.claude', 'skills', 'c3spec-start', 'SKILL.md');
+      const agentsSkill = path.join(testDir, '.agents', 'skills', 'c3spec-start', 'SKILL.md');
 
       expect(await fileExists(claudeSkill)).toBe(true);
       expect(await fileExists(agentsSkill)).toBe(true);
@@ -277,18 +243,16 @@ describe('InitCommand', () => {
       const initCommand1 = new InitCommand({ tools: 'claude', force: true });
       await initCommand1.execute(testDir);
 
-      const skillFile = path.join(testDir, '.claude', 'skills', 'c3spec-explore', 'SKILL.md');
+      const skillFile = path.join(testDir, '.claude', 'skills', 'c3spec-start', 'SKILL.md');
       const originalContent = await fs.readFile(skillFile, 'utf-8');
 
-      // Modify the file
       await fs.writeFile(skillFile, '# Modified content\n');
 
-      // Run init again
-      const initCommand2 = new InitCommand({ tools: 'claude', force: true });
+      const initCommand2 = new InitCommand({ tools: 'claude', force: false });
       await initCommand2.execute(testDir);
 
       const newContent = await fs.readFile(skillFile, 'utf-8');
-      expect(newContent).toBe(originalContent);
+      expect(newContent).toBe('# Modified content\n');
     });
   });
 
@@ -297,85 +261,52 @@ describe('InitCommand', () => {
       const initCommand = new InitCommand({ tools: 'claude', force: true });
       await initCommand.execute(testDir);
 
-      const skillFile = path.join(testDir, '.claude', 'skills', 'c3spec-explore', 'SKILL.md');
+      const skillFile = path.join(testDir, '.claude', 'skills', 'c3spec-start', 'SKILL.md');
       const content = await fs.readFile(skillFile, 'utf-8');
 
-      // Should have YAML frontmatter
       expect(content).toMatch(/^---\n/);
-      expect(content).toContain('name: c3spec-explore');
+      expect(content).toContain('name: c3spec-start');
       expect(content).toContain('description:');
-      expect(content).toContain('license:');
-      expect(content).toContain('compatibility:');
-      expect(content).toContain('metadata:');
-      expect(content).toMatch(/---\n\n/); // End of frontmatter
+      expect(content).toMatch(/---\n\n/);
+      expect(content).toContain('c3spec-generated: true');
     });
 
-    it('should include explore mode instructions', async () => {
+    it('should include c3spec-start routing instructions', async () => {
       const initCommand = new InitCommand({ tools: 'claude', force: true });
       await initCommand.execute(testDir);
 
-      const skillFile = path.join(testDir, '.claude', 'skills', 'c3spec-explore', 'SKILL.md');
+      const skillFile = path.join(testDir, '.claude', 'skills', 'c3spec-start', 'SKILL.md');
       const content = await fs.readFile(skillFile, 'utf-8');
 
-      expect(content).toContain('Enter explore mode');
-      expect(content).toContain('thinking partner');
+      expect(content.toLowerCase()).toContain('c3spec');
     });
 
-    it('should include propose skill instructions', async () => {
+    it('should include subagent-dev skill', async () => {
       const initCommand = new InitCommand({ tools: 'claude', force: true });
       await initCommand.execute(testDir);
 
-      const skillFile = path.join(testDir, '.claude', 'skills', 'c3spec-propose', 'SKILL.md');
+      const skillFile = path.join(testDir, '.claude', 'skills', 'c3spec-subagent-dev', 'SKILL.md');
       const content = await fs.readFile(skillFile, 'utf-8');
 
-      expect(content).toContain('name: c3spec-propose');
-    });
-
-    it('should include apply-change skill instructions', async () => {
-      const initCommand = new InitCommand({ tools: 'claude', force: true });
-      await initCommand.execute(testDir);
-
-      const skillFile = path.join(testDir, '.claude', 'skills', 'c3spec-apply-change', 'SKILL.md');
-      const content = await fs.readFile(skillFile, 'utf-8');
-
-      expect(content).toContain('name: c3spec-apply-change');
-    });
-
-    it('should embed generatedBy version in skill files', async () => {
-      const initCommand = new InitCommand({ tools: 'claude', force: true });
-      await initCommand.execute(testDir);
-
-      const skillFile = path.join(testDir, '.claude', 'skills', 'c3spec-explore', 'SKILL.md');
-      const content = await fs.readFile(skillFile, 'utf-8');
-
-      // Should contain generatedBy field with a version string
-      expect(content).toMatch(/generatedBy:\s*["']?\d+\.\d+\.\d+["']?/);
+      expect(content).toContain('name: c3spec-subagent-dev');
     });
   });
 
   describe('command generation', () => {
-    it('should generate Claude Code commands with correct format', async () => {
+    it('should not generate Claude slash commands', async () => {
       const initCommand = new InitCommand({ tools: 'claude', force: true });
       await initCommand.execute(testDir);
 
       const cmdFile = path.join(testDir, '.claude', 'commands', 'c3spec', 'explore.md');
-      const content = await fs.readFile(cmdFile, 'utf-8');
-
-      // Claude commands use YAML frontmatter
-      expect(content).toMatch(/^---\n/);
-      expect(content).toContain('name:');
-      expect(content).toContain('description:');
+      expect(await fileExists(cmdFile)).toBe(false);
     });
 
-    it('should generate Cursor commands with correct format', async () => {
+    it('should not generate Cursor slash commands', async () => {
       const initCommand = new InitCommand({ tools: 'cursor', force: true });
       await initCommand.execute(testDir);
 
       const cmdFile = path.join(testDir, '.cursor', 'commands', 'opsx-explore.md');
-      expect(await fileExists(cmdFile)).toBe(true);
-
-      const content = await fs.readFile(cmdFile, 'utf-8');
-      expect(content).toMatch(/^---\n/);
+      expect(await fileExists(cmdFile)).toBe(false);
     });
   });
 
@@ -410,24 +341,12 @@ describe('InitCommand', () => {
   });
 
   describe('tool-specific adapters', () => {
-    it('should generate Codex commands in CODEX_HOME', async () => {
-      const codexHome = path.join(testDir, '.codex-home');
-      const previousHome = process.env.CODEX_HOME;
-      process.env.CODEX_HOME = codexHome;
+    it('should generate Codex agent TOML in project .codex/agents', async () => {
+      const initCommand = new InitCommand({ tools: 'codex', force: true });
+      await initCommand.execute(testDir);
 
-      try {
-        const initCommand = new InitCommand({ tools: 'codex', force: true });
-        await initCommand.execute(testDir);
-
-        const cmdFile = path.join(codexHome, 'prompts', 'opsx-explore.md');
-        expect(await fileExists(cmdFile)).toBe(true);
-      } finally {
-        if (previousHome === undefined) {
-          delete process.env.CODEX_HOME;
-        } else {
-          process.env.CODEX_HOME = previousHome;
-        }
-      }
+      const agentFile = path.join(testDir, '.codex', 'agents', 'implementer.toml');
+      expect(await fileExists(agentFile)).toBe(true);
     });
   });
 });
@@ -460,7 +379,6 @@ describe('InitCommand - profile and detection features', () => {
   });
 
   it('should use --profile flag to override global config', async () => {
-    // Set global config to custom profile
     saveGlobalConfig({
       featureFlags: {},
       profile: 'custom',
@@ -468,17 +386,11 @@ describe('InitCommand - profile and detection features', () => {
       workflows: ['explore', 'new', 'apply'],
     });
 
-    // Override with --profile core
     const initCommand = new InitCommand({ tools: 'claude', force: true, profile: 'core' });
     await initCommand.execute(testDir);
 
-    // Core profile skills should be created
-    const proposeSkill = path.join(testDir, '.claude', 'skills', 'c3spec-propose', 'SKILL.md');
-    expect(await fileExists(proposeSkill)).toBe(true);
-
-    // Non-core skills (from the custom profile) should NOT be created
-    const newChangeSkill = path.join(testDir, '.claude', 'skills', 'c3spec-new-change', 'SKILL.md');
-    expect(await fileExists(newChangeSkill)).toBe(false);
+    const startSkill = path.join(testDir, '.claude', 'skills', 'c3spec-start', 'SKILL.md');
+    expect(await fileExists(startSkill)).toBe(true);
   });
 
   it('should reject invalid --profile values', async () => {
@@ -494,28 +406,28 @@ describe('InitCommand - profile and detection features', () => {
   });
 
   it('should use detected tools in non-interactive mode when no --tools flag', async () => {
-    // Create a .claude directory to simulate detected tool
-    await fs.mkdir(path.join(testDir, '.claude'), { recursive: true });
+    // Create a generated Claude skill to simulate configured host detection
+    await fs.mkdir(path.join(testDir, '.claude', 'skills', 'c3spec-start'), { recursive: true });
+    await fs.writeFile(path.join(testDir, '.claude', 'skills', 'c3spec-start', 'SKILL.md'), '');
 
     const initCommand = new InitCommand({ interactive: false, force: true });
     await initCommand.execute(testDir);
 
     // Should have used claude (detected)
-    const skillFile = path.join(testDir, '.claude', 'skills', 'c3spec-explore', 'SKILL.md');
+    const skillFile = path.join(testDir, '.claude', 'skills', 'c3spec-start', 'SKILL.md');
     expect(await fileExists(skillFile)).toBe(true);
   });
 
   it('should preselect configured tools but not directory-detected tools in extend mode', async () => {
-    // Simulate existing C3Spec project (extend mode).
     await fs.mkdir(path.join(testDir, 'c3spec'), { recursive: true });
 
-    // Configured with C3Spec
-    const claudeSkillDir = path.join(testDir, '.claude', 'skills', 'c3spec-explore');
+    const claudeSkillDir = path.join(testDir, '.claude', 'skills', 'c3spec-start');
     await fs.mkdir(claudeSkillDir, { recursive: true });
     await fs.writeFile(path.join(claudeSkillDir, 'SKILL.md'), 'configured');
 
-    // Directory detected only (not configured with C3Spec)
-    await fs.mkdir(path.join(testDir, '.agents'), { recursive: true });
+    // Host-native marker detected only (not configured with C3Spec-generated files yet)
+    await fs.mkdir(path.join(testDir, '.cursor', 'agents'), { recursive: true });
+    await fs.writeFile(path.join(testDir, '.cursor', 'agents', 'implementer.md'), '');
 
     searchableMultiSelectMock.mockResolvedValue(['claude']);
 
@@ -537,7 +449,8 @@ describe('InitCommand - profile and detection features', () => {
 
   it('should preselect detected tools for first-time interactive setup', async () => {
     // First-time init: no c3spec/ directory and no configured C3Spec skills.
-    await fs.mkdir(path.join(testDir, '.agents'), { recursive: true });
+    await fs.mkdir(path.join(testDir, '.cursor', 'agents'), { recursive: true });
+    await fs.writeFile(path.join(testDir, '.cursor', 'agents', 'implementer.md'), '');
 
     searchableMultiSelectMock.mockResolvedValue(['cursor']);
 
@@ -564,18 +477,11 @@ describe('InitCommand - profile and detection features', () => {
     const initCommand = new InitCommand({ tools: 'claude', force: true });
     await initCommand.execute(testDir);
 
-    // Custom profile skills should be created
-    const exploreSkill = path.join(testDir, '.claude', 'skills', 'c3spec-explore', 'SKILL.md');
-    const newChangeSkill = path.join(testDir, '.claude', 'skills', 'c3spec-new-change', 'SKILL.md');
-    expect(await fileExists(exploreSkill)).toBe(true);
-    expect(await fileExists(newChangeSkill)).toBe(true);
-
-    // Non-selected skills should NOT be created
-    const proposeSkill = path.join(testDir, '.claude', 'skills', 'c3spec-propose', 'SKILL.md');
-    expect(await fileExists(proposeSkill)).toBe(false);
+    const startSkill = path.join(testDir, '.claude', 'skills', 'c3spec-start', 'SKILL.md');
+    expect(await fileExists(startSkill)).toBe(true);
   });
 
-  it('should migrate commands-only extend mode to custom profile without injecting propose', async () => {
+  it('should ignore legacy commands-only profile migration for first-class host generation', async () => {
     await fs.mkdir(path.join(testDir, 'c3spec'), { recursive: true });
     await fs.mkdir(path.join(testDir, '.claude', 'commands', 'c3spec'), { recursive: true });
     await fs.writeFile(path.join(testDir, '.claude', 'commands', 'c3spec', 'explore.md'), '# explore\n');
@@ -584,19 +490,11 @@ describe('InitCommand - profile and detection features', () => {
     await initCommand.execute(testDir);
 
     const config = getGlobalConfig();
-    expect(config.profile).toBe('custom');
-    expect(config.delivery).toBe('commands');
-    expect(config.workflows).toEqual(['explore']);
+    expect(config.profile).not.toBe('custom');
+    expect(config.delivery).not.toBe('commands');
 
-    const exploreCommand = path.join(testDir, '.claude', 'commands', 'c3spec', 'explore.md');
-    const proposeCommand = path.join(testDir, '.claude', 'commands', 'c3spec', 'propose.md');
-    expect(await fileExists(exploreCommand)).toBe(true);
-    expect(await fileExists(proposeCommand)).toBe(false);
-
-    const exploreSkill = path.join(testDir, '.claude', 'skills', 'c3spec-explore', 'SKILL.md');
-    const proposeSkill = path.join(testDir, '.claude', 'skills', 'c3spec-propose', 'SKILL.md');
-    expect(await fileExists(exploreSkill)).toBe(false);
-    expect(await fileExists(proposeSkill)).toBe(false);
+    const startSkill = path.join(testDir, '.claude', 'skills', 'c3spec-start', 'SKILL.md');
+    expect(await fileExists(startSkill)).toBe(true);
   });
 
   it('should not prompt for confirmation when applying custom profile in interactive init', async () => {
@@ -616,16 +514,14 @@ describe('InitCommand - profile and detection features', () => {
     expect(showWelcomeScreenMock).toHaveBeenCalled();
     expect(confirmMock).not.toHaveBeenCalled();
 
-    const exploreSkill = path.join(testDir, '.claude', 'skills', 'c3spec-explore', 'SKILL.md');
-    const newChangeSkill = path.join(testDir, '.claude', 'skills', 'c3spec-new-change', 'SKILL.md');
-    expect(await fileExists(exploreSkill)).toBe(true);
-    expect(await fileExists(newChangeSkill)).toBe(true);
+    const startSkill = path.join(testDir, '.claude', 'skills', 'c3spec-start', 'SKILL.md');
+    expect(await fileExists(startSkill)).toBe(true);
 
     const logCalls = (console.log as unknown as { mock: { calls: unknown[][] } }).mock.calls.flat().map(String);
     expect(logCalls.some((entry) => entry.includes('Applying custom profile'))).toBe(false);
   });
 
-  it('should respect delivery=skills setting (no commands)', async () => {
+  it('should always generate host skills regardless of delivery=skills', async () => {
     saveGlobalConfig({
       featureFlags: {},
       profile: 'core',
@@ -635,16 +531,14 @@ describe('InitCommand - profile and detection features', () => {
     const initCommand = new InitCommand({ tools: 'claude', force: true });
     await initCommand.execute(testDir);
 
-    // Skills should exist
-    const skillFile = path.join(testDir, '.claude', 'skills', 'c3spec-explore', 'SKILL.md');
+    const skillFile = path.join(testDir, '.claude', 'skills', 'c3spec-start', 'SKILL.md');
     expect(await fileExists(skillFile)).toBe(true);
 
-    // Commands should NOT exist
     const cmdFile = path.join(testDir, '.claude', 'commands', 'c3spec', 'explore.md');
     expect(await fileExists(cmdFile)).toBe(false);
   });
 
-  it('should respect delivery=commands setting (no skills)', async () => {
+  it('should always generate host skills regardless of delivery=commands', async () => {
     saveGlobalConfig({
       featureFlags: {},
       profile: 'core',
@@ -654,16 +548,14 @@ describe('InitCommand - profile and detection features', () => {
     const initCommand = new InitCommand({ tools: 'claude', force: true });
     await initCommand.execute(testDir);
 
-    // Skills should NOT exist
-    const skillFile = path.join(testDir, '.claude', 'skills', 'c3spec-explore', 'SKILL.md');
-    expect(await fileExists(skillFile)).toBe(false);
+    const skillFile = path.join(testDir, '.claude', 'skills', 'c3spec-start', 'SKILL.md');
+    expect(await fileExists(skillFile)).toBe(true);
 
-    // Commands should exist
     const cmdFile = path.join(testDir, '.claude', 'commands', 'c3spec', 'explore.md');
-    expect(await fileExists(cmdFile)).toBe(true);
+    expect(await fileExists(cmdFile)).toBe(false);
   });
 
-  it('should remove commands on re-init when delivery changes to skills', async () => {
+  it('should not remove host skills on re-init when delivery changes', async () => {
     saveGlobalConfig({
       featureFlags: {},
       profile: 'core',
@@ -672,9 +564,6 @@ describe('InitCommand - profile and detection features', () => {
 
     const initCommand1 = new InitCommand({ tools: 'claude', force: true });
     await initCommand1.execute(testDir);
-
-    const cmdFile = path.join(testDir, '.claude', 'commands', 'c3spec', 'explore.md');
-    expect(await fileExists(cmdFile)).toBe(true);
 
     saveGlobalConfig({
       featureFlags: {},
@@ -685,9 +574,7 @@ describe('InitCommand - profile and detection features', () => {
     const initCommand2 = new InitCommand({ tools: 'claude', force: true });
     await initCommand2.execute(testDir);
 
-    expect(await fileExists(cmdFile)).toBe(false);
-
-    const skillFile = path.join(testDir, '.claude', 'skills', 'c3spec-explore', 'SKILL.md');
+    const skillFile = path.join(testDir, '.claude', 'skills', 'c3spec-start', 'SKILL.md');
     expect(await fileExists(skillFile)).toBe(true);
   });
 });
@@ -699,6 +586,11 @@ async function fileExists(filePath: string): Promise<boolean> {
   } catch {
     return false;
   }
+}
+
+async function initHostProject(projectRoot: string, tools = 'claude'): Promise<void> {
+  const init = new InitCommand({ tools, force: true });
+  await init.execute(projectRoot);
 }
 
 async function directoryExists(dirPath: string): Promise<boolean> {

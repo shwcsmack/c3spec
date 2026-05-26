@@ -8,6 +8,7 @@ import { promises as fs } from 'fs';
 import chalk from 'chalk';
 import { FileSystemUtils, removeMarkerBlock as removeMarkerBlockUtil } from '../utils/file-system.js';
 import { C3SPEC_MARKERS } from './config.js';
+import { isGeneratedByC3spec } from './host-generation/sentinel.js';
 
 /**
  * Legacy config file names from the old ToolRegistry.
@@ -161,7 +162,7 @@ export async function detectLegacyConfigFiles(
     if (await FileSystemUtils.fileExists(filePath)) {
       const content = await FileSystemUtils.readFile(filePath);
 
-      if (hasC3SpecMarkers(content)) {
+      if (hasC3SpecMarkers(content) && !isGeneratedByC3spec(content, 'markdown')) {
         allFiles.push(fileName);
         filesToUpdate.push(fileName); // Always update, never delete config files
       }
@@ -287,7 +288,8 @@ export async function detectLegacyStructureFiles(
   const rootAgentsPath = FileSystemUtils.joinPath(projectPath, 'AGENTS.md');
   if (await FileSystemUtils.fileExists(rootAgentsPath)) {
     const content = await FileSystemUtils.readFile(rootAgentsPath);
-    hasRootAgentsWithMarkers = hasC3SpecMarkers(content);
+    hasRootAgentsWithMarkers =
+      hasC3SpecMarkers(content) && !isGeneratedByC3spec(content, 'markdown');
   }
 
   return { hasOpenspecAgents, hasProjectMd, hasRootAgentsWithMarkers };
