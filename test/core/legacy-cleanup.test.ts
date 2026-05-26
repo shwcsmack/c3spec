@@ -260,12 +260,12 @@ ${C3SPEC_MARKERS.end}`);
 
   describe('detectLegacySlashCommands', () => {
     it('should detect legacy Claude slash command directory', async () => {
-      const dirPath = path.join(testDir, '.claude', 'commands', 'c3spec');
+      const dirPath = path.join(testDir, '.claude', 'commands', 'opsx');
       await fs.mkdir(dirPath, { recursive: true });
       await fs.writeFile(path.join(dirPath, 'proposal.md'), 'content');
 
       const result = await detectLegacySlashCommands(testDir);
-      expect(result.directories).toContain('.claude/commands/c3spec');
+      expect(result.directories).toContain('.claude/commands/opsx');
     });
 
     it('should detect legacy Cursor slash command files', async () => {
@@ -290,7 +290,7 @@ ${C3SPEC_MARKERS.end}`);
 
     it('should detect multiple tool directories and files', async () => {
       // Create directory-based
-      await fs.mkdir(path.join(testDir, '.claude', 'commands', 'c3spec'), { recursive: true });
+      await fs.mkdir(path.join(testDir, '.claude', 'commands', 'opsx'), { recursive: true });
       await fs.mkdir(path.join(testDir, '.qoder', 'commands', 'c3spec'), { recursive: true });
 
       // Create file-based
@@ -298,7 +298,7 @@ ${C3SPEC_MARKERS.end}`);
       await fs.writeFile(path.join(testDir, '.cursor', 'commands', 'c3spec-proposal.md'), 'content');
 
       const result = await detectLegacySlashCommands(testDir);
-      expect(result.directories).toContain('.claude/commands/c3spec');
+      expect(result.directories).toContain('.claude/commands/opsx');
       expect(result.directories).toContain('.qoder/commands/c3spec');
       expect(result.files).toContain('.cursor/commands/c3spec-proposal.md');
     });
@@ -424,11 +424,11 @@ ${C3SPEC_MARKERS.end}`);
     });
 
     it('should return hasLegacyArtifacts: true when slash commands are found', async () => {
-      await fs.mkdir(path.join(testDir, '.claude', 'commands', 'c3spec'), { recursive: true });
+      await fs.mkdir(path.join(testDir, '.claude', 'commands', 'opsx'), { recursive: true });
 
       const result = await detectLegacyArtifacts(testDir);
       expect(result.hasLegacyArtifacts).toBe(true);
-      expect(result.slashCommandDirs).toContain('.claude/commands/c3spec');
+      expect(result.slashCommandDirs).toContain('.claude/commands/opsx');
     });
 
     it('should return hasLegacyArtifacts: true when c3spec/AGENTS.md is found', async () => {
@@ -451,14 +451,14 @@ ${C3SPEC_MARKERS.end}`);
     it('should combine all detection results', async () => {
       // Create various legacy artifacts
       await fs.writeFile(path.join(testDir, 'CLAUDE.md'), `${C3SPEC_MARKERS.start}\nContent\n${C3SPEC_MARKERS.end}`);
-      await fs.mkdir(path.join(testDir, '.claude', 'commands', 'c3spec'), { recursive: true });
+      await fs.mkdir(path.join(testDir, '.claude', 'commands', 'opsx'), { recursive: true });
       await fs.writeFile(path.join(testDir, 'c3spec', 'AGENTS.md'), 'content');
       await fs.writeFile(path.join(testDir, 'c3spec', 'project.md'), 'content');
 
       const result = await detectLegacyArtifacts(testDir);
       expect(result.hasLegacyArtifacts).toBe(true);
       expect(result.configFiles).toContain('CLAUDE.md');
-      expect(result.slashCommandDirs).toContain('.claude/commands/c3spec');
+      expect(result.slashCommandDirs).toContain('.claude/commands/opsx');
       expect(result.hasOpenspecAgents).toBe(true);
       expect(result.hasProjectMd).toBe(true);
     });
@@ -500,14 +500,14 @@ ${C3SPEC_MARKERS.end}`);
     });
 
     it('should delete legacy slash command directories', async () => {
-      const dirPath = path.join(testDir, '.claude', 'commands', 'c3spec');
+      const dirPath = path.join(testDir, '.claude', 'commands', 'opsx');
       await fs.mkdir(dirPath, { recursive: true });
       await fs.writeFile(path.join(dirPath, 'proposal.md'), 'content');
 
       const detection = await detectLegacyArtifacts(testDir);
       const result = await cleanupLegacyArtifacts(testDir, detection);
 
-      expect(result.deletedDirs).toContain('.claude/commands/c3spec');
+      expect(result.deletedDirs).toContain('.claude/commands/opsx');
       await expect(fs.access(dirPath)).rejects.toThrow();
       // Parent directory should still exist
       await expect(fs.access(path.join(testDir, '.claude', 'commands'))).resolves.not.toThrow();
@@ -628,7 +628,7 @@ ${C3SPEC_MARKERS.end}`);
       };
 
       const summary = formatCleanupSummary(result);
-      expect(summary).toContain('✓ Removed .claude/commands/c3spec/ (replaced by /opsx:*)');
+      expect(summary).toContain('✓ Removed .claude/commands/c3spec/ (replaced by /c3spec:*)');
     });
 
     it('should format modified files', () => {
@@ -917,7 +917,7 @@ ${C3SPEC_MARKERS.end}`);
     it('should include expected tool patterns', () => {
       expect(LEGACY_SLASH_COMMAND_PATHS['claude']).toEqual({
         type: 'directory',
-        path: '.claude/commands/c3spec',
+        path: '.claude/commands/opsx',
       });
 
       expect(LEGACY_SLASH_COMMAND_PATHS['cursor']).toEqual({
@@ -949,7 +949,7 @@ ${C3SPEC_MARKERS.end}`);
       const detection = {
         configFiles: [],
         configFilesToUpdate: [],
-        slashCommandDirs: ['.claude/commands/c3spec'],
+        slashCommandDirs: ['.claude/commands/opsx'],
         slashCommandFiles: [],
         hasOpenspecAgents: false,
         hasProjectMd: false,
@@ -983,7 +983,7 @@ ${C3SPEC_MARKERS.end}`);
       const detection = {
         configFiles: [],
         configFilesToUpdate: [],
-        slashCommandDirs: ['.claude/commands/c3spec', '.qoder/commands/c3spec'],
+        slashCommandDirs: ['.claude/commands/opsx', '.qoder/commands/c3spec'],
         slashCommandFiles: ['.cursor/commands/c3spec-apply.md', '.windsurf/workflows/c3spec-archive.md'],
         hasOpenspecAgents: false,
         hasProjectMd: false,

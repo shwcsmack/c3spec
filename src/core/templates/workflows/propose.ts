@@ -6,6 +6,7 @@
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
 
+// BEGIN:GENERATED_SKILL
 export function getOpsxProposeSkillTemplate(): SkillTemplate {
   return {
     name: 'c3spec-propose',
@@ -17,7 +18,7 @@ I'll create a change with artifacts:
 - design.md (how)
 - tasks.md (implementation steps)
 
-When ready to implement, run /opsx:apply
+When ready to implement, run /c3spec:apply
 
 ---
 
@@ -92,7 +93,7 @@ After completing all artifacts, summarize:
 - Change name and location
 - List of artifacts created with brief descriptions
 - What's ready: "All artifacts created! Ready for implementation."
-- Prompt: "Run \`/opsx:apply\` or ask me to implement to start working on the tasks."
+- Prompt: "Run \`/c3spec:apply\` or ask me to implement to start working on the tasks."
 
 **Artifact Creation Guidelines**
 
@@ -115,6 +116,7 @@ After completing all artifacts, summarize:
     metadata: { author: 'c3spec', version: '1.0' },
   };
 }
+// END:GENERATED_SKILL
 
 export function getOpsxProposeCommandTemplate(): CommandTemplate {
   return {
@@ -129,11 +131,11 @@ I'll create a change with artifacts:
 - design.md (how)
 - tasks.md (implementation steps)
 
-When ready to implement, run /opsx:apply
+When ready to implement, run /c3spec:apply
 
 ---
 
-**Input**: The argument after \`/opsx:propose\` is the change name (kebab-case), OR a description of what the user wants to build.
+**Input**: The argument after \`/c3spec:propose\` is the change name (kebab-case), OR a description of what the user wants to build.
 
 **Steps**
 
@@ -204,7 +206,7 @@ After completing all artifacts, summarize:
 - Change name and location
 - List of artifacts created with brief descriptions
 - What's ready: "All artifacts created! Ready for implementation."
-- Prompt: "Run \`/opsx:apply\` to start implementing."
+- Prompt: "Run \`/c3spec:apply\` to start implementing."
 
 **Artifact Creation Guidelines**
 

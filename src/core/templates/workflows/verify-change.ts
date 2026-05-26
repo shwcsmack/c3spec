@@ -6,6 +6,7 @@
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
 
+// BEGIN:GENERATED_SKILL
 export function getVerifyChangeSkillTemplate(): SkillTemplate {
   return {
     name: 'c3spec-verify-change',
@@ -175,6 +176,7 @@ Use clear markdown with:
     metadata: { author: 'c3spec', version: '1.0' },
   };
 }
+// END:GENERATED_SKILL
 
 export function getOpsxVerifyCommandTemplate(): CommandTemplate {
   return {
@@ -184,7 +186,7 @@ export function getOpsxVerifyCommandTemplate(): CommandTemplate {
     tags: ['workflow', 'verify', 'experimental'],
     content: `Verify that an implementation matches the change artifacts (specs, tasks, design).
 
-**Input**: Optionally specify a change name after \`/opsx:verify\` (e.g., \`/opsx:verify add-auth\`). If omitted, check if it can be inferred from conversation context. If vague or ambiguous you MUST prompt for available changes.
+**Input**: Optionally specify a change name after \`/c3spec:verify\` (e.g., \`/c3spec:verify add-auth\`). If omitted, check if it can be inferred from conversation context. If vague or ambiguous you MUST prompt for available changes.
 
 **Steps**
 
