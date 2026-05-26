@@ -31,7 +31,7 @@ import { generateSkillContent } from '../../../src/core/shared/skill-generation.
 
 const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   getExploreSkillTemplate: '79566a7365eed94ae78075a433e929e3f5f5d70e1a26507fb3b1abbba000392f',
-  getNewChangeSkillTemplate: '7ed2b026e688e4e979fe00e94d6ab2a3223cfce50fc012dd6b5c0b9bce25109c',
+  getNewChangeSkillTemplate: '4e658193012d1ec236d1d108d83e129c923fad45469e776a6f9acb185c4bfe61',
   getContinueChangeSkillTemplate: '5fb91351921a8b83814de0fa2d22a18594213202622f2454c23b5df629b28429',
   getApplyChangeSkillTemplate: '62cd0c2225ccf45af497e330eba65e2ad34c96179ef28f7e5fa3387bb2f0d067',
   getFfChangeSkillTemplate: '92cfd4bf8a9e33a7878dd0cc05fc7c67a17a238958c863e047b41267aabdcfe3',
@@ -57,7 +57,7 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
 
 const EXPECTED_GENERATED_SKILL_CONTENT_HASHES: Record<string, string> = {
   'c3spec-explore': '849fe788754af33af4f3bd12a241df493e37cae7ed71021a2f65b45844b05831',
-  'c3spec-new-change': '0213bfce7f32714bdbc1f6703864a36e5c3b3acc336d8a5423ed745876953200',
+  'c3spec-new-change': 'bfc40192584bef5b65a76b8bf2e2b06d8e30e806174ab5db4d6429bef2b573d5',
   'c3spec-continue-change': '7aaba615ecfa1788aa33bfebd4db43b451491ef1fbd53f27303bdf9701ece925',
   'c3spec-apply-change': 'bcc128aa51cda7218b2c0722131ee720b983f4144bf4d83c453776c79e98ac32',
   'c3spec-ff-change': '1dff8a96232d9c95ebbc0d90be3df91d174603c90a55d5a6681929f71809023b',
