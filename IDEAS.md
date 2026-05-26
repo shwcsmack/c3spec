@@ -69,3 +69,5 @@ We already have human-in-the-loop checkpoints (HTML artifact approvals, commit a
 - Identify gaps where the agent currently goes too long without human checkpoint
 - Identify spots where we over-interrupt and could move to HOTL
 - Propose concrete changes to skills / routing / CLAUDE.md
+
+8. theres no skill.md for the tier 3 flow. where is the agent getting instructions from?
