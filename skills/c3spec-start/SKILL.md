@@ -1,9 +1,9 @@
 ---
-name: openspec-start
-description: Single front door for all development work. Interview the user, classify the tier, and route to the correct workflow. Replaces /opsx:new, /opsx:ff, and the manual "direct PR vs opsx" decision.
+name: c3spec-start
+description: Single front door for all development work. Interview the user, classify the tier, and route to the correct workflow. Replaces /c3spec:new, /c3spec:ff, and the manual "direct PR vs c3spec" decision.
 ---
 
-# OpenSpec Start — Interview, Route, Execute
+# C3Spec Start — Interview, Route, Execute
 
 The single entry point for all development work in this project. You interview the user until genuinely aligned, then classify the change into a tier and route to the correct workflow.
 
@@ -82,8 +82,8 @@ When the change could go either way, lean toward the lighter tier and say so exp
 
 After confirmation:
 
-**Tier 1:** Invoke `openspec-tier1-fix` skill
-**Tier 2:** Invoke `openspec-tier2-feature` skill  
-**Tier 3:** Use `/opsx:continue` to begin the superpowers-bridge flow from the brainstorm artifact (create the change directory first: `openspec new change "<name>"`)
+**Tier 1:** Invoke `c3spec-tier1-fix` skill
+**Tier 2:** Invoke `c3spec-tier2-feature` skill  
+**Tier 3:** Use `/c3spec:continue` to begin the superpowers-bridge flow from the brainstorm artifact (create the change directory first: `c3spec new change "<name>"`)
 
 Carry forward everything from the interview as context into the tier skill — the user should not repeat themselves.

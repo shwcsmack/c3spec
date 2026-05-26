@@ -46,7 +46,7 @@ Agent task (general-purpose):
 
     **Dependency hygiene**
     - Any new imports from packages not in package.json? (Must be declared explicitly —
-      do not rely on transitive hoisting. See c3spec/memory/constraints/markdown-ast-direct-deps.md)
+      do not rely on transitive hoisting. See c3spec/memory/constraints/ for relevant entries.)
 
     ## Report Format
 

@@ -1,9 +1,9 @@
 ---
-name: openspec-subagent-dev
-description: Execute an implementation plan using staged parallel subagents with two-stage review per task. Project-local replacement for superpowers:subagent-driven-development. Use when executing Tier 1, 2, or 3 plans from /opsx:start.
+name: c3spec-subagent-dev
+description: Execute an implementation plan using staged parallel subagents with two-stage review per task. Project-local replacement for superpowers:subagent-driven-development. Use when executing Tier 1, 2, or 3 plans from /c3spec:start.
 ---
 
-# OpenSpec Subagent-Driven Development
+# C3Spec Subagent-Driven Development
 
 Execute a plan by dispatching fresh subagents per task, with stage-based parallelism for independent task groups and two-stage review (spec compliance → code quality) per task.
 

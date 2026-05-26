@@ -24,7 +24,7 @@ Agent task (general-purpose):
 
     ## Working Directory
 
-    [path — e.g. open-brain/]
+    [path — e.g. project root]
 
     ## Before You Begin
 

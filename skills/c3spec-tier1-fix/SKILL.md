@@ -1,13 +1,13 @@
 ---
-name: openspec-tier1-fix
-description: Execute a Tier 1 Spec-Aware Fix. Use after openspec-start routes here. Covers bugs, investigations, simple changes. No change directory. Fast worktree → mini plan → subagent execution → spec impact → micro-retro → memory capture.
+name: c3spec-tier1-fix
+description: Execute a Tier 1 Spec-Aware Fix. Use after c3spec-start routes here. Covers bugs, investigations, simple changes. No change directory. Fast worktree → mini plan → subagent execution → spec impact → micro-retro → memory capture.
 ---
 
 # Tier 1 — Spec-Aware Fix
 
 For bugs, investigations, config tweaks, and simple changes that don't introduce new capabilities or change spec-level contracts.
 
-**Input:** Interview context and alignment from `openspec-start`. Do not re-interview — carry forward everything.
+**Input:** Interview context and alignment from `c3spec-start`. Do not re-interview — carry forward everything.
 
 ---
 
@@ -65,12 +65,12 @@ Keep it tight. The implementer subagent should be able to act on each task witho
 
 ---
 
-## Step 3 — Execute via openspec-subagent-dev
+## Step 3 — Execute via c3spec-subagent-dev
 
-Invoke `openspec-subagent-dev` skill with:
+Invoke `c3spec-subagent-dev` skill with:
 - **Tier: 1** (skip final whole-implementation code review)
 - **Plan:** the mini plan from Step 2
-- **Memory context:** already loaded from openspec-start memory scan
+- **Memory context:** already loaded from c3spec-start memory scan
 
 The subagent-dev skill handles: implementer dispatch, spec reviewer, quality reviewer, checkbox discipline, HTML file path rule.
 
@@ -182,8 +182,8 @@ This confirms tests are green, opens the PR, cleans up the worktree. PR descript
 
 ## What NOT to do
 
-- Do not create an OpenSpec change directory (`c3spec/changes/<name>/`) — this is Tier 1, no change directory
+- Do not create a C3Spec change directory (`c3spec/changes/<name>/`) — this is Tier 1, no change directory
 - Do not invoke `superpowers:writing-plans` — use the inline mini plan
 - Do not skip the spec impact report even if the fix seems obviously localized
 - Do not skip memory capture if the bug class generalizes
-- Do not re-interview the user — carry forward context from openspec-start
+- Do not re-interview the user — carry forward context from c3spec-start

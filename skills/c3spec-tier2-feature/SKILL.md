@@ -1,13 +1,13 @@
 ---
-name: openspec-tier2-feature
-description: Execute a Tier 2 Lightweight Feature. Use after openspec-start routes here. For contained new capabilities with real design decisions but limited footprint. HTML review on planning artifacts before markdown save.
+name: c3spec-tier2-feature
+description: Execute a Tier 2 Lightweight Feature. Use after c3spec-start routes here. For contained new capabilities with real design decisions but limited footprint. HTML review on planning artifacts before markdown save.
 ---
 
 # Tier 2 — Lightweight Feature
 
 For new capabilities with clear scope, limited spec footprint (1-2 capabilities), and design decisions that are real but not deeply uncertain.
 
-**Input:** Interview context and alignment from `openspec-start`. Do not re-interview.
+**Input:** Interview context and alignment from `c3spec-start`. Do not re-interview.
 
 ---
 
@@ -127,12 +127,12 @@ Depth: enough for a subagent to act without guessing. No inline code snippets.
 
 ---
 
-## Step 6 — Execute via openspec-subagent-dev
+## Step 6 — Execute via c3spec-subagent-dev
 
-Invoke `openspec-subagent-dev` skill with:
+Invoke `c3spec-subagent-dev` skill with:
 - **Tier: 2** (skip final whole-implementation code review)
 - **Plan:** `c3spec/changes/tier2-<name>/plan.md`
-- **Memory context:** from openspec-start memory scan
+- **Memory context:** from c3spec-start memory scan
 
 ---
 
@@ -140,8 +140,8 @@ Invoke `openspec-subagent-dev` skill with:
 
 After all tasks complete, run these 5 checks inline (no formal verify.md file):
 
-1. **Tests pass** — `cd open-brain && npm test` (or equivalent)
-2. **TypeScript clean** — `npx tsc --noEmit`
+1. **Tests pass** — `pnpm test` (or equivalent)
+2. **TypeScript clean** — `pnpm exec tsc --noEmit`
 3. **Task completion** — all tasks.md checkboxes are `[x]`
 4. **Spec sync** — for each capability in `c3spec/changes/tier2-<name>/specs/` (if any), confirm `c3spec/specs/<capability>/spec.md` is up to date
 5. **No routing leak** — `ls docs/superpowers/specs/*.md 2>/dev/null` returns nothing new
@@ -183,7 +183,7 @@ If Step 8 identified a generalizable learning, create a memory entry (same forma
 ## Step 10 — Archive and finish
 
 ```bash
-openspec archive -y
+c3spec archive -y
 ```
 
 Archives the compact change directory (`proposal.md`, `design.md`, `tasks.md`, `plan.md`, `retro.md`) and syncs any delta specs.
