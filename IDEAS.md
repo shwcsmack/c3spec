@@ -169,3 +169,15 @@ The repo has a `schemas/` directory at the root (`spec-driven`, `workspace-plann
 - Decide the disposition per bundle: keep + wire back in, fold useful pieces into the tier skill content and delete, or delete outright with a brief rationale captured in the change retro
 - If deleting, make sure `c3spec list`, validation, and host-generation still pass and that the relevant spec/capability is also updated or retired
 - Coordinate with idea #12 (pre-fork content audit) so we don't do two passes over the same upstream residue
+
+## 17. Research pi agent and explore c3spec integration
+
+Investigate "pi agent" as a potential runtime or collaborator for c3spec — first as standalone research (what it is, how it works, its primitives, strengths, and limits) and then specifically how it could interoperate with c3spec's tiered workflow. Today c3spec treats Cursor, Claude Code, and Codex as first-class hosts via `c3spec-host-adapter` and bundled skill delivery; pi agent, if it fits, would be a new host, a sub-runtime for subagent dispatch, a tool surface, or something orthogonal — the goal of this idea is to figure out which (or "none"). Output is a research doc, not an implementation — but the doc should be concrete enough to either close as "no fit" or spawn a follow-up proposal.
+
+- **Phase 1 — pi agent itself:** what it is, who maintains it, license / distribution model, runtime shape (CLI, service, embedded library), skill / tool / hook surfaces, prompt-handling model, current adopters and maturity signals
+- **Phase 2 — c3spec fit assessment:** classify it against c3spec's existing seams — host runtime (like Cursor / Claude Code / Codex), subagent target (like the `implementer` / `spec-reviewer` / `quality-reviewer` roles), tool surface (MCP-like), or something we don't have a slot for yet
+- Identify the smallest viable integration story per classification, e.g. "c3spec dispatches subagents into pi agent" vs. "pi agent gets the same `.agents/skills/` bundle as Cursor" vs. "pi agent calls c3spec CLI as an external tool"
+- Map what would have to change in `c3spec-host-adapter`, host-generation, `.agents/skills/` delivery, slash-command templates, and the CLI surfaces to accommodate the chosen story
+- Surface blockers and open questions up front — licensing, prompt-format compatibility, missing primitives (subagent dispatch? hooks? structured answer-picker?) — so the research is honest about what we don't know
+- Cross-reference with idea #4 (bundled agent tooling survey) and idea #14 (native answer-picker UIs) — overlap is likely and worth coordinating instead of duplicating
+- Output: a single research doc under `docs/research/pi-agent-fit.md` (or similar), plus 0–N follow-up ideas appended to `IDEAS.md` if the research surfaces concrete work
