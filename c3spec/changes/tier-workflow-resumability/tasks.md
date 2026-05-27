@@ -13,7 +13,7 @@
 
 ## 3. Resume / Apply Helper Realignment
 
-- [ ] 3.1 Update `.agents/skills/c3spec-continue-change/SKILL.md` to select a change, read `tier.md`, consult `c3spec-tier-lifecycle`, and report the next safe artifact, approval gate, implementation step, verification step, retrospective step, or archive step.
+- [x] 3.1 Update `.agents/skills/c3spec-continue-change/SKILL.md` to select a change, read `tier.md`, consult `c3spec-tier-lifecycle`, and report the next safe artifact, approval gate, implementation step, verification step, retrospective step, or archive step.
 - [ ] 3.2 Update `.agents/skills/c3spec-apply-change/SKILL.md` to identify tier state from disk, verify required planning artifacts, read context files, and hand implementation to `c3spec-subagent-dev` instead of directly looping through tasks and marking checkboxes.
 - [ ] 3.3 Update `.agents/skills/c3spec-host-adapter/SKILL.md` so Cursor dispatch instructions reflect native subagent role dispatch and do not require non-existent `.cursor/agents/<name>.md` files.
 
