@@ -22,7 +22,9 @@ The repository SHALL maintain one `SKILL.md` per canonical skill under `.agents/
 
 ### Requirement: Required canonical skills are enforced
 
-Host generation and validation SHALL require the tier routing skills plus utility skills: `c3spec-start`, `c3spec-tier1-fix`, `c3spec-tier2-feature`, `c3spec-tier3-full`, `c3spec-subagent-dev`, `c3spec-host-adapter`, `c3spec-explore`, `c3spec-sync-specs`, `c3spec-archive-change`, `c3spec-bulk-archive-change`, `c3spec-verify-change`, and `c3spec-onboard`.
+Host generation and validation SHALL require the tier routing skills, resumption helpers, and utility skills: `c3spec-start`, `c3spec-tier1-fix`, `c3spec-tier2-feature`, `c3spec-tier3-full`, `c3spec-subagent-dev`, `c3spec-host-adapter`, `c3spec-continue-change`, `c3spec-apply-change`, `c3spec-explore`, `c3spec-sync-specs`, `c3spec-archive-change`, `c3spec-bulk-archive-change`, `c3spec-verify-change`, and `c3spec-onboard`.
+
+`c3spec-continue-change` and `c3spec-apply-change` SHALL exist so that an agent can resume a paused tier workflow — either after an explicit stop between artifacts or in a fresh context — without re-running `c3spec-start` from scratch.
 
 #### Scenario: Validation fails when a required skill is missing
 

@@ -19,7 +19,9 @@ Use `.agents/skills/` as the single canonical source. Retire root `skills/`, `sc
 | c3spec-bulk-archive-change | Migrate | Bulk archive utility |
 | c3spec-verify-change | Migrate | Verification helper |
 | c3spec-onboard | Migrate | Onboarding flow for new projects |
-| c3spec-propose, new/continue/apply/ff | Retire | Replaced by c3spec-start + tier workflows |
+| c3spec-continue-change | Migrate | Resume a paused tier workflow by creating the next artifact |
+| c3spec-apply-change | Migrate | Implement tasks for an in-flight change, including fresh-context resume |
+| c3spec-propose, new-change, ff-change | Retire | Replaced by `c3spec-start` and tier workflows |
 | Root duplicates of tier skills | Delete | `.agents/` is authoritative |
 
 ## Risks

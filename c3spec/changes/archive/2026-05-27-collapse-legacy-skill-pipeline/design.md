@@ -24,4 +24,8 @@ flowchart LR
 
 ## Retired skills
 
-`c3spec-propose`, `c3spec-new-change`, `c3spec-continue-change`, `c3spec-apply-change`, `c3spec-ff-change` — superseded by `c3spec-start` and tier skills.
+`c3spec-propose`, `c3spec-new-change`, `c3spec-ff-change` — superseded by `c3spec-start` and tier skills.
+
+## Resumption helpers kept
+
+`c3spec-continue-change` and `c3spec-apply-change` are migrated and required. They cover the gap where an agent has stopped mid-tier (between artifacts, or before all implementation tasks are done) and needs to resume from disk state — either in the same session or with a fresh context — without rerunning `c3spec-start`.

@@ -279,7 +279,24 @@ async function pathExists(targetPath: string): Promise<boolean> {
 
 function isC3SpecManagedSkillDir(skillDir: string): boolean {
   const dirName = path.basename(skillDir);
-  return dirName.startsWith('c3spec-');
+  if (!dirName.startsWith('c3spec-')) {
+    return false;
+  }
+
+  const skillPath = path.join(skillDir, 'SKILL.md');
+  let content: string;
+  try {
+    content = nodeFs.readFileSync(skillPath, 'utf8');
+  } catch {
+    return false;
+  }
+
+  const frontmatterMatch = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
+  if (!frontmatterMatch) {
+    return false;
+  }
+  const nameMatch = frontmatterMatch[1].match(/^name:\s*(.+?)\s*$/m);
+  return nameMatch?.[1] === dirName;
 }
 
 async function removeManagedWorkflowSkillDirs(
