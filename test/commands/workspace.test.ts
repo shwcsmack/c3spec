@@ -40,7 +40,6 @@ describe('workspace command', () => {
       XDG_DATA_HOME: dataHome,
       XDG_CONFIG_HOME: configHome,
       OPEN_SPEC_INTERACTIVE: '0',
-      C3SPEC_TELEMETRY: '0',
     };
   });
 

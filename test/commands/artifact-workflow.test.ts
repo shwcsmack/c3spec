@@ -347,7 +347,6 @@ describe('artifact-workflow CLI commands', () => {
         XDG_DATA_HOME: path.join(tempDir, 'data'),
         XDG_CONFIG_HOME: path.join(tempDir, 'config'),
         OPEN_SPEC_INTERACTIVE: '0',
-        C3SPEC_TELEMETRY: '0',
       };
       const api = path.join(tempDir, 'linked-api');
       await fs.mkdir(path.join(api, 'c3spec', 'specs'), { recursive: true });
@@ -403,7 +402,6 @@ describe('artifact-workflow CLI commands', () => {
         XDG_DATA_HOME: path.join(tempDir, 'data'),
         XDG_CONFIG_HOME: path.join(tempDir, 'config'),
         OPEN_SPEC_INTERACTIVE: '0',
-        C3SPEC_TELEMETRY: '0',
       };
       const api = path.join(tempDir, 'linked-api');
       await fs.mkdir(api, { recursive: true });

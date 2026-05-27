@@ -69,7 +69,6 @@ describe('workspace command interactive flows', () => {
       ...process.env,
       XDG_DATA_HOME: dataHome,
       XDG_CONFIG_HOME: configHome,
-      C3SPEC_TELEMETRY: '0',
     };
     delete process.env.CI;
     delete process.env.OPEN_SPEC_INTERACTIVE;
