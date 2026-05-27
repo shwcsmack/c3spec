@@ -53,7 +53,7 @@ The `c3spec-start` routing classifier SHALL produce exactly one of three outcome
 
 ### Requirement: Tier 1 Spec-Aware Fix routing and workflow shape
 
-`c3spec-start` SHALL route changes that are low risk, localized, and free of spec-level contract changes to a Tier 1 Spec-Aware Fix workflow that avoids full proposal/tasks/plan change-directory ceremony.
+`c3spec-start` SHALL route changes that are low risk, localized, and free of spec-level contract changes to a Tier 1 Spec-Aware Fix workflow that avoids full proposal/design/tasks/plan ceremony while still producing a lightweight durable change record.
 
 #### Scenario: T1 routing signals
 
@@ -65,13 +65,19 @@ The `c3spec-start` routing classifier SHALL produce exactly one of three outcome
 
 - **WHEN** the user confirms T1 routing
 - **THEN** `c3spec-start` SHALL hand off to the `c3spec-tier1-fix` skill
-- **AND** the workflow SHALL NOT create a full change directory containing proposal, tasks, plan, and delta spec artifacts under the current contract
-- **AND** the workflow MAY write review artifacts such as spec-impact or micro-retrospective reports under a tier-specific path for human review
-- **AND** the workflow SHALL include a spec impact check against the touched `c3spec/specs/` capabilities and a micro-retrospective with memory capture when the learning generalizes
+- **AND** the workflow SHALL create a lightweight tier change folder for the fix
+- **AND** the workflow SHALL NOT require full proposal, design, tasks, and plan ceremony
+- **AND** the workflow SHALL include a mini-plan, spec impact check, micro-retrospective, and memory capture when the learning generalizes
+
+#### Scenario: T1 fresh-context record
+
+- **WHEN** a T1 workflow pauses or completes
+- **THEN** its change folder SHALL contain enough durable markdown metadata for a fresh agent to identify the tier, goal, branch, required artifacts, affected specs, and current status
+- **AND** HTML review artifacts SHALL NOT be the only durable record of spec impact or retrospective conclusions
 
 ### Requirement: Tier 2 Lightweight Feature workflow
 
-`c3spec-start` SHALL route contained new capabilities or extensions of an existing capability that have clear scope, real but limited design decisions, and a 1–2 capability spec footprint to a Tier 2 Lightweight Feature workflow with a compact change directory.
+`c3spec-start` SHALL route contained new capabilities or extensions of an existing capability that have clear scope, real but limited design decisions, and a 1–2 capability spec footprint to a Tier 2 Lightweight Feature workflow with a compact change directory and explicit lifecycle metadata.
 
 #### Scenario: T2 routing signals
 
@@ -83,12 +89,13 @@ The `c3spec-start` routing classifier SHALL produce exactly one of three outcome
 
 - **WHEN** the user confirms T2 routing
 - **THEN** `c3spec-start` SHALL hand off to the `c3spec-tier2-feature` skill
-- **AND** the workflow SHALL produce a compact change directory containing at minimum a proposal, tasks list, and plan, plus a design artifact when the design decisions are non-trivial
+- **AND** the workflow SHALL produce a compact change directory with lifecycle metadata, proposal, tasks, plan, verification, and retrospective artifacts
+- **AND** the workflow SHALL include a design artifact and delta specs when the feature has non-trivial design decisions or spec-level behavior changes
 - **AND** the workflow SHALL execute via `c3spec-subagent-dev`, run a lightweight verification pass, write a lightweight retrospective, and archive the change
 
 ### Requirement: Tier 3 Full Workflow routing and workflow shape
 
-`c3spec-start` SHALL route changes with significant design uncertainty, architectural reach, breaking or external-contract change, cross-system integration, DB/schema change, or any design that is expensive to undo to a Tier 3 Full Workflow with full planning artifacts.
+`c3spec-start` SHALL route changes with significant design uncertainty, architectural reach, breaking or external-contract change, cross-system integration, DB/schema change, or any design that is expensive to undo to a Tier 3 Full Workflow with full planning artifacts and explicit lifecycle metadata.
 
 #### Scenario: T3 routing signals
 
@@ -99,8 +106,30 @@ The `c3spec-start` routing classifier SHALL produce exactly one of three outcome
 
 - **WHEN** the user confirms T3 routing
 - **THEN** `c3spec-start` SHALL hand off to the `c3spec-tier3-full` skill
-- **AND** the workflow SHALL produce, in order, a brainstorm, proposal, design, delta specs for each affected capability, tasks, and a staged plan before implementation
+- **AND** the workflow SHALL produce lifecycle metadata, brainstorm, proposal, design, delta specs for each affected capability, tasks, and a staged plan before implementation
 - **AND** implementation SHALL run via `c3spec-subagent-dev` followed by a full verification artifact, a retrospective, memory capture when learnings generalize, and archive
+
+### Requirement: Tier lifecycle contract
+
+Tier workflows SHALL share a single lifecycle contract that defines each tier's change folder convention, required artifacts, optional artifacts, pause points, apply readiness, and archive readiness.
+
+#### Scenario: Tier skills consult lifecycle contract
+
+- **WHEN** a tier skill creates, resumes, verifies, or finishes a tier workflow
+- **THEN** it SHALL follow the canonical tier lifecycle contract
+- **AND** it SHALL NOT duplicate incompatible artifact rules in tier-specific prose
+
+#### Scenario: Fresh-context resume uses lifecycle metadata
+
+- **WHEN** an agent resumes a paused change from disk
+- **THEN** it SHALL read the tier lifecycle metadata before creating artifacts or implementing tasks
+- **AND** it SHALL be able to identify the tier and next safe action without relying on prior chat history
+
+#### Scenario: Archive readiness is explicit
+
+- **WHEN** a tier workflow is ready to finish
+- **THEN** it SHALL check the required artifacts for that tier before archiving or declaring completion
+- **AND** missing required artifacts SHALL be reported as blockers or explicit warnings before archive
 
 ### Requirement: Canonical skill and review-agent surfaces
 
@@ -114,6 +143,7 @@ The workflow-routing contract SHALL be backed by a fixed set of canonical skill 
   - `c3spec-tier1-fix`
   - `c3spec-tier2-feature`
   - `c3spec-tier3-full`
+  - `c3spec-tier-lifecycle`
   - `c3spec-subagent-dev`
   - `c3spec-host-adapter`
 - **AND** these skills SHALL be treated as the canonical entry points for routing, tier execution, subagent-driven development, and host dispatch
@@ -179,7 +209,7 @@ c3spec machine enforcement SHALL guarantee that the canonical skill, agent, and 
 #### Scenario: Canonical artifact presence is enforced
 
 - **WHEN** c3spec validates or generates host artifacts
-- **THEN** the required canonical skill names (`c3spec-start`, `c3spec-tier1-fix`, `c3spec-tier2-feature`, `c3spec-tier3-full`, `c3spec-subagent-dev`, `c3spec-host-adapter`, `c3spec-continue-change`, `c3spec-apply-change`, `c3spec-explore`, `c3spec-sync-specs`, `c3spec-archive-change`, `c3spec-bulk-archive-change`, `c3spec-verify-change`, `c3spec-onboard`) SHALL be required to exist under `.agents/skills/`
+- **THEN** the required canonical skill names (`c3spec-start`, `c3spec-tier1-fix`, `c3spec-tier2-feature`, `c3spec-tier3-full`, `c3spec-tier-lifecycle`, `c3spec-subagent-dev`, `c3spec-host-adapter`, `c3spec-continue-change`, `c3spec-apply-change`, `c3spec-explore`, `c3spec-sync-specs`, `c3spec-archive-change`, `c3spec-bulk-archive-change`, `c3spec-verify-change`, `c3spec-onboard`) SHALL be required to exist under `.agents/skills/`
 - **AND** the required canonical agent role names (`implementer`, `spec-reviewer`, `quality-reviewer`) SHALL be required to exist under `.agents/agents/`
 - **AND** the required canonical hook name (`c3spec-memory-scan`) SHALL be required to exist under `.agents/hooks/`
 

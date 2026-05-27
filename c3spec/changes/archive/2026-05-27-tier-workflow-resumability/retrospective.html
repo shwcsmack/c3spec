@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Retrospective: Tier Workflow Resumability</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #0f172a;
+      --panel: #111827;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --good: #22c55e;
+      --warn: #f59e0b;
+      --border: #334155;
+    }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: linear-gradient(180deg, #020617 0%, var(--bg) 100%);
+      color: var(--text);
+      line-height: 1.55;
+    }
+    main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 32px 20px 64px;
+    }
+    h1, h2 { line-height: 1.2; }
+    h1 { font-size: 2rem; margin-bottom: 0.25rem; }
+    .meta { color: var(--muted); margin-bottom: 24px; }
+    section {
+      background: rgba(17, 24, 39, 0.82);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px 22px;
+      margin: 16px 0;
+    }
+    ul { margin: 0.4rem 0 0 1.2rem; }
+    li { margin: 0.45rem 0; }
+    .tag {
+      display: inline-block;
+      padding: 0.15rem 0.55rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      margin-right: 0.35rem;
+    }
+    .good { color: var(--good); }
+    .warn { color: var(--warn); }
+    code {
+      background: #1e293b;
+      padding: 0.1rem 0.35rem;
+      border-radius: 6px;
+      font-size: 0.95em;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 0.75rem;
+      font-size: 0.95rem;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 0.55rem 0.65rem;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #1e293b; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Retrospective: Tier Workflow Resumability</h1>
+    <p class="meta">
+      <span class="tag">Change</span> tier-workflow-resumability
+      <span class="tag">Branch</span> feat/tier-workflow-resumability
+      <span class="tag">Tier</span> 3
+    </p>
+
+    <section>
+      <h2>1. Evidence</h2>
+      <ul>
+        <li>Commits on branch: lifecycle skill, tier skill alignment, continue/apply/host-adapter updates, source spec sync, generated host artifacts, focused contract tests, verification record.</li>
+        <li>Implementation tasks 1.1 through 5.5 are complete in <code>tasks.md</code>.</li>
+        <li>Verification: <code>pnpm check:canonical-skills</code>, <code>pnpm run build</code>, <code>pnpm test</code> (1415 tests), change/spec validation all passed.</li>
+        <li>Host generation: <code>c3spec sync --force .</code> regenerated tracked artifacts and repeat sync was stable.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>2. What worked</h2>
+      <ul>
+        <li><span class="good">Single lifecycle contract.</span> Adding <code>c3spec-tier-lifecycle</code> as a reference skill gave tier, resume, apply, and archive helpers one shared source of truth instead of duplicating artifact rules in each skill.</li>
+        <li><span class="good">Skills-first delivery.</span> Most behavior landed in canonical skills with minimal code churn, which matched the approved design and kept CLI compatibility intact.</li>
+        <li><span class="good">Focused contract tests.</span> <code>test/specs/tier-lifecycle-skill-contract.test.ts</code> locked the important prose contracts without relying on more subprocess-heavy CLI tests.</li>
+        <li><span class="good">Staged reviews caught real issues.</span> Spec/quality review cycles surfaced concrete gaps (T1 status transitions, T2 pause gates, archive task-progress blocking, missing tier-skill lifecycle references) before they were committed.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>3. What did not work</h2>
+      <ul>
+        <li><span class="warn">Initial skill drafts drifted from lifecycle semantics.</span> Early tier1/tier2/archive wording needed multiple review passes for status transitions, optional HTML companions, and task-progress blocking.</li>
+        <li><span class="warn">Generated artifact tracking is uneven.</span> <code>c3spec sync</code> writes the full Claude skill set, but only a subset is force-tracked in git; this made drift verification depend on sentinel/hash review rather than a simple <code>git status</code> view.</li>
+        <li><span class="warn">Spec terminology is still mixed in one area.</span> Synced <code>cli-artifact-workflow</code> sections now say <code>c3spec</code>, while neighboring untouched scenarios still say <code>openspec</code>.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>4. Workflow / process improvements</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Observation</th>
+            <th>Improvement</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Tier skills and lifecycle contract evolved together</td>
+            <td>Keep <code>c3spec-tier-lifecycle</code> as the first implementation task for any future tier-workflow change; treat tier skill edits as consumers, not co-owners of the contract.</td>
+          </tr>
+          <tr>
+            <td>Archive readiness needed explicit task-progress rules</td>
+            <td>When changing lifecycle semantics, update archive helpers and their tests in the same stage as tier skill edits.</td>
+          </tr>
+          <tr>
+            <td>Host sync output is broader than tracked git paths</td>
+            <td>Document the tracked-vs-ignored generated artifact convention in verification steps so repeat sync stability checks are interpreted correctly.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>5. Learning worth capturing</h2>
+      <p>
+        <strong>Recommendation:</strong> capture a workflow learning that tier lifecycle behavior should stay centralized in
+        <code>c3spec-tier-lifecycle</code>, with tier/resume/apply/archive skills acting as thin orchestrators over on-disk metadata
+        (<code>tier.md</code>, required artifacts, status, and task progress) rather than re-deriving rules locally.
+      </p>
+      <p>
+        This generalizes beyond this change because future tier workflow edits will otherwise reintroduce contradictions between
+        T1/T2/T3 skills, resume helpers, apply handoffs, and archive readiness checks.
+      </p>
+      <p><strong>Memory capture:</strong> recommended if the team wants this pattern preserved for future tier workflow work.</p>
+    </section>
+  </main>
+</body>
+</html>

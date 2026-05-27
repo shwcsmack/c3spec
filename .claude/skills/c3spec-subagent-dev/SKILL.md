@@ -135,5 +135,5 @@ This is mandatory. The user works exclusively from the command line.
 - Start implementation without loading c3spec/memory/MEMORY.md for context
 
 <!-- c3spec-generated: true
-c3spec-source: /Users/shayne/code/c3spec/.worktrees/feat-one-question-interviews/.agents/skills/c3spec-subagent-dev/SKILL.md
+c3spec-source: /Users/shayne/code/c3spec/.worktrees/feat-tier-workflow-resumability/.agents/skills/c3spec-subagent-dev/SKILL.md
 c3spec-hash: 721c4f4dc8d6aab00ca901d2860dea006183a513ee4d438f00bf8d77cda9a0d5 -->

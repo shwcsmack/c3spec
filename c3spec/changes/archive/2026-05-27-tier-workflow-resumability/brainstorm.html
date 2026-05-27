@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Brainstorm - Tier Workflow Resumability</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f8fb;
+      --card: #ffffff;
+      --text: #172033;
+      --muted: #5b6578;
+      --border: #dfe4ee;
+      --blue: #2563eb;
+      --green: #16803c;
+      --yellow: #9a6700;
+      --red: #b42318;
+      --purple: #7c3aed;
+    }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    }
+    main {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 36px 24px 72px;
+    }
+    h1 {
+      margin: 0 0 6px;
+      font-size: 28px;
+      letter-spacing: -0.02em;
+    }
+    h2 {
+      margin: 0 0 12px;
+      font-size: 18px;
+    }
+    h3 {
+      margin: 18px 0 8px;
+      font-size: 15px;
+    }
+    p {
+      margin: 8px 0;
+    }
+    code {
+      background: #eef1f7;
+      border: 1px solid #dde3ed;
+      border-radius: 5px;
+      padding: 1px 5px;
+      font-size: 13px;
+    }
+    ul {
+      margin: 8px 0 0 20px;
+      padding: 0;
+    }
+    li {
+      margin: 5px 0;
+    }
+    .subtitle {
+      color: var(--muted);
+      margin-bottom: 26px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin: 18px 0 28px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 20px;
+      box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+      margin-bottom: 16px;
+    }
+    .callout {
+      border-left: 5px solid var(--blue);
+      background: #eef5ff;
+    }
+    .decision {
+      border-left: 5px solid var(--green);
+      background: #effbf3;
+    }
+    .risk {
+      border-left: 5px solid var(--yellow);
+      background: #fff8e5;
+    }
+    .tag {
+      display: inline-block;
+      border-radius: 999px;
+      padding: 3px 9px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-right: 6px;
+    }
+    .tag.chosen { background: #dff8e8; color: var(--green); }
+    .tag.considered { background: #eef1f7; color: #475467; }
+    .tag.risk { background: #fff0c2; color: var(--yellow); }
+    .tag.contract { background: #ede9fe; color: var(--purple); }
+    .option {
+      border-top: 1px solid var(--border);
+      padding-top: 14px;
+      margin-top: 14px;
+    }
+    .option:first-of-type {
+      border-top: 0;
+      margin-top: 0;
+      padding-top: 0;
+    }
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      align-items: stretch;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .step {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      min-height: 74px;
+      position: relative;
+    }
+    .step strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--blue);
+    }
+    .step:not(:last-child)::after {
+      content: "→";
+      position: absolute;
+      right: -16px;
+      top: 30px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    th, td {
+      border-bottom: 1px solid var(--border);
+      padding: 10px 12px;
+      vertical-align: top;
+      text-align: left;
+    }
+    th {
+      background: #f1f4f9;
+      color: #475467;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    tr:last-child td {
+      border-bottom: 0;
+    }
+    @media (max-width: 900px) {
+      .grid, .flow { grid-template-columns: 1fr; }
+      .step:not(:last-child)::after { content: ""; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Brainstorm: Tier Workflow Resumability</h1>
+    <p class="subtitle">
+      Combined Tier 3 change for IDEAS #7 and #15. Branch:
+      <code>feat/tier-workflow-resumability</code>. Change:
+      <code>tier-workflow-resumability</code>.
+    </p>
+
+    <section class="card callout">
+      <h2>Problem Framing</h2>
+      <p>
+        c3spec now has tiered workflows, but the artifact lifecycle and resume helpers
+        still carry pre-tier assumptions. Tier 2 and Tier 3 produce structured change
+        folders, but Tier 1 is contradictory: the skill says not to create a change
+        directory while later writing HTML artifacts under <code>c3spec/changes/tier1-...</code>.
+        At the same time, <code>c3spec-continue-change</code> and
+        <code>c3spec-apply-change</code> still assume the old schema-driven flow and do
+        not understand current Tier 1 / Tier 2 / Tier 3 pause points.
+      </p>
+      <p>
+        The result is an auditability and resumability gap: a human can pause, a fresh
+        agent can return later, and the on-disk artifacts may not be enough to recover
+        the workflow safely.
+      </p>
+    </section>
+
+    <section class="grid">
+      <div class="card">
+        <h2>Current Facts</h2>
+        <ul>
+          <li><code>c3spec new change</code> creates a <code>superpowers-bridge</code> sequence: brainstorm, design, proposal, specs, tasks, plan, verify, retrospective.</li>
+          <li>Tier 3 skill sequence is brainstorm, proposal, design, specs, tasks, plan, verify, retrospective.</li>
+          <li>Tier 2 skill creates a compact, partly ad-hoc folder: proposal, optional design, tasks, plan, retro.</li>
+          <li>Tier 1 writes spec-impact and micro-retro HTML artifacts, but has no registered change.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h2>Relevant Memory</h2>
+        <ul>
+          <li>Canonical skills live under <code>.agents/skills/</code>; do not reintroduce root <code>skills/</code>.</li>
+          <li>Resume helpers are intentionally canonical because they support fresh-context handoffs after pauses.</li>
+          <li>Subprocess-heavy tests need the current vitest timeout headroom; do not lower it while adding tests.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h2>Success Shape</h2>
+        <ul>
+          <li>Every tier has an explicit artifact set and completion contract.</li>
+          <li>Every tier leaves a durable on-disk trail that a fresh agent can resume from.</li>
+          <li>Resume/apply helpers are tier-aware enough not to follow retired artifact sequences.</li>
+          <li>Archive/completion checks fail clearly when required artifacts are missing.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Decision Chain</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Question</th>
+            <th>Decision</th>
+            <th>Reason</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Do #7 and #15 belong together?</td>
+            <td><span class="tag chosen">Chosen</span>Yes, one Tier 3 change</td>
+            <td>Resume helpers need stable tier artifact contracts. Fixing the helpers before fixing T1/T2/T3 artifact discipline would encode more drift.</td>
+          </tr>
+          <tr>
+            <td>Should T1 get a real change folder?</td>
+            <td><span class="tag chosen">Chosen</span>Yes, lightweight and registered</td>
+            <td>Without a folder, fresh-context resume is impossible and archive/completion checks cannot be uniform.</td>
+          </tr>
+          <tr>
+            <td>Should resume helpers remain generic schema walkers?</td>
+            <td><span class="tag chosen">Chosen</span>No, make them tier-aware at the workflow layer</td>
+            <td>The current tier skills are the canonical product workflow. Schema status is useful, but not enough to know human approval gates, HTML review, subagent dispatch, or Tier 1 special cases.</td>
+          </tr>
+          <tr>
+            <td>Should archive be mandatory?</td>
+            <td><span class="tag chosen">Chosen</span>Yes, through explicit verification/checks</td>
+            <td>The audit trail only matters if completion and archive are enforced, not aspirational.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card">
+      <h2>Approaches Considered</h2>
+
+      <div class="option">
+        <h3><span class="tag considered">Option A</span>Patch only the resume helpers</h3>
+        <p>
+          Update <code>c3spec-continue-change</code> and <code>c3spec-apply-change</code>
+          to mention current tiers, but leave Tier 1 without a registered folder and leave
+          artifact contracts implicit.
+        </p>
+        <p><strong>Trade-off:</strong> Fastest, but preserves the root ambiguity. Fresh-context resume would still have to guess what Tier 1 means.</p>
+      </div>
+
+      <div class="option">
+        <h3><span class="tag chosen">Option B</span>Define tier artifact contracts, then realign helpers</h3>
+        <p>
+          Make each tier declare a canonical folder shape, required artifacts, pause points,
+          completion criteria, and archive behavior. Then rewrite resume/apply helpers to
+          detect tier state and route to the next safe action.
+        </p>
+        <p><strong>Trade-off:</strong> Medium-sized but coherent. This is the recommended path.</p>
+      </div>
+
+      <div class="option">
+        <h3><span class="tag considered">Option C</span>Move everything fully into CLI schemas</h3>
+        <p>
+          Encode Tier 1 / 2 / 3 artifact sequences entirely in schema definitions and make
+          the skills dumb wrappers around <code>c3spec status</code> and
+          <code>c3spec instructions</code>.
+        </p>
+        <p><strong>Trade-off:</strong> Architecturally tidy long-term, but too large for this pass. It would touch schema loaders, templates, skills, CLI validation, and all existing change folders.</p>
+      </div>
+    </section>
+
+    <section class="card decision">
+      <h2>Recommended Direction</h2>
+      <p>
+        Use <strong>Option B</strong>: define a small tier lifecycle contract and realign the
+        helpers around that contract.
+      </p>
+      <div class="flow">
+        <div class="step">
+          <strong>1. Contract</strong>
+          Define required artifacts, optional artifacts, pause points, and archive readiness for T1/T2/T3.
+        </div>
+        <div class="step">
+          <strong>2. T1 Folder</strong>
+          Give Tier 1 a lightweight registered folder, likely <code>c3spec/changes/tier1-&lt;slug&gt;/</code>.
+        </div>
+        <div class="step">
+          <strong>3. Resume</strong>
+          Update <code>continue-change</code> to identify next artifact or human approval gate by tier.
+        </div>
+        <div class="step">
+          <strong>4. Apply</strong>
+          Update <code>apply-change</code> to read plan/tasks and dispatch through <code>c3spec-subagent-dev</code>.
+        </div>
+        <div class="step">
+          <strong>5. Verify</strong>
+          Add checks/tests so missing artifacts or stale helper guidance fail before archive/completion.
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Scope</h2>
+      <h3>In Scope</h3>
+      <ul>
+        <li>Update canonical skills under <code>.agents/skills/</code> only.</li>
+        <li>Define Tier 1 / 2 / 3 artifact sets and pause/resume behavior in one canonical place.</li>
+        <li>Update <code>c3spec-tier1-fix</code>, <code>c3spec-tier2-feature</code>, <code>c3spec-tier3-full</code>, <code>c3spec-continue-change</code>, and <code>c3spec-apply-change</code>.</li>
+        <li>Update <code>c3spec-host-adapter</code> if needed so it reflects Cursor's actual subagent mechanism.</li>
+        <li>Add at least one verification path: tests, CLI check, or explicit skill validation that catches missing required artifacts.</li>
+      </ul>
+      <h3>Out of Scope</h3>
+      <ul>
+        <li>Full schema-system rewrite for all tiers.</li>
+        <li>IDEAS #9 richer tasks schema, except where minimum task shape affects resume/apply.</li>
+        <li>IDEAS #10 mandatory context reset, though the handoff contract should be compatible with it.</li>
+        <li>IDEAS #12 pre-fork cleanup, even if stale archived changes make testing noisier.</li>
+      </ul>
+    </section>
+
+    <section class="card risk">
+      <h2>Key Risks and Mitigations</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Risk</th>
+            <th>Mitigation</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Overbuilding a CLI lifecycle engine when skill updates are enough.</td>
+            <td>Keep this pass focused on explicit contracts and minimal checks. Defer full schema migration.</td>
+          </tr>
+          <tr>
+            <td>Breaking existing archived change behavior.</td>
+            <td>Scope checks to active changes and new tier folders unless archival compatibility is explicitly required.</td>
+          </tr>
+          <tr>
+            <td>Resume helpers still depend on chat memory.</td>
+            <td>Require enough tier metadata and artifact files on disk for fresh-context resume.</td>
+          </tr>
+          <tr>
+            <td>Tests become slow because CLI helpers spawn subprocesses.</td>
+            <td>Use the existing 30s vitest timeout constraint; keep added tests focused and avoid unnecessary repeated <code>runCLI</code> calls.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card">
+      <h2>Open Questions for Design</h2>
+      <ul>
+        <li>What is the exact Tier 1 artifact set? Minimum likely: <code>notes.md</code> or <code>mini-plan.md</code>, <code>spec-impact.html/md</code>, <code>micro-retro.html/md</code>, plus optional memory link.</li>
+        <li>Where should the tier contract live? Options: skill prose only, a small machine-readable sidecar under <code>.agents/</code>, or CLI schema metadata.</li>
+        <li>Should archive checks be implemented as CLI behavior now, or as skill-level validation with tests around canonical skill content?</li>
+        <li>How much should <code>c3spec-apply-change</code> execute itself versus dispatch back into the tier skill / <code>c3spec-subagent-dev</code>?</li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>

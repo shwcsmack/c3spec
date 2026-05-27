@@ -13,6 +13,8 @@ Archive multiple completed changes in a single operation.
 
 This skill allows you to batch-archive changes, handling spec conflicts intelligently by checking the codebase to determine what's actually implemented.
 
+**Lifecycle contract:** This skill follows `c3spec-tier-lifecycle`. Apply the archive readiness check (Section 6) to every selected change before archiving it. Treat tier-aware readiness as a per-change gate inside the batch — surface gaps for individual changes rather than failing the whole batch.
+
 **Input**: None required (prompts for selection)
 
 **Steps**
@@ -42,11 +44,30 @@ This skill allows you to batch-archive changes, handling spec conflicts intellig
 
       If any selected change reports `actionContext.mode: "workspace-planning"`, explain that workspace bulk archive is not supported in this slice and STOP before syncing specs or moving changes. Do not fall back to repo-local paths or edit linked repos.
 
-   b. **Task completion** - Read `artifactPaths.tasks.existingOutputPaths` from status JSON
+   b. **Tier lifecycle readiness** - Consult `c3spec-tier-lifecycle` (Section 6) for each change:
+      - Look for `<changeRoot>/tier.md`.
+      - **If `tier.md` exists:**
+        - Read `Tier:` and `Status:` from the metadata block.
+        - Verify every tier-specific required artifact from `c3spec-tier-lifecycle` Section 2 is present on disk:
+          - **T1** (`c3spec/changes/tier1-<slug>/`): `tier.md`, `mini-plan.md`, `spec-impact.html`, `spec-impact.md`, `micro-retro.html`, `micro-retro.md`
+          - **T2** (`c3spec/changes/tier2-<slug>/`): `tier.md`, `proposal.md`, `tasks.md`, `plan.md`, `verify.md`, `retrospective.md`
+          - **T3** (`c3spec/changes/<slug>/`): `tier.md`, `brainstorm.md`, `proposal.md`, `design.md`, every `specs/<capability>/spec.md` delta listed in `tier.md` Affected Specs, `tasks.md`, `plan.md`, `verify.md`, `retrospective.md`
+        - Verify the required artifacts checklist in `tier.md` is fully `- [x]`.
+        - Verify `Status` is `ready-to-archive`.
+        - Verify tier-specific task progress is complete:
+          - **T1:** every checkbox in `mini-plan.md` (and any mirrored `tier.md` progress checklist) is `- [x]`.
+          - **T2/T3:** every checkbox in `tasks.md` is `- [x]`.
+        - Record any missing artifacts, unchecked checklist entries, non-`ready-to-archive` status, or incomplete task progress as a per-change readiness gap. Do NOT archive a tier change with unresolved readiness gaps in this batch.
+      - **If `tier.md` is absent** (legacy / pre-fork change):
+        - Record an explicit "legacy: no tier.md" warning for this change.
+        - Apply backwards-compatible handling — the user MAY still confirm archive for legacy changes in Step 7, but the warning must be visible in the per-change status table.
+
+   c. **Task completion** - Read `artifactPaths.tasks.existingOutputPaths` from status JSON
       - Count `- [ ]` (incomplete) vs `- [x]` (complete)
       - If no tasks file exists, note as "No tasks"
+      - If `tier.md` exists, task completion is already part of the tier readiness gate from Step 3b; incomplete progress keeps the change `Blocked`, not `Warn`.
 
-   c. **Delta specs** - Check `artifactPaths.specs.existingOutputPaths` from status JSON
+   d. **Delta specs** - Check `artifactPaths.specs.existingOutputPaths` from status JSON
       - List which capability specs exist
       - For each, extract requirement names (lines matching `### Requirement: <name>`)
 
@@ -83,16 +104,21 @@ This skill allows you to batch-archive changes, handling spec conflicts intellig
 
 6. **Show consolidated status table**
 
-   Display a table summarizing all changes:
+   Display a table summarizing all changes, including the tier readiness column from Step 3b:
 
    ```
-   | Change              | Artifacts | Tasks | Specs   | Conflicts | Status |
-   |---------------------|-----------|-------|---------|-----------|--------|
-   | schema-management   | Done      | 5/5   | 2 delta | None      | Ready  |
-   | project-config      | Done      | 3/3   | 1 delta | None      | Ready  |
-   | add-oauth           | Done      | 4/4   | 1 delta | auth (!)  | Ready* |
-   | add-verify-skill    | 1 left    | 2/5   | None    | None      | Warn   |
+   | Change              | Tier | Tier Ready    | Artifacts | Tasks | Specs   | Conflicts | Status  |
+   |---------------------|------|---------------|-----------|-------|---------|-----------|---------|
+   | schema-management   | T3   | Ready         | Done      | 5/5   | 2 delta | None      | Ready   |
+   | project-config      | T2   | Ready         | Done      | 3/3   | 1 delta | None      | Ready   |
+   | add-oauth           | T2   | Ready         | Done      | 4/4   | 1 delta | auth (!)  | Ready*  |
+   | add-verify-skill    | T2   | Missing retro | 1 left    | 2/5   | None    | None      | Blocked |
+   | old-pre-fork-change | —    | Legacy (warn) | Done      | 4/4   | None    | None      | Warn    |
    ```
+
+   - `Tier`: `T1`/`T2`/`T3` when `tier.md` exists, `—` when absent.
+   - `Tier Ready`: `Ready` when all tier-required artifacts are present, the `tier.md` checklist is fully `- [x]`, tier-specific task progress is complete, and `Status` is `ready-to-archive`. Otherwise show a short reason such as `Missing retro`, `tier.md not [x]`, `tasks incomplete`, or `Status=verifying`. For legacy/pre-fork changes without `tier.md`, show `Legacy (warn)`.
+   - `Status`: `Blocked` whenever `Tier Ready` is anything other than `Ready` or `Legacy (warn)`. `Warn` for legacy/pre-fork changes that lack tier metadata but otherwise pass artifact/task checks. `Ready` only when tier readiness and artifact/task checks all pass.
 
    For conflicts, show the resolution:
    ```
@@ -100,10 +126,17 @@ This skill allows you to batch-archive changes, handling spec conflicts intellig
      - auth spec: Will apply add-oauth then add-jwt (both implemented, chronological order)
    ```
 
-   For incomplete changes, show warnings:
+   For tier-blocked changes, list specific gaps:
+   ```
+   Tier readiness gaps:
+   - add-verify-skill (T2): missing retrospective.md; tier.md "retrospective.md" still [ ]; Status=verifying
+   ```
+
+   For incomplete (non-tier) changes, show warnings:
    ```
    Warnings:
    - add-verify-skill: 1 incomplete artifact, 3 incomplete tasks
+   - old-pre-fork-change: no tier.md (legacy/pre-fork, lifecycle metadata not retroactively enforced)
    ```
 
 7. **Confirm batch operation**
@@ -112,15 +145,20 @@ This skill allows you to batch-archive changes, handling spec conflicts intellig
 
    - "Archive N changes?" with options based on status
    - Options might include:
-     - "Archive all N changes"
-     - "Archive only N ready changes (skip incomplete)"
+     - "Archive all eligible changes (skip tier-blocked)"
+     - "Archive only N ready changes (skip blocked and incomplete)"
      - "Cancel"
 
-   If there are incomplete changes, make clear they'll be archived with warnings.
+   **Per-change archive rules:**
+   - **Blocked (tier readiness gap, `tier.md` present):** Do NOT include in the archive batch in this run. Route the user to `c3spec-continue-change` or the relevant tier skill (`c3spec-tier1-fix`, `c3spec-tier2-feature`, `c3spec-tier3-full`) to complete the gap, then re-run bulk archive.
+   - **Warn (legacy/pre-fork, no `tier.md`):** Allowed to archive if the user explicitly confirms in this step; do not auto-include without confirmation.
+   - **Ready:** Eligible to archive.
+
+   If there are incomplete (non-tier) changes, make clear they'll be archived with warnings only when the user explicitly opts in.
 
 8. **Execute archive for each confirmed change**
 
-   Process changes in the determined order (respecting conflict resolution):
+   Process changes in the determined order (respecting conflict resolution). Skip any change whose tier readiness from Step 3b is `Blocked`; only process `Ready` changes and `Warn` (legacy/pre-fork) changes the user explicitly confirmed.
 
    a. **Sync specs** if delta specs exist:
       - Use the c3spec-sync-specs approach (agent-driven intelligent merge)
@@ -136,7 +174,8 @@ This skill allows you to batch-archive changes, handling spec conflicts intellig
    c. **Track outcome** for each change:
       - Success: archived successfully
       - Failed: error during archive (record error)
-      - Skipped: user chose not to archive (if applicable)
+      - Blocked: tier readiness gap (`tier.md` present, required artifacts/checklist/status incomplete); record the specific gap
+      - Skipped: user chose not to archive (legacy/pre-fork warn, incomplete tasks, etc.)
 
 9. **Display summary**
 
@@ -219,11 +258,14 @@ Spec sync summary:
 Archived N changes:
 - <change-1> -> archive/YYYY-MM-DD-<change-1>/
 
-Skipped M changes:
-- <change-2> (user chose not to archive incomplete)
+Blocked M changes (tier readiness gap — run c3spec-continue-change or the tier skill):
+- <change-2> (T2): missing retrospective.md; tier.md "retrospective.md" still [ ]
 
-Failed K changes:
-- <change-3>: Archive directory already exists
+Skipped K changes:
+- <change-3> (user chose not to archive incomplete)
+
+Failed L changes:
+- <change-4>: Archive directory already exists
 ```
 
 **Output When No Changes**
@@ -237,12 +279,15 @@ No active changes found. Create a new change to get started.
 **Guardrails**
 - Allow any number of changes (1+ is fine, 2+ is the typical use case)
 - Always prompt for selection, never auto-select
+- Always apply the `c3spec-tier-lifecycle` Section 6 archive readiness check to every selected change before archiving it
+- BLOCK archive for any change where `tier.md` exists but tier-required artifacts are missing, the `tier.md` checklist is not fully `- [x]`, tier-specific task progress is incomplete, or `Status` is not `ready-to-archive`. Surface gaps per change and continue with the rest of the batch.
+- For legacy/pre-fork changes without `tier.md`, surface an explicit warning but allow archive when the user confirms in the batch confirmation step. Do not retroactively require lifecycle metadata in this pass.
 - Detect spec conflicts early and resolve by checking codebase
 - When both changes are implemented, apply specs in chronological order
 - Skip spec sync only when implementation is missing (warn user)
-- Show clear per-change status before confirming
+- Show clear per-change status before confirming, including tier readiness
 - Use single confirmation for entire batch
-- Track and report all outcomes (success/skip/fail)
+- Track and report all outcomes (success/skip/blocked/fail)
 - Preserve .c3spec.yaml when moving to archive
 - Archive directory target uses current date: YYYY-MM-DD-<name>
 - If archive target exists, fail that change but continue with others

@@ -258,6 +258,7 @@ description: Load the c3spec memory index at session start.
 
       expect(errors).toEqual([]);
       expect(artifacts.skills).toHaveLength(REQUIRED_CANONICAL_SKILL_NAMES.length);
+      expect(artifacts.skills.map((skill) => skill.name)).toContain('c3spec-tier-lifecycle');
       expect(artifacts.agents).toHaveLength(REQUIRED_CANONICAL_AGENT_NAMES.length);
       expect(artifacts.hooks).toHaveLength(1);
       expect(artifacts.hooks[0]?.event).toBe('session-start');
@@ -273,6 +274,18 @@ description: Load the c3spec memory index at session start.
       const { errors } = await discoverCanonicalArtifacts(testDir);
 
       expect(errors.some((error) => error.message.includes('c3spec-host-adapter'))).toBe(true);
+    });
+
+    it('reports missing lifecycle contract skill', async () => {
+      await writeBundledCanonicalLayout(testDir);
+      await fs.rm(path.join(testDir, '.agents', 'skills', 'c3spec-tier-lifecycle'), {
+        recursive: true,
+        force: true,
+      });
+
+      const { errors } = await discoverCanonicalArtifacts(testDir);
+
+      expect(errors.some((error) => error.message.includes('c3spec-tier-lifecycle'))).toBe(true);
     });
 
     it('reports missing required canonical hooks', async () => {
@@ -294,6 +307,7 @@ description: Load the c3spec memory index at session start.
       expect(artifacts.skills.map((skill) => skill.name)).toEqual(
         [...REQUIRED_CANONICAL_SKILL_NAMES].sort()
       );
+      expect(artifacts.skills.some((skill) => skill.name === 'c3spec-tier-lifecycle')).toBe(true);
       expect(artifacts.agents.map((agent) => agent.name)).toEqual(
         [...REQUIRED_CANONICAL_AGENT_NAMES].sort()
       );

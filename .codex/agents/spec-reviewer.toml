@@ -1,5 +1,5 @@
 # c3spec-generated: true
-# c3spec-source: /Users/shayne/code/c3spec/.worktrees/feat-one-question-interviews/.agents/agents/spec-reviewer.yaml
+# c3spec-source: /Users/shayne/code/c3spec/.worktrees/feat-tier-workflow-resumability/.agents/agents/spec-reviewer.yaml
 # c3spec-hash: 2ec7d8938977e2cce96be84aa402b71482ff59dccd1243a24516472c0c151846
 
 name = "spec-reviewer"

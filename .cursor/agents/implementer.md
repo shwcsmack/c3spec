@@ -37,5 +37,5 @@ Return:
 - Risks or concerns
 
 <!-- c3spec-generated: true
-c3spec-source: /Users/shayne/code/c3spec/.worktrees/feat-one-question-interviews/.agents/agents/implementer.yaml
+c3spec-source: /Users/shayne/code/c3spec/.worktrees/feat-tier-workflow-resumability/.agents/agents/implementer.yaml
 c3spec-hash: dca6a01314e5fbadebd49e1f46f89da1604f20a923b0800c4fec123196eab676 -->

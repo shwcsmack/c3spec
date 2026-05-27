@@ -5,27 +5,29 @@ description: Map c3spec named agent roles to the current host's native subagent 
 
 # C3Spec Host Adapter
 
-Other c3spec skills refer to named agents (`implementer`, `spec-reviewer`, `quality-reviewer`) instead of host-specific tools. Use this skill to translate those roles into the native subagent surface for the active host.
+Other c3spec skills refer to named agents (`implementer`, `spec-reviewer`, `quality-reviewer`) and to "host-appropriate structured questions" instead of host-specific tool names. Use this skill to translate those references into the native surfaces of the active host.
 
-Canonical agent definitions live under `.agents/agents/*.yaml`. Host renderers materialize native copies; at runtime, dispatch using the host mechanism below.
+Canonical agent definitions live under `.agents/agents/*.yaml`. Host renderers may materialize native copies, but at runtime, dispatch using the host mechanism below. Do not require a repo-local generated file to exist before dispatching when the host exposes the role natively.
 
 ## Cursor
 
-Dispatch named agents via Cursor's subagent mechanism using the generated definitions under `.cursor/agents/<name>.md`.
+**Named-agent dispatch.** Cursor exposes the canonical c3spec roles (`implementer`, `spec-reviewer`, `quality-reviewer`) as native subagent types. When a skill says "dispatch the spec-reviewer agent," spawn the Cursor subagent whose role/type matches `spec-reviewer` directly through Cursor's subagent mechanism. The role names match the canonical role names exactly.
 
-When a skill says "dispatch the spec-reviewer agent," spawn or invoke the Cursor subagent whose name matches `spec-reviewer`.
+Do not require `.cursor/agents/<name>.md` files to exist before dispatching; the roles are available natively even when no repo-local file is present.
+
+**Structured questions.** When a skill says "use a host-appropriate structured question," use Cursor's native structured-question primitive if one is exposed in the current session. Otherwise fall back to a plain numbered prompt as the calling skill describes.
 
 ## Claude Code
 
-Dispatch named agents via Claude Code's subagent mechanism using the generated definitions under `.claude/agents/<name>.md`.
+**Named-agent dispatch.** Dispatch named agents via Claude Code's subagent mechanism using the generated definitions under `.claude/agents/<name>.md`. When a skill says "dispatch the implementer agent," invoke the Claude subagent whose name matches `implementer`.
 
-When a skill says "dispatch the implementer agent," invoke the Claude subagent whose name matches `implementer`.
+**Structured questions.** When a skill says "use a host-appropriate structured question," use the `AskUserQuestion` tool when it is available in the session. Otherwise fall back to a plain numbered prompt.
 
 ## Codex
 
-Dispatch named custom agents from `.codex/agents/<name>.toml`.
+**Named-agent dispatch.** Dispatch named custom agents from `.codex/agents/<name>.toml`. When a skill says "dispatch the quality-reviewer agent," invoke the Codex custom agent whose `name` field matches `quality-reviewer`.
 
-When a skill says "dispatch the quality-reviewer agent," invoke the Codex custom agent whose `name` field matches `quality-reviewer`.
+**Structured questions.** When a skill says "use a host-appropriate structured question," prefer Codex's native structured-input primitive if one is exposed in the current session. Otherwise fall back to a plain numbered prompt.
 
 ## Unsupported host
 
