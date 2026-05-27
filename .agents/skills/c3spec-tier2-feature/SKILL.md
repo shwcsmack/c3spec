@@ -209,3 +209,11 @@ superpowers:finishing-a-development-branch
 ```
 
 PR is last. PR description should reference the proposal and any memory entries created.
+
+---
+
+## What NOT to do
+
+- Do not re-interview the user — carry forward context from c3spec-start
+- Do not batch multiple clarifying questions in one message — ask one at a time if follow-up is needed
+- Do not dump numbered question lists during planning approvals

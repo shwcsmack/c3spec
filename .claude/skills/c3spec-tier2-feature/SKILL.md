@@ -210,6 +210,14 @@ superpowers:finishing-a-development-branch
 
 PR is last. PR description should reference the proposal and any memory entries created.
 
+---
+
+## What NOT to do
+
+- Do not re-interview the user — carry forward context from c3spec-start
+- Do not batch multiple clarifying questions in one message — ask one at a time if follow-up is needed
+- Do not dump numbered question lists during planning approvals
+
 <!-- c3spec-generated: true
-c3spec-source: /Users/shayne/code/c3spec/.worktrees/first-class-agent-hosts/.agents/skills/c3spec-tier2-feature/SKILL.md
-c3spec-hash: 75199a1f1628e50ccd7eb657f487b23aa5e322467e6ff361e1c5efade3f1b5e7 -->
+c3spec-source: /Users/shayne/code/c3spec/.worktrees/feat-one-question-interviews/.agents/skills/c3spec-tier2-feature/SKILL.md
+c3spec-hash: 52636273701a62852524976fa85d308c3d42d53efde41c3474bbab954a2fc5f3 -->

@@ -64,7 +64,7 @@ Use the CLI-reported paths for `planningHome`, `changeRoot`, `artifactPaths`, an
 
 ## Step 3 - Brainstorm artifact
 
-Use the brainstorming skill to explore the problem, constraints, options, and trade-offs before writing proposal or design artifacts.
+Use the brainstorming skill to explore the problem, constraints, options, and trade-offs before writing proposal or design artifacts. Run discovery with one clarifying question per turn — do not override the skill with batched numbered question lists.
 
 Write the approved output to:
 
@@ -305,6 +305,7 @@ PR is last. The PR description should reference the proposal, design, verificati
 ## What NOT to do
 
 - Do not skip the brainstorm for Tier 3 work.
+- Do not run brainstorm or discovery with numbered question dumps — one question per turn
 - Do not proceed past HTML proposal, design, or retrospective artifacts without printing the `file:///` path and waiting for approval.
 - Do not implement before proposal, design, specs, tasks, and plan exist.
 - Do not write inline code in `plan.md`.

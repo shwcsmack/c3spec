@@ -39,6 +39,8 @@ Do not follow a script. Ask what you need to ask, in whatever order makes sense,
 
 **Then interview.** Offer hypotheses and suggested answers — don't just ask open questions. The user should be able to say "yes exactly" or correct you. Surface any relevant memory entries naturally: "we ran into a coordinate system issue in the selection toolbar before — is this related?"
 
+**Interview pacing.** Ask one interview question per message, then wait for the answer before asking the next. You may include grouped findings, hypotheses, or codebase research in the same message, but the user-facing question at the end must be singular — not a numbered list of questions. Tightly coupled clarifications may share one turn when splitting would feel artificial (for example: "soft-block or hard-block — and if soft, what default?"). If the user volunteers answers to questions you have not asked yet, accept that context and advance; do not re-ask. Keep the interview as short as alignment allows; prefer routing once you can classify confidently over maximizing question count.
+
 Things you might need to understand (not a checklist — just a guide for what "aligned" means):
 - What the user wants to change and why it matters now
 - What's in scope and what isn't
@@ -103,3 +105,8 @@ After confirmation:
 **Tier 3:** Invoke `c3spec-tier3-full` skill
 
 Carry forward everything from the interview as context into the tier skill — the user should not repeat themselves.
+
+## What NOT to do
+
+- Do not dump multiple numbered interview questions in one message
+- Do not select a tier or begin tier work before explicit user confirmation

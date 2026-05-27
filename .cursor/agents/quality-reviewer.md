@@ -24,5 +24,5 @@ Return pass or fail with concrete fixes:
 - NEEDS FIXES — list exactly what must change before re-review, with file references
 
 <!-- c3spec-generated: true
-c3spec-source: /Users/shayne/code/c3spec/.worktrees/first-class-agent-hosts/.agents/agents/quality-reviewer.yaml
+c3spec-source: /Users/shayne/code/c3spec/.worktrees/feat-one-question-interviews/.agents/agents/quality-reviewer.yaml
 c3spec-hash: 1e8d36c0bba8d70456a7c330b9af3ed1a34f94d49fd2d17150693469d41a16fc -->

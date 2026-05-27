@@ -203,3 +203,4 @@ This confirms tests are green, opens the PR, cleans up the worktree. PR descript
 - Do not skip the spec impact report even if the fix seems obviously localized
 - Do not skip memory capture if the bug class generalizes
 - Do not re-interview the user — carry forward context from c3spec-start
+- Do not batch multiple clarifying questions in one message — ask one at a time if follow-up is needed

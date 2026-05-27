@@ -119,19 +119,7 @@ Every tier should pause between planning and implementation, either by handing t
 - Decide how to associate a backlog entry with its change (explicit `change:` slug field on the entry, or fuzzy match on title) so the lifecycle hooks know what to prune
 - Add an "audit backlog" step (or skill) that flags entries pointing at already-archived changes so completed work doesn't linger
 
-## 12. Interview one question at a time during `c3spec-start` and brainstorming
-
-Right now when `c3spec-start` runs the "relentless interview" or `superpowers:brainstorming` runs its discovery, the agent tends to fire a numbered batch of questions all at once — sometimes 6–10 in a single message. That's overwhelming, and the user ends up either answering them out of order, missing some, or spending a long block of time before the agent sees any feedback. The agent also can't adapt — the answer to question 1 frequently makes questions 4–6 irrelevant or reshapes them entirely. Single-question interviews are slower per-turn but converge faster overall and feel like a conversation instead of a quiz.
-
-- Update `c3spec-start` Step 2 ("Relentless interview") to require one question per turn, not a numbered batch
-- Mirror the same rule into the brainstorming skill (`superpowers:brainstorming` or its vendored equivalent once #4 lands)
-- Allow grouped surfacing of *findings* (codebase research, hypotheses) in a single message, but the *question* at the end must be singular
-- Permit "stacked" follow-ups in the same turn only when they are tightly coupled (e.g., "soft-block or hard-block? — and if soft, what default option?") and would feel artificial split apart
-- Update the "What NOT to do" section of every tier skill and `c3spec-start` to explicitly forbid numbered question dumps
-- Decide how to handle the user proactively answering more than was asked — accept the bonus context, don't re-ask, advance the interview accordingly
-- Consider a soft cap on interview turns so a one-question-per-turn rule doesn't drag a Tier 1 fix into a 20-question slog
-
-## 13. Audit and clean out pre-fork content in `c3spec/changes/`
+## 12. Audit and clean out pre-fork content in `c3spec/changes/`
 
 `c3spec/changes/` still carries a large amount of content produced upstream before the c3spec fork — both active-looking change folders at the root (e.g. `add-artifact-regeneration-support`, `add-change-stacking-awareness`, `add-global-install-scope`, `add-qa-smoke-harness`, `add-tool-command-surface-capabilities`, `simplify-skill-installation`, `unify-template-generation-pipeline`, `workspace-*`, `tier2-c3spec-bootstrap`, etc.) and ~80 entries under `archive/` dated from `2025-01-11` through `2026-04-23` (well before the fork). Because c3spec is a clean break from upstream and we don't cherry-pick from there, this content is mostly noise — it pollutes `c3spec list`, dilutes the audit trail, and makes it harder to see what's actually been built on c3spec. We should audit, classify, and prune so the changes folder reflects only c3spec history (plus anything we explicitly want to keep as inherited record).
 
@@ -146,7 +134,7 @@ Right now when `c3spec-start` runs the "relentless interview" or `superpowers:br
 - Document the cleanup in a single change folder so the prune itself is auditable
 - Update `IMPLEMENTATION_ORDER.md` (still in the changes root) if it references entries that get removed
 
-## 14. Enforce requirements of ALL specs with backing tests
+## 13. Enforce requirements of ALL specs with backing tests
 
 Today the only cross-spec enforcement in this repo is `test/specs/source-specs-normalization.test.ts`, which checks the *shape* of every `c3spec/specs/*/spec.md` (Purpose + Requirements sections, no delta headers, no placeholder text, parseable requirements). Behavioral alignment between each `### Requirement: …` and the code that implements it is trusted entirely to human discipline and `opsx-verify-skill` runs at change time — there is no CI signal when a requirement loses its backing test, or when an implementation drifts away from the requirement it was supposed to satisfy. We dogfood spec-driven development, so the bar should be higher: every requirement in every spec should be traceable to at least one test that exercises it, and CI should fail when that link breaks. Explore what this looks like end-to-end before committing to an implementation.
 

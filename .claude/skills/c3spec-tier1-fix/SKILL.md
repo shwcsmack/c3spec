@@ -203,7 +203,8 @@ This confirms tests are green, opens the PR, cleans up the worktree. PR descript
 - Do not skip the spec impact report even if the fix seems obviously localized
 - Do not skip memory capture if the bug class generalizes
 - Do not re-interview the user — carry forward context from c3spec-start
+- Do not batch multiple clarifying questions in one message — ask one at a time if follow-up is needed
 
 <!-- c3spec-generated: true
-c3spec-source: /Users/shayne/code/c3spec/.worktrees/first-class-agent-hosts/.agents/skills/c3spec-tier1-fix/SKILL.md
-c3spec-hash: 6f153fab7a5bce731899ed81513b3ec25c96e9e2ba04cd63069dba2dfcdadbe0 -->
+c3spec-source: /Users/shayne/code/c3spec/.worktrees/feat-one-question-interviews/.agents/skills/c3spec-tier1-fix/SKILL.md
+c3spec-hash: ad92cc5db998eeba7fb5d90b7b244af306f14fc9d1190e68537ae8e596e9557f -->

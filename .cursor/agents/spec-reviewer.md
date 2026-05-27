@@ -26,5 +26,5 @@ Return pass or fail with concrete file references:
 - ISSUES FOUND — list what is missing or extra with file:line references
 
 <!-- c3spec-generated: true
-c3spec-source: /Users/shayne/code/c3spec/.worktrees/first-class-agent-hosts/.agents/agents/spec-reviewer.yaml
+c3spec-source: /Users/shayne/code/c3spec/.worktrees/feat-one-question-interviews/.agents/agents/spec-reviewer.yaml
 c3spec-hash: 30d6b4002b31e1f05dc42b35bdb6af42936942e015f7beed744924712a83ed72 -->
