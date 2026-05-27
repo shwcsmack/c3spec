@@ -112,5 +112,5 @@ Carry forward everything from the interview as context into the tier skill — t
 - Do not select a tier or begin tier work before explicit user confirmation
 
 <!-- c3spec-generated: true
-c3spec-source: /Users/shayne/code/c3spec/.worktrees/feat-one-question-interviews/.agents/skills/c3spec-start/SKILL.md
+c3spec-source: /Users/shayne/code/c3spec/.worktrees/feat-tier-workflow-resumability/.agents/skills/c3spec-start/SKILL.md
 c3spec-hash: 2ee8bf37268e7377f6daca4d79b783e52b16a99bf1f2736addfe1ca1549a21e2 -->

@@ -20,8 +20,8 @@
 ## 4. Spec Sync and Generated Artifact Drift
 
 - [x] 4.1 Sync approved delta specs into source specs (`workflow-routing`, `canonical-skills`, `cli-artifact-workflow`, `cli-archive`) after implementation decisions are reflected in skills.
-- [ ] 4.2 Run host-generation or sync commands required by the repo so generated host artifacts stay aligned with `.agents/skills/`.
-- [ ] 4.3 Verify no generated artifact drift remains after canonical skill edits.
+- [x] 4.2 Run host-generation or sync commands required by the repo so generated host artifacts stay aligned with `.agents/skills/`.
+- [x] 4.3 Verify no generated artifact drift remains after canonical skill edits.
 
 ## 5. Tests and Verification
 
