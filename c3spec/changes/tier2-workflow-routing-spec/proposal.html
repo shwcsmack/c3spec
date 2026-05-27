@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tier 2 Proposal: Workflow Routing Spec</title>
+  <style>
+    :root {
+      --bg: #f7f7f4;
+      --panel: #ffffff;
+      --ink: #1f2933;
+      --muted: #5f6c7b;
+      --border: #d8ddd6;
+      --accent: #2f6fed;
+      --good: #0f766e;
+      --warn: #b45309;
+      --soft-blue: #eaf1ff;
+      --soft-green: #e8f5f1;
+      --soft-amber: #fff4df;
+    }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+    }
+    main {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 40px 24px 56px;
+    }
+    header {
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 28px;
+      padding-bottom: 20px;
+    }
+    h1 {
+      font-size: 2.25rem;
+      line-height: 1.15;
+      margin: 0 0 8px;
+    }
+    h2 {
+      margin-top: 32px;
+      font-size: 1.25rem;
+    }
+    .eyebrow {
+      color: var(--accent);
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-size: 0.78rem;
+    }
+    .summary {
+      color: var(--muted);
+      font-size: 1.05rem;
+      max-width: 760px;
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      margin: 18px 0;
+      box-shadow: 0 1px 2px rgba(31, 41, 51, 0.04);
+    }
+    .callout {
+      background: var(--soft-blue);
+      border-color: #b7cafb;
+    }
+    .defer {
+      background: var(--soft-amber);
+      border-color: #f0c36a;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 12px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    th, td {
+      border-bottom: 1px solid var(--border);
+      padding: 12px 14px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: #eef1f4;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.035em;
+    }
+    tr:last-child td {
+      border-bottom: 0;
+    }
+    code {
+      background: #eef1f4;
+      border-radius: 6px;
+      padding: 0.15rem 0.35rem;
+      font-size: 0.92em;
+    }
+    .capability {
+      background: var(--soft-green);
+      border-color: #a8d8ca;
+    }
+    .status {
+      display: inline-block;
+      border-radius: 999px;
+      padding: 0.2rem 0.6rem;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+    .new { background: var(--soft-green); color: var(--good); }
+    .unchanged { background: #eef1f4; color: var(--muted); }
+    .deferred { background: var(--soft-amber); color: var(--warn); }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div class="eyebrow">Tier 2 Proposal · 2026-05-26</div>
+      <h1>Codify Workflow Routing as a Spec</h1>
+      <p class="summary">
+        Add a new source-of-truth behavioral spec for c3spec's tier routing contract:
+        the <code>c3spec-start</code> front door, T1/T2/T3 classification, canonical tier skills,
+        required workflow phases, and the existing enforcement surfaces that keep the generated host
+        artifacts aligned.
+      </p>
+    </header>
+
+    <section class="card callout">
+      <h2>Why</h2>
+      <p>
+        The tier workflow is one of c3spec's core product contracts, but today it is spread across
+        <code>CLAUDE.md</code>, <code>AGENTS.md</code>, generated instruction source, and six skill files.
+        Other stable behaviors in the repo are documented under <code>c3spec/specs/</code>; routing is not.
+        Capturing it as a behavior-first spec gives future workflow changes a shared target and reduces
+        drift between instructions, skills, tests, and generated host artifacts.
+      </p>
+    </section>
+
+    <section>
+      <h2>What Changes</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Area</th>
+            <th>From</th>
+            <th>To</th>
+            <th>Impact</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Workflow routing contract</strong></td>
+            <td>Documented in instructions and skill prose only.</td>
+            <td>Documented as <code>workflow-routing</code> under <code>c3spec/specs/</code>.</td>
+            <td><span class="status new">New spec</span></td>
+          </tr>
+          <tr>
+            <td><strong>Tier set and entry path</strong></td>
+            <td>Implied by <code>c3spec-start</code> and host instruction blocks.</td>
+            <td>Specified as a stable contract: all work enters through <code>c3spec-start</code>, then routes to T1/T2/T3.</td>
+            <td><span class="status new">Clarifies behavior</span></td>
+          </tr>
+          <tr>
+            <td><strong>Canonical skills and agents</strong></td>
+            <td>Enforced by constants/tests, not described in a workflow spec.</td>
+            <td>Spec names the canonical skill and review-agent surface at behavior level.</td>
+            <td><span class="status unchanged">No code change</span></td>
+          </tr>
+          <tr>
+            <td><strong>Spec/test enforcement</strong></td>
+            <td>No project-wide requirement-to-test coverage convention exists.</td>
+            <td>Explicitly out of scope for this change; captured as IDEAS.md #15.</td>
+            <td><span class="status deferred">Deferred</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card capability">
+      <h2>New Capability</h2>
+      <p>
+        <code>workflow-routing</code>: Defines the c3spec tier workflow contract, including the front-door
+        interview, routing classifier behavior, tier-specific workflow shape, canonical skill/agent surfaces,
+        and expected enforcement boundaries.
+      </p>
+    </section>
+
+    <section>
+      <h2>Impact</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Surface</th>
+            <th>Expected Change</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>c3spec/changes/tier2-workflow-routing-spec/specs/workflow-routing/spec.md</code></td>
+            <td>Add delta spec for the new capability.</td>
+          </tr>
+          <tr>
+            <td><code>c3spec/specs/workflow-routing/spec.md</code></td>
+            <td>Created when the change is archived.</td>
+          </tr>
+          <tr>
+            <td><code>.agents/skills/*</code>, <code>src/core/host-generation/*</code>, tests</td>
+            <td>No changes in this docs-only pass.</td>
+          </tr>
+          <tr>
+            <td><code>IDEAS.md</code></td>
+            <td>Already updated on <code>main</code> with #15 for future all-spec requirement/test enforcement.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card defer">
+      <h2>Explicit Non-Goals</h2>
+      <ul>
+        <li>No new test or CI enforcement for requirement-to-test mapping.</li>
+        <li>No edits to tier skills, generated host instructions, <code>CLAUDE.md</code>, or <code>AGENTS.md</code>.</li>
+        <li>No change to T1's current inline/no-change-folder behavior.</li>
+        <li>No richer <code>tasks.md</code> schema work; that remains a separate backlog item.</li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>
