@@ -11,6 +11,7 @@ const REQUIRED = [
   'c3spec-tier1-fix',
   'c3spec-tier2-feature',
   'c3spec-tier3-full',
+  'c3spec-tier-lifecycle',
   'c3spec-subagent-dev',
   'c3spec-host-adapter',
   'c3spec-continue-change',

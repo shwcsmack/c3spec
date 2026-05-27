@@ -1,8 +1,8 @@
 ## 1. Canonical Lifecycle Contract
 
-- [ ] 1.1 Add `.agents/skills/c3spec-tier-lifecycle/SKILL.md` as a reference skill that defines T1/T2/T3 folder conventions, required artifacts, optional artifacts, pause points, apply readiness, archive readiness, and fresh-context resume rules.
-- [ ] 1.2 Register `c3spec-tier-lifecycle` in canonical skill enforcement surfaces (`REQUIRED_CANONICAL_SKILL_NAMES` and `scripts/check-canonical-skills.js`) so validation and host generation require it.
-- [ ] 1.3 Add or update tests that fail when `c3spec-tier-lifecycle` is missing from the required canonical skill list or script-level check.
+- [x] 1.1 Add `.agents/skills/c3spec-tier-lifecycle/SKILL.md` as a reference skill that defines T1/T2/T3 folder conventions, required artifacts, optional artifacts, pause points, apply readiness, archive readiness, and fresh-context resume rules.
+- [x] 1.2 Register `c3spec-tier-lifecycle` in canonical skill enforcement surfaces (`REQUIRED_CANONICAL_SKILL_NAMES` and `scripts/check-canonical-skills.js`) so validation and host generation require it.
+- [x] 1.3 Add or update tests that fail when `c3spec-tier-lifecycle` is missing from the required canonical skill list or script-level check.
 
 ## 2. Tier Workflow Skill Updates
 
