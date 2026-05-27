@@ -7,6 +7,7 @@ One line per entry. Load this index at the start of every `/opsx:start` session 
 
 ## Workflow
 - [Two Skill Pipelines](workflow/two-skill-pipelines.md) — skills, host-generation, codegen, tier-workflows, workflow-gates
+- [Complete Excision Active Surfaces](workflow/complete-excision-active-surfaces.md) — cleanup, telemetry, lockfiles, tests, excision, workflow-gates
 
 ## Constraints
 <!-- entries added here as constraints are discovered -->
