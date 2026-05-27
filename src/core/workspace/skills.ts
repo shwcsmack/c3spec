@@ -1,21 +1,18 @@
 import * as nodeFs from 'node:fs';
-import { createRequire } from 'node:module';
+import path from 'node:path';
 
 import { FileSystemUtils } from '../../utils/file-system.js';
 import { AI_TOOLS, type AIToolOption } from '../config.js';
 import { getGlobalConfig, type Delivery, type Profile } from '../global-config.js';
-import { getProfileWorkflows } from '../profiles.js';
+import { ALL_WORKFLOWS, getProfileWorkflows } from '../profiles.js';
 import {
-  generateSkillContent,
-  getSkillTemplates,
   getToolSkillStatus,
   getToolsWithSkillsDir,
-  extractGeneratedByVersion,
+  readBundledSkillsForWorkflows,
+  workflowIdToCanonicalSkill,
 } from '../shared/index.js';
 import type { WorkspaceLocalState, WorkspaceSkillState } from './foundation.js';
 
-const require = createRequire(import.meta.url);
-const { version: C3SPEC_VERSION } = require('../../../package.json');
 const fs = nodeFs.promises;
 
 export interface WorkspaceSkillAgentResult {
@@ -260,8 +257,15 @@ function makeAgentResult(
   };
 }
 
-function getManagedWorkspaceSkillEntries(): Array<{ workflowId: string; dirName: string }> {
-  return getSkillTemplates().map(({ workflowId, dirName }) => ({ workflowId, dirName }));
+function getManagedWorkspaceSkillEntries(
+  workflowIds: readonly string[]
+): Array<{ workflowId: string; dirName: string }> {
+  return workflowIds
+    .map((workflowId) => {
+      const dirName = workflowIdToCanonicalSkill(workflowId);
+      return dirName ? { workflowId, dirName } : null;
+    })
+    .filter((entry): entry is { workflowId: string; dirName: string } => entry !== null);
 }
 
 async function pathExists(targetPath: string): Promise<boolean> {
@@ -274,8 +278,25 @@ async function pathExists(targetPath: string): Promise<boolean> {
 }
 
 function isC3SpecManagedSkillDir(skillDir: string): boolean {
-  const skillFile = FileSystemUtils.joinPath(skillDir, 'SKILL.md');
-  return extractGeneratedByVersion(skillFile) !== null;
+  const dirName = path.basename(skillDir);
+  if (!dirName.startsWith('c3spec-')) {
+    return false;
+  }
+
+  const skillPath = path.join(skillDir, 'SKILL.md');
+  let content: string;
+  try {
+    content = nodeFs.readFileSync(skillPath, 'utf8');
+  } catch {
+    return false;
+  }
+
+  const frontmatterMatch = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
+  if (!frontmatterMatch) {
+    return false;
+  }
+  const nameMatch = frontmatterMatch[1].match(/^name:\s*(.+?)\s*$/m);
+  return nameMatch?.[1] === dirName;
 }
 
 async function removeManagedWorkflowSkillDirs(
@@ -288,7 +309,7 @@ async function removeManagedWorkflowSkillDirs(
   const skillsDir = getWorkspaceSkillDirectoryForTool(workspaceRoot, tool);
   const removedWorkflowIds: string[] = [];
 
-  for (const { workflowId, dirName } of getManagedWorkspaceSkillEntries()) {
+  for (const { workflowId, dirName } of getManagedWorkspaceSkillEntries(ALL_WORKFLOWS)) {
     if (desiredSet.has(workflowId)) {
       continue;
     }
@@ -331,9 +352,9 @@ export async function generateWorkspaceAgentSkills(
     return report;
   }
 
-  const skillTemplates = getSkillTemplates(profileContext.workflowIds);
+  const bundledSkills = await readBundledSkillsForWorkflows(profileContext.workflowIds);
 
-  if (skillTemplates.length === 0) {
+  if (bundledSkills.length === 0) {
     for (const toolId of selectedAgentIds) {
       const tool = getWorkspaceSkillTool(toolId);
       report.skipped.push({
@@ -352,10 +373,9 @@ export async function generateWorkspaceAgentSkills(
 
     try {
       const skillsDir = getWorkspaceSkillDirectoryForTool(workspaceRoot, tool);
-      for (const { template, dirName } of skillTemplates) {
+      for (const { dirName, content } of bundledSkills) {
         const skillFile = FileSystemUtils.joinPath(skillsDir, dirName, 'SKILL.md');
-        const skillContent = generateSkillContent(template, C3SPEC_VERSION);
-        await FileSystemUtils.writeFile(skillFile, skillContent);
+        await FileSystemUtils.writeFile(skillFile, content);
       }
 
       const result = makeAgentResult(workspaceRoot, tool, profileContext.workflowIds);
@@ -386,7 +406,7 @@ export async function updateWorkspaceAgentSkills(
   const previousSelectedAgentIds = previousSkillState?.selected_agents ?? [];
   const previousSelectedSet = new Set(previousSelectedAgentIds);
   const selectedSet = new Set(selectedAgentIds);
-  const skillTemplates = getSkillTemplates(profileContext.workflowIds);
+  const bundledSkills = await readBundledSkillsForWorkflows(profileContext.workflowIds);
 
   for (const toolId of previousSelectedAgentIds) {
     if (selectedSet.has(toolId)) {
@@ -426,7 +446,7 @@ export async function updateWorkspaceAgentSkills(
     return report;
   }
 
-  if (skillTemplates.length === 0) {
+  if (bundledSkills.length === 0) {
     for (const toolId of selectedAgentIds) {
       const tool = getWorkspaceSkillTool(toolId);
       try {
@@ -461,10 +481,9 @@ export async function updateWorkspaceAgentSkills(
 
     try {
       const skillsDir = getWorkspaceSkillDirectoryForTool(workspaceRoot, tool);
-      for (const { template, dirName } of skillTemplates) {
+      for (const { dirName, content } of bundledSkills) {
         const skillFile = FileSystemUtils.joinPath(skillsDir, dirName, 'SKILL.md');
-        const skillContent = generateSkillContent(template, C3SPEC_VERSION);
-        await FileSystemUtils.writeFile(skillFile, skillContent);
+        await FileSystemUtils.writeFile(skillFile, content);
       }
 
       const removed = await removeManagedWorkflowSkillDirs(

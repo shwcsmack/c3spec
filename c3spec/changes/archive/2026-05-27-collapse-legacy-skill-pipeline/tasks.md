@@ -1,0 +1,7 @@
+- [x] Inventory and classify legacy root skills
+- [x] Migrate utility skills to `.agents/skills/`
+- [x] Remove root `skills/` and codegen pipeline
+- [x] Refactor workspace install to copy bundled canonical skills
+- [x] Move command templates to `src/core/templates/commands/`
+- [x] Update profiles, tests, and specs
+- [x] Add `check:canonical-skills` CI script

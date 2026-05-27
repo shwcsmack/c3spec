@@ -741,13 +741,13 @@ More user content after markers.
       const claudeSkillsDir = path.join(testDir, '.claude', 'skills');
       await fs.mkdir(path.join(claudeSkillsDir, 'c3spec-explore'), { recursive: true });
       await fs.writeFile(path.join(claudeSkillsDir, 'c3spec-explore', 'SKILL.md'), 'content');
-      await fs.mkdir(path.join(claudeSkillsDir, 'c3spec-apply-change'), { recursive: true });
-      await fs.writeFile(path.join(claudeSkillsDir, 'c3spec-apply-change', 'SKILL.md'), 'content');
+      await fs.mkdir(path.join(claudeSkillsDir, 'c3spec-sync-specs'), { recursive: true });
+      await fs.writeFile(path.join(claudeSkillsDir, 'c3spec-sync-specs', 'SKILL.md'), 'content');
 
       const workflows = scanInstalledWorkflows(testDir, ['claude']);
       expect(workflows).toContain('explore');
-      expect(workflows).toContain('apply');
-      expect(workflows).not.toContain('propose');
+      expect(workflows).toContain('sync');
+      expect(workflows).not.toContain('onboard');
     });
 
     it('should return union of workflows across multiple tools', async () => {
@@ -756,12 +756,12 @@ More user content after markers.
       await fs.writeFile(path.join(claudeSkillsDir, 'c3spec-explore', 'SKILL.md'), 'content');
 
       const agentsSkillsDir = path.join(testDir, '.agents', 'skills');
-      await fs.mkdir(path.join(agentsSkillsDir, 'c3spec-apply-change'), { recursive: true });
-      await fs.writeFile(path.join(agentsSkillsDir, 'c3spec-apply-change', 'SKILL.md'), 'content');
+      await fs.mkdir(path.join(agentsSkillsDir, 'c3spec-archive-change'), { recursive: true });
+      await fs.writeFile(path.join(agentsSkillsDir, 'c3spec-archive-change', 'SKILL.md'), 'content');
 
       const workflows = scanInstalledWorkflows(testDir, ['claude', 'cursor']);
       expect(workflows).toContain('explore');
-      expect(workflows).toContain('apply');
+      expect(workflows).toContain('archive');
     });
 
     it('should only match workflows in ALL_WORKFLOWS', async () => {

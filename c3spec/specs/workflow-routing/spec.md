@@ -179,7 +179,7 @@ c3spec machine enforcement SHALL guarantee that the canonical skill, agent, and 
 #### Scenario: Canonical artifact presence is enforced
 
 - **WHEN** c3spec validates or generates host artifacts
-- **THEN** the required canonical skill names (`c3spec-start`, `c3spec-tier1-fix`, `c3spec-tier2-feature`, `c3spec-tier3-full`, `c3spec-subagent-dev`, `c3spec-host-adapter`) SHALL be required to exist under `.agents/skills/`
+- **THEN** the required canonical skill names (`c3spec-start`, `c3spec-tier1-fix`, `c3spec-tier2-feature`, `c3spec-tier3-full`, `c3spec-subagent-dev`, `c3spec-host-adapter`, `c3spec-continue-change`, `c3spec-apply-change`, `c3spec-explore`, `c3spec-sync-specs`, `c3spec-archive-change`, `c3spec-bulk-archive-change`, `c3spec-verify-change`, `c3spec-onboard`) SHALL be required to exist under `.agents/skills/`
 - **AND** the required canonical agent role names (`implementer`, `spec-reviewer`, `quality-reviewer`) SHALL be required to exist under `.agents/agents/`
 - **AND** the required canonical hook name (`c3spec-memory-scan`) SHALL be required to exist under `.agents/hooks/`
 

@@ -274,7 +274,7 @@ describe('workspace command', () => {
     writeGlobalConfig({
       profile: 'custom',
       delivery: 'commands',
-      workflows: ['apply', 'archive'],
+      workflows: ['verify', 'archive'],
     });
 
     const result = await runCLI(
@@ -308,14 +308,14 @@ describe('workspace command', () => {
       expect.objectContaining({
         profile: 'custom',
         delivery: 'commands',
-        workflow_ids: ['apply', 'archive'],
+        workflow_ids: ['verify', 'archive'],
         selected_agents: ['codex'],
         skills_only: true,
         delivery_notice: expect.stringContaining('skills only'),
         generated: [
           expect.objectContaining({
             tool_id: 'codex',
-            workflow_ids: ['apply', 'archive'],
+            workflow_ids: ['verify', 'archive'],
           }),
         ],
         refreshed: [],
@@ -323,9 +323,9 @@ describe('workspace command', () => {
       })
     );
 
-    expect(fs.existsSync(path.join(workspaceRoot, '.agents', 'skills', 'c3spec-apply-change', 'SKILL.md'))).toBe(true);
+    expect(fs.existsSync(path.join(workspaceRoot, '.agents', 'skills', 'c3spec-verify-change', 'SKILL.md'))).toBe(true);
     expect(fs.existsSync(path.join(workspaceRoot, '.agents', 'skills', 'c3spec-archive-change', 'SKILL.md'))).toBe(true);
-    expect(fs.existsSync(path.join(workspaceRoot, '.agents', 'skills', 'c3spec-propose', 'SKILL.md'))).toBe(false);
+    expect(fs.existsSync(path.join(workspaceRoot, '.agents', 'skills', 'c3spec-explore', 'SKILL.md'))).toBe(false);
     expect(fs.existsSync(path.join(codexHome, 'prompts'))).toBe(false);
     expect(fs.readdirSync(api).sort()).toEqual(linkedEntriesBefore);
     expect(fs.existsSync(path.join(api, '.codex'))).toBe(false);
@@ -335,7 +335,7 @@ describe('workspace command', () => {
         selected_agents: ['codex'],
         last_applied_profile: 'custom',
         last_applied_delivery: 'commands',
-        last_applied_workflow_ids: ['apply', 'archive'],
+        last_applied_workflow_ids: ['verify', 'archive'],
         last_applied_at: expect.any(String),
       })
     );
@@ -361,7 +361,7 @@ describe('workspace command', () => {
     expect(readLocalState(setup.workspace.root).workspace_skills).toEqual(
       expect.objectContaining({
         selected_agents: [],
-        last_applied_workflow_ids: ['propose', 'explore', 'apply', 'sync', 'archive'],
+        last_applied_workflow_ids: ['explore', 'sync', 'archive'],
       })
     );
   });
@@ -372,7 +372,7 @@ describe('workspace command', () => {
     writeGlobalConfig({
       profile: 'custom',
       delivery: 'commands',
-      workflows: ['apply', 'verify'],
+      workflows: ['verify', 'bulk-archive'],
     });
     const setup = await setupWorkspace('profile-sync', [`api=${api}`], ['--tools', 'codex']);
     const workspaceRoot = setup.workspace.root;
@@ -380,8 +380,8 @@ describe('workspace command', () => {
     fs.mkdirSync(customSkillDir, { recursive: true });
     fs.writeFileSync(path.join(customSkillDir, 'README.md'), 'user-owned\n');
 
-    expect(fs.existsSync(path.join(workspaceRoot, '.agents', 'skills', 'c3spec-apply-change', 'SKILL.md'))).toBe(true);
     expect(fs.existsSync(path.join(workspaceRoot, '.agents', 'skills', 'c3spec-verify-change', 'SKILL.md'))).toBe(true);
+    expect(fs.existsSync(path.join(workspaceRoot, '.agents', 'skills', 'c3spec-bulk-archive-change', 'SKILL.md'))).toBe(true);
 
     writeGlobalConfig({
       profile: 'core',
@@ -412,31 +412,31 @@ describe('workspace command', () => {
       expect.objectContaining({
         profile: 'core',
         delivery: 'commands',
-        workflow_ids: ['propose', 'explore', 'apply', 'sync', 'archive'],
+        workflow_ids: ['explore', 'sync', 'archive'],
         selected_agents: ['codex'],
         skills_only: true,
         delivery_notice: expect.stringContaining('skills only'),
         refreshed: [
           expect.objectContaining({
             tool_id: 'codex',
-            workflow_ids: ['propose', 'explore', 'apply', 'sync', 'archive'],
+            workflow_ids: ['explore', 'sync', 'archive'],
           }),
         ],
         removed: [
           expect.objectContaining({
             tool_id: 'codex',
             reason: 'workflow_unselected',
-            workflow_ids: ['verify'],
+            workflow_ids: ['bulk-archive', 'verify'],
           }),
         ],
         failed: [],
       })
     );
-    expect(fs.existsSync(path.join(workspaceRoot, '.agents', 'skills', 'c3spec-propose', 'SKILL.md'))).toBe(true);
     expect(fs.existsSync(path.join(workspaceRoot, '.agents', 'skills', 'c3spec-explore', 'SKILL.md'))).toBe(true);
     expect(fs.existsSync(path.join(workspaceRoot, '.agents', 'skills', 'c3spec-sync-specs', 'SKILL.md'))).toBe(true);
     expect(fs.existsSync(path.join(workspaceRoot, '.agents', 'skills', 'c3spec-archive-change', 'SKILL.md'))).toBe(true);
     expect(fs.existsSync(path.join(workspaceRoot, '.agents', 'skills', 'c3spec-verify-change'))).toBe(false);
+    expect(fs.existsSync(path.join(workspaceRoot, '.agents', 'skills', 'c3spec-bulk-archive-change'))).toBe(false);
     expect(fs.existsSync(path.join(customSkillDir, 'README.md'))).toBe(true);
     expect(fs.existsSync(path.join(workspaceRoot, '.codex', 'prompts'))).toBe(false);
     expect(fs.readdirSync(api).sort()).toEqual(linkedEntriesBefore);
@@ -446,7 +446,7 @@ describe('workspace command', () => {
         selected_agents: ['codex'],
         last_applied_profile: 'core',
         last_applied_delivery: 'commands',
-        last_applied_workflow_ids: ['propose', 'explore', 'apply', 'sync', 'archive'],
+        last_applied_workflow_ids: ['explore', 'sync', 'archive'],
       })
     );
 
@@ -468,12 +468,12 @@ describe('workspace command', () => {
     writeGlobalConfig({
       profile: 'custom',
       delivery: 'commands',
-      workflows: ['apply'],
+      workflows: ['verify'],
     });
     const setup = await setupWorkspace('update-redirect', [`api=${api}`], ['--tools', 'codex']);
     const workspaceRoot = setup.workspace.root;
-    expect(fs.existsSync(path.join(workspaceRoot, '.agents', 'skills', 'c3spec-apply-change', 'SKILL.md'))).toBe(true);
-    expect(fs.existsSync(path.join(workspaceRoot, '.agents', 'skills', 'c3spec-propose', 'SKILL.md'))).toBe(false);
+    expect(fs.existsSync(path.join(workspaceRoot, '.agents', 'skills', 'c3spec-verify-change', 'SKILL.md'))).toBe(true);
+    expect(fs.existsSync(path.join(workspaceRoot, '.agents', 'skills', 'c3spec-explore', 'SKILL.md'))).toBe(false);
 
     writeGlobalConfig({
       profile: 'core',
@@ -488,7 +488,7 @@ describe('workspace command', () => {
     expect(update.stdout).toContain('Workspace update complete');
     expect(update.stdout).toContain('update-redirect');
     expect(update.stdout).not.toContain('not recorded in the local workspace registry');
-    expect(fs.existsSync(path.join(workspaceRoot, '.agents', 'skills', 'c3spec-propose', 'SKILL.md'))).toBe(true);
+    expect(fs.existsSync(path.join(workspaceRoot, '.agents', 'skills', 'c3spec-explore', 'SKILL.md'))).toBe(true);
     expect(fs.existsSync(path.join(workspaceRoot, '.agents', 'skills', 'c3spec-sync-specs', 'SKILL.md'))).toBe(true);
     expect(fs.readdirSync(api).sort()).toEqual(linkedEntriesBefore);
     expect(fs.existsSync(path.join(api, '.codex'))).toBe(false);
@@ -500,7 +500,7 @@ describe('workspace command', () => {
     writeGlobalConfig({
       profile: 'custom',
       delivery: 'commands',
-      workflows: ['apply'],
+      workflows: ['verify'],
     });
     const first = await setupWorkspace('target-first', [`api=${firstApi}`], ['--tools', 'codex']);
     const second = await setupWorkspace('target-second', [`api=${secondApi}`], ['--tools', 'codex']);
@@ -519,8 +519,8 @@ describe('workspace command', () => {
     expect(update.stdout).toContain('Workspace update complete');
     expect(update.stdout).toContain('target-first');
     expect(update.stdout).not.toContain('Multiple C3Spec workspaces are known');
-    expect(fs.existsSync(path.join(first.workspace.root, '.agents', 'skills', 'c3spec-propose', 'SKILL.md'))).toBe(true);
-    expect(fs.existsSync(path.join(second.workspace.root, '.agents', 'skills', 'c3spec-propose', 'SKILL.md'))).toBe(false);
+    expect(fs.existsSync(path.join(first.workspace.root, '.agents', 'skills', 'c3spec-explore', 'SKILL.md'))).toBe(true);
+    expect(fs.existsSync(path.join(second.workspace.root, '.agents', 'skills', 'c3spec-explore', 'SKILL.md'))).toBe(false);
   });
 
   it('supports named and flag-selected workspace updates with explicit agent changes', async () => {
@@ -528,7 +528,7 @@ describe('workspace command', () => {
     writeGlobalConfig({
       profile: 'custom',
       delivery: 'skills',
-      workflows: ['apply'],
+      workflows: ['verify'],
     });
     const setup = await setupWorkspace('agent-change', [`api=${api}`], ['--tools', 'codex']);
     const workspaceRoot = setup.workspace.root;
@@ -543,12 +543,12 @@ describe('workspace command', () => {
     expect(addAgent.exitCode).toBe(0);
     const addPayload = parseJson(addAgent);
     expect(addPayload.workspace_skills.refreshed).toEqual([
-      expect.objectContaining({ tool_id: 'codex', workflow_ids: ['apply'] }),
+      expect.objectContaining({ tool_id: 'codex', workflow_ids: ['verify'] }),
     ]);
     expect(addPayload.workspace_skills.added).toEqual([
-      expect.objectContaining({ tool_id: 'claude', workflow_ids: ['apply'] }),
+      expect.objectContaining({ tool_id: 'claude', workflow_ids: ['verify'] }),
     ]);
-    expect(fs.existsSync(path.join(workspaceRoot, '.claude', 'skills', 'c3spec-apply-change', 'SKILL.md'))).toBe(true);
+    expect(fs.existsSync(path.join(workspaceRoot, '.claude', 'skills', 'c3spec-verify-change', 'SKILL.md'))).toBe(true);
     expect(readLocalState(workspaceRoot).workspace_skills?.selected_agents).toEqual(['codex', 'claude']);
 
     const removeAgent = await runCLI(
@@ -561,13 +561,13 @@ describe('workspace command', () => {
       expect.objectContaining({
         tool_id: 'codex',
         reason: 'agent_unselected',
-        workflow_ids: ['apply'],
+        workflow_ids: ['verify'],
       }),
     ]);
     expect(removePayload.workspace_skills.refreshed).toEqual([
-      expect.objectContaining({ tool_id: 'claude', workflow_ids: ['apply'] }),
+      expect.objectContaining({ tool_id: 'claude', workflow_ids: ['verify'] }),
     ]);
-    expect(fs.existsSync(path.join(workspaceRoot, '.agents', 'skills', 'c3spec-apply-change'))).toBe(false);
+    expect(fs.existsSync(path.join(workspaceRoot, '.agents', 'skills', 'c3spec-verify-change'))).toBe(false);
     expect(fs.existsSync(path.join(userSkillDir, 'SKILL.md'))).toBe(true);
     expect(readLocalState(workspaceRoot).workspace_skills?.selected_agents).toEqual(['claude']);
   });
@@ -600,11 +600,11 @@ describe('workspace command', () => {
     writeGlobalConfig({
       profile: 'custom',
       delivery: 'skills',
-      workflows: ['apply'],
+      workflows: ['verify'],
     });
     const setup = await setupWorkspace('failed-update-state', [`api=${api}`], ['--tools', 'codex']);
     const workspaceRoot = setup.workspace.root;
-    const blockingSkillPath = path.join(workspaceRoot, '.agents', 'skills', 'c3spec-propose');
+    const blockingSkillPath = path.join(workspaceRoot, '.agents', 'skills', 'c3spec-explore');
     fs.writeFileSync(blockingSkillPath, 'blocks generated skill directory\n');
 
     writeGlobalConfig({
@@ -627,7 +627,7 @@ describe('workspace command', () => {
       expect.objectContaining({
         selected_agents: ['codex'],
         last_applied_profile: 'custom',
-        last_applied_workflow_ids: ['apply'],
+        last_applied_workflow_ids: ['verify'],
       })
     );
   });
