@@ -6,6 +6,7 @@ export const REQUIRED_CANONICAL_SKILL_NAMES = [
   'c3spec-start',
   'c3spec-tier1-fix',
   'c3spec-tier2-feature',
+  'c3spec-tier3-full',
   'c3spec-subagent-dev',
   'c3spec-host-adapter',
 ] as const;

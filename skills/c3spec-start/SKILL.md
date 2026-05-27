@@ -84,6 +84,6 @@ After confirmation:
 
 **Tier 1:** Invoke `c3spec-tier1-fix` skill
 **Tier 2:** Invoke `c3spec-tier2-feature` skill  
-**Tier 3:** Use `/c3spec:continue` to begin the superpowers-bridge flow from the brainstorm artifact (create the change directory first: `c3spec new change "<name>"`)
+**Tier 3:** Invoke `c3spec-tier3-full` skill
 
 Carry forward everything from the interview as context into the tier skill — the user should not repeat themselves.
