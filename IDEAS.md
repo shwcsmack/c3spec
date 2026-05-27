@@ -84,18 +84,7 @@ The repo has two parallel skill pipelines (see memory: `workflow/two-skill-pipel
 - Update `CLAUDE.md` / `AGENTS.md` to declare `.agents/skills/` as the single source of truth so contributors don't reintroduce the legacy path
 - Confirm host-generation regenerates `.cursor/skills/`, `.claude/skills/`, and `.codex/` skill artifacts cleanly after the migration
 
-## 9. Codify the tier workflow contract as a `workflow-routing` spec
-
-The tier system (T1/T2/T3, `c3spec-start` as the front door, dedicated skills per tier) currently lives only in `CLAUDE.md` and the skill files themselves. Other system behaviors in this repo have specs under `c3spec/specs/` with explicit requirements and scenarios; the workflow routing contract does not. Spawned from the Tier 3 skill change (archived as `2026-05-27-tier2-tier3-full-skill`) — when authoring that skill the question came up whether to add a spec, and the answer was "not in that change, but worth doing later as its own thing."
-
-- Define what counts as a tier and how many there are
-- Define the required entry path (`c3spec-start` → tier skill)
-- Define the canonical skill set per tier and how that list is enforced (constants in `init.ts`/`update.ts`, host-generation coverage)
-- Define the routing classifier contract (signals per tier, ambiguous-case rule, user-confirmation gate)
-- Define what a tier skill MUST contain (pre-flight, planning, apply, verify, retro, finish, anti-patterns)
-- Specify which existing tests/CI checks enforce each requirement
-
-## 10. Make `tasks.md` more extensive and structured
+## 9. Make `tasks.md` more extensive and structured
 
 The current Tier 2 `tasks.md` template is a flat bulleted checklist (`- [ ] Task 1: ...`). For anything beyond a trivial feature this collapses too much detail and loses the staging that the plan already implies. Tasks should mirror the staged structure of the plan (`Task 1`, `Task 1.1`, `Task 1.2`, ...) so the task list itself communicates dependencies, stages, and grouping — not just an ordered checklist.
 
@@ -105,7 +94,7 @@ The current Tier 2 `tasks.md` template is a flat bulleted checklist (`- [ ] Task
 - Decide whether checkboxes apply per-subtask, per-task, or both, and update the subagent-dev checkbox discipline accordingly
 - Make sure spec-impact, verify, retro, and archive remain visible as their own structured tasks rather than buried in a flat list
 
-## 11. Mandatory context reset before the implementation step
+## 10. Mandatory context reset before the implementation step
 
 Every tier should pause between planning and implementation, either by handing the apply step to a fresh agent or by clearing the orchestrator's context before code is written. Today the same session that did the brainstorm/proposal/design/plan also drives apply, so it carries hundreds of turns of planning chatter into the code-writing phase — which dilutes attention, leaks half-formed ideas into the implementation, and makes review harder. Subagents already get fresh context, but the orchestrator itself does not, and there's no enforced pause point.
 
@@ -115,11 +104,11 @@ Every tier should pause between planning and implementation, either by handing t
 - Encode the pause as an explicit skill step with a checkpoint, not a convention
 - Make sure the context-reset boundary preserves the artifacts the apply step needs (paths to plan.md, specs, change folder) — usually via filesystem, not chat history
 
-## 12. Formalize `IDEAS.md` as the backlog with an "add idea" skill
+## 11. Formalize `IDEAS.md` as the backlog with an "add idea" skill
 
 `IDEAS.md` is already where new work lands, but it's an informal convention — there's no skill to add to it, no schema for entries, and no way to capture an idea mid-flow without derailing whatever the agent is currently doing. Mid-chat ideas get lost or shoehorned into the current conversation. The backlog also goes stale — completed ideas linger because nothing prunes them when a change starts or archives. Formalize the file as the project backlog, give it a dedicated capture skill that works from anywhere in the workflow (T1 fix, T2 plan, T3 brainstorm, idle chat) without breaking the active task, and wire it into the change lifecycle so the backlog stays current automatically.
 
-- Define the entry schema (heading style, summary paragraph, bullet list — match the current shape of #1–#12)
+- Define the entry schema (heading style, summary paragraph, bullet list — match the current shape of #1–#11)
 - Author a `c3spec-add-idea` skill that takes a short user prompt and appends a properly-formatted entry, auto-numbered, without leaving the current workflow
 - Make the skill non-disruptive: it must not switch worktrees, touch the active change folder, or pollute the in-flight plan
 - Decide on auto-numbering vs. date-based slugs and how to handle concurrent edits / merge conflicts
@@ -130,7 +119,7 @@ Every tier should pause between planning and implementation, either by handing t
 - Decide how to associate a backlog entry with its change (explicit `change:` slug field on the entry, or fuzzy match on title) so the lifecycle hooks know what to prune
 - Add an "audit backlog" step (or skill) that flags entries pointing at already-archived changes so completed work doesn't linger
 
-## 13. Interview one question at a time during `c3spec-start` and brainstorming
+## 12. Interview one question at a time during `c3spec-start` and brainstorming
 
 Right now when `c3spec-start` runs the "relentless interview" or `superpowers:brainstorming` runs its discovery, the agent tends to fire a numbered batch of questions all at once — sometimes 6–10 in a single message. That's overwhelming, and the user ends up either answering them out of order, missing some, or spending a long block of time before the agent sees any feedback. The agent also can't adapt — the answer to question 1 frequently makes questions 4–6 irrelevant or reshapes them entirely. Single-question interviews are slower per-turn but converge faster overall and feel like a conversation instead of a quiz.
 
@@ -142,7 +131,7 @@ Right now when `c3spec-start` runs the "relentless interview" or `superpowers:br
 - Decide how to handle the user proactively answering more than was asked — accept the bonus context, don't re-ask, advance the interview accordingly
 - Consider a soft cap on interview turns so a one-question-per-turn rule doesn't drag a Tier 1 fix into a 20-question slog
 
-## 14. Audit and clean out pre-fork content in `c3spec/changes/`
+## 13. Audit and clean out pre-fork content in `c3spec/changes/`
 
 `c3spec/changes/` still carries a large amount of content produced upstream before the c3spec fork — both active-looking change folders at the root (e.g. `add-artifact-regeneration-support`, `add-change-stacking-awareness`, `add-global-install-scope`, `add-qa-smoke-harness`, `add-tool-command-surface-capabilities`, `simplify-skill-installation`, `unify-template-generation-pipeline`, `workspace-*`, `tier2-c3spec-bootstrap`, etc.) and ~80 entries under `archive/` dated from `2025-01-11` through `2026-04-23` (well before the fork). Because c3spec is a clean break from upstream and we don't cherry-pick from there, this content is mostly noise — it pollutes `c3spec list`, dilutes the audit trail, and makes it harder to see what's actually been built on c3spec. We should audit, classify, and prune so the changes folder reflects only c3spec history (plus anything we explicitly want to keep as inherited record).
 
@@ -157,7 +146,7 @@ Right now when `c3spec-start` runs the "relentless interview" or `superpowers:br
 - Document the cleanup in a single change folder so the prune itself is auditable
 - Update `IMPLEMENTATION_ORDER.md` (still in the changes root) if it references entries that get removed
 
-## 15. Enforce requirements of ALL specs with backing tests
+## 14. Enforce requirements of ALL specs with backing tests
 
 Today the only cross-spec enforcement in this repo is `test/specs/source-specs-normalization.test.ts`, which checks the *shape* of every `c3spec/specs/*/spec.md` (Purpose + Requirements sections, no delta headers, no placeholder text, parseable requirements). Behavioral alignment between each `### Requirement: …` and the code that implements it is trusted entirely to human discipline and `opsx-verify-skill` runs at change time — there is no CI signal when a requirement loses its backing test, or when an implementation drifts away from the requirement it was supposed to satisfy. We dogfood spec-driven development, so the bar should be higher: every requirement in every spec should be traceable to at least one test that exercises it, and CI should fail when that link breaks. Explore what this looks like end-to-end before committing to an implementation.
 
@@ -169,4 +158,4 @@ Today the only cross-spec enforcement in this repo is `test/specs/source-specs-n
 - Avoid over-coupling: tests must still be readable on their own; a `requirement:` annotation should add information, not become the only way to understand what the test does
 - Cover the inverse drift case: when a requirement is deleted or renamed via the archive flow, the matching tests/annotations should be flagged for cleanup rather than silently orphaned
 - Surface coverage in a way agents and humans both consume: a `c3spec coverage` subcommand or a generated report under `c3spec/` that shows per-spec status
-- Spawned from #9 (workflow-routing spec) — that change deliberately stayed docs-only because no precedent exists for new-test-per-requirement work; this idea is where that precedent gets set
+- Spawned from the completed workflow-routing spec change — that change deliberately stayed docs-only because no precedent exists for new-test-per-requirement work; this idea is where that precedent gets set
