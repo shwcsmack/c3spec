@@ -150,3 +150,18 @@ Right now when `c3spec-start` runs the "relentless interview" or `superpowers:br
 - Update the "What NOT to do" section of every tier skill and `c3spec-start` to explicitly forbid numbered question dumps
 - Decide how to handle the user proactively answering more than was asked — accept the bonus context, don't re-ask, advance the interview accordingly
 - Consider a soft cap on interview turns so a one-question-per-turn rule doesn't drag a Tier 1 fix into a 20-question slog
+
+## 15. Audit and clean out pre-fork content in `c3spec/changes/`
+
+`c3spec/changes/` still carries a large amount of content produced upstream before the c3spec fork — both active-looking change folders at the root (e.g. `add-artifact-regeneration-support`, `add-change-stacking-awareness`, `add-global-install-scope`, `add-qa-smoke-harness`, `add-tool-command-surface-capabilities`, `simplify-skill-installation`, `unify-template-generation-pipeline`, `workspace-*`, `tier2-c3spec-bootstrap`, etc.) and ~80 entries under `archive/` dated from `2025-01-11` through `2026-04-23` (well before the fork). Because c3spec is a clean break from upstream and we don't cherry-pick from there, this content is mostly noise — it pollutes `c3spec list`, dilutes the audit trail, and makes it harder to see what's actually been built on c3spec. We should audit, classify, and prune so the changes folder reflects only c3spec history (plus anything we explicitly want to keep as inherited record).
+
+- Inventory every entry under `c3spec/changes/` (root-level folders) and `c3spec/changes/archive/`, classify each as: produced-on-c3spec, pre-fork upstream, or ambiguous
+- Use `git log` on each folder to confirm fork-vs-c3spec authorship rather than relying on filename dates alone
+- Decide the retention policy per category:
+  - Produced-on-c3spec: keep as-is
+  - Pre-fork archived: delete, or move under a clearly labeled `archive/upstream-pre-fork/` subdirectory if we want to preserve provenance
+  - Pre-fork still-active root folders: archive them as historical, or delete if they describe upstream-only capabilities we'll never ship
+- Confirm that pruning the folders does not break `c3spec list`, `c3spec archive`, or any spec-sync logic that scans `c3spec/changes/`
+- Cross-reference with `c3spec/specs/` — some pre-fork changes may have left orphan spec capabilities that should also be cleaned (overlaps with idea #3 codebase audit)
+- Document the cleanup in a single change folder so the prune itself is auditable
+- Update `IMPLEMENTATION_ORDER.md` (still in the changes root) if it references entries that get removed
