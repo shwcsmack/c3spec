@@ -25,9 +25,9 @@
 
 ## 5. Tests and Verification
 
-- [ ] 5.1 Add tests that assert canonical skill validation includes `c3spec-tier-lifecycle`.
-- [ ] 5.2 Add focused tests or text checks that assert resume/apply/archive helper skills reference `c3spec-tier-lifecycle`, `tier.md`, and `c3spec-subagent-dev` where required.
-- [ ] 5.3 Add or update tests for host-adapter wording so Cursor dispatch no longer depends on `.cursor/agents/<name>.md`.
+- [x] 5.1 Add tests that assert canonical skill validation includes `c3spec-tier-lifecycle`.
+- [x] 5.2 Add focused tests or text checks that assert resume/apply/archive helper skills reference `c3spec-tier-lifecycle`, `tier.md`, and `c3spec-subagent-dev` where required.
+- [x] 5.3 Add or update tests for host-adapter wording so Cursor dispatch no longer depends on `.cursor/agents/<name>.md`.
 - [ ] 5.4 Run `pnpm check:canonical-skills`, `pnpm test`, and any build/typecheck commands required by changed code.
 - [ ] 5.5 Include cross-platform path considerations in verification; any tests that construct paths must use Node `path` helpers rather than hardcoded separators.
 
