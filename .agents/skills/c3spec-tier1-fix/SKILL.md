@@ -1,13 +1,15 @@
 ---
 name: c3spec-tier1-fix
-description: Execute a Tier 1 Spec-Aware Fix. Use after c3spec-start routes here. Covers bugs, investigations, simple changes. No change directory. Fast worktree → mini plan → subagent execution → spec impact → micro-retro → memory capture.
+description: Execute a Tier 1 Spec-Aware Fix. Use after c3spec-start routes here. Covers bugs, investigations, simple changes. Creates a lightweight tier change folder, mini plan, subagent execution, spec impact, micro-retro, and memory capture per the c3spec-tier-lifecycle contract.
 ---
 
 # Tier 1 — Spec-Aware Fix
 
-For bugs, investigations, config tweaks, and simple changes that don't introduce new capabilities or change spec-level contracts.
+For bugs, investigations, config tweaks, and simple changes that don't introduce new capabilities or change spec-level contracts. T1 is lightweight, but it still produces a durable, resumable change record on disk.
 
 **Input:** Interview context and alignment from `c3spec-start`. Do not re-interview — carry forward everything.
+
+**Lifecycle contract:** This skill follows `c3spec-tier-lifecycle`. Consult that skill for tier folder conventions, required artifacts, pause points, apply readiness, and archive readiness. This skill writes the artifacts; the lifecycle skill defines what is required.
 
 ---
 
@@ -31,9 +33,9 @@ Do not continue into worktree setup while tracked changes are present unless the
 
 ## Pre-flight: commit approval
 
-Before doing anything else, ask:
+After the clean source tree gate passes, ask:
 
-> "This fix will produce commits for: implementation, any spec updates, and a memory entry. Do you want to approve all commits upfront, or confirm each one individually?"
+> "This fix will produce commits for: implementation, any spec updates, the tier change record, and a memory entry. Do you want to approve all commits upfront, or confirm each one individually?"
 
 Wait for answer. Remember the preference for this session.
 
@@ -42,63 +44,114 @@ Wait for answer. Remember the preference for this session.
 ## Step 1 — Worktree setup
 
 ```bash
-# Derive branch name from the fix description (kebab-case, max 40 chars)
-BRANCH="fix/<short-description>"
+# Derive a kebab-case slug from the fix description (max ~40 chars)
+SLUG="<short-description>"
+BRANCH="fix/${SLUG}"
 
 superpowers:using-git-worktrees
 ```
 
 Fast setup — create the worktree and branch. No full test baseline required. Just confirm the worktree is clean.
 
+Keep the slug around: it names the tier change folder (`c3spec/changes/tier1-${SLUG}/`) and is referenced throughout the rest of the workflow.
+
 ---
 
-## Step 2 — Generate mini plan
+## Step 2 — Create tier change folder and `tier.md`
 
-Do NOT invoke `superpowers:writing-plans`. Generate the plan inline from the interview context.
+Create the T1 change folder and write the lifecycle metadata anchor.
+
+```bash
+mkdir -p c3spec/changes/tier1-${SLUG}
+```
+
+Write `c3spec/changes/tier1-${SLUG}/tier.md` following the `tier.md` shape defined in `c3spec-tier-lifecycle`:
+
+```markdown
+# Tier 1: <slug>
+
+- Tier: 1
+- Slug: <slug>
+- Branch: fix/<slug>
+- Goal: <one or two sentences describing what the fix achieves>
+- Status: planning
+
+## Required Artifacts
+
+- [ ] tier.md
+- [ ] mini-plan.md
+- [ ] spec-impact.html
+- [ ] spec-impact.md
+- [ ] micro-retro.html
+- [ ] micro-retro.md
+
+## Affected Specs
+
+- <capability> | none
+
+## Progress
+
+(Task checkboxes for this T1 live in `mini-plan.md` after Step 3. Mirror them here only if it helps a fresh agent resume.)
+```
+
+`tier.md` itself counts as the first required artifact — mark its checkbox `- [x]` once the file is written. Update `Status` as the workflow progresses (`planning` → `implementation` → `verifying` → `retrospective` → `ready-to-archive`).
+
+---
+
+## Step 3 — Write `mini-plan.md`
+
+Do NOT invoke `superpowers:writing-plans`. Generate the plan inline from the interview context and write it to `c3spec/changes/tier1-${SLUG}/mini-plan.md` before execution.
+
+The mini plan MUST use `- [ ]` / `- [x]` checkboxes so the same progress signal works for apply readiness, archive readiness, and fresh-context resume per the lifecycle contract.
 
 Mini plan format (3-10 tasks, no inline code):
 
 ```markdown
-## Bug Fix Plan: <short-description>
+# Mini Plan: <short-description>
 
 **Goal:** [one sentence — what the fix achieves]
 **Root hypothesis:** [what you believe is broken and why, based on interview + codebase research]
 
-### Task 1: Write failing test
-Reproduce the bug with a test that fails for the right reason.
-Test file: [path]
-Test name: [descriptive name]
+## Tasks
 
-### Task 2: Fix root cause
-[which file, which function, what specifically changes]
-
-### Task 3: Verify fix
-Run [specific test command]. Confirm test passes. Run full suite.
-
-### Task 4: Spec impact check
-[which spec files describe behavior touched by this fix — list them]
+- [ ] Task 1 — Write failing test
+  - Reproduce the bug with a test that fails for the right reason.
+  - Test file: [path]
+  - Test name: [descriptive name]
+- [ ] Task 2 — Fix root cause
+  - [which file, which function, what specifically changes]
+- [ ] Task 3 — Verify fix
+  - Run [specific test command]. Confirm test passes. Run full suite.
+- [ ] Task 4 — Spec impact check
+  - [which spec files describe behavior touched by this fix — list them]
 ```
 
 Keep it tight. The implementer agent should be able to act on each task without ambiguity. Do not include inline code — the implementer reads the actual files.
 
+Tick the `- [ ] mini-plan.md` checkbox in `tier.md` once the file is written.
+
 ---
 
-## Step 3 — Execute via c3spec-subagent-dev
+## Step 4 — Execute via c3spec-subagent-dev
+
+Before invoking implementation, update `tier.md` `Status` to `implementation`. This marks the transition from planning to apply-ready execution per `c3spec-tier-lifecycle`.
 
 Invoke `c3spec-subagent-dev` skill with:
 - **Tier: 1** (skip final whole-implementation code review)
-- **Plan:** the mini plan from Step 2
+- **Plan:** `c3spec/changes/tier1-${SLUG}/mini-plan.md`
 - **Memory context:** already loaded from c3spec-start memory scan
 
-The subagent-dev skill handles: implementer dispatch, spec reviewer, quality reviewer, checkbox discipline, HTML file path rule.
+The subagent-dev skill handles: implementer dispatch, spec reviewer, quality reviewer, checkbox discipline, HTML file path rule. Checkboxes in `mini-plan.md` are owned by the controller / subagent-dev after review — do not flip them yourself outside that flow.
 
 Consult `c3spec-host-adapter` when dispatching named agents.
 
+When implementation tasks are complete, update `tier.md` `Status` to `verifying`.
+
 ---
 
-## Step 4 — Spec impact report (HTML artifact)
+## Step 5 — Spec impact report (HTML + markdown)
 
-After all tasks complete, generate a spec impact report.
+After all mini-plan tasks complete, generate a spec impact report. Both an HTML review surface and a durable markdown record are required by the lifecycle contract.
 
 For each spec file identified in the mini plan (and any others discovered during implementation):
 
@@ -106,7 +159,7 @@ For each spec file identified in the mini plan (and any others discovered during
 2. Read the implementation diff: `git diff <base-sha> HEAD -- <affected-files>`
 3. For each Requirements section in the spec, assess: is the behavior described still accurate?
 
-Generate an HTML report at `c3spec/changes/tier1-<branch-name>/spec-impact.html`:
+Write `c3spec/changes/tier1-${SLUG}/spec-impact.html` as the review surface:
 
 ```html
 <!-- Rich HTML: use color-coded table, green/yellow/red per spec section -->
@@ -114,18 +167,25 @@ Generate an HTML report at `c3spec/changes/tier1-<branch-name>/spec-impact.html`
 ```
 
 **Immediately after writing the file, print:**
+
 ```
 Spec impact report ready — paste into browser:
   file:///[absolute path to spec-impact.html]
 ```
 
-Wait for the user to review. Ask: "Any spec sections that need updating?" If yes, update them directly and commit. If no, proceed.
+Wait for the user to review. Ask: "Any spec sections that need updating?" If yes, update those spec files directly and commit. If no, proceed.
+
+After the user has reviewed and any spec edits are committed, save the durable markdown record to `c3spec/changes/tier1-${SLUG}/spec-impact.md`. The markdown version captures the same per-spec assessment table and any follow-up actions, without HTML formatting, so it survives as a diffable artifact even if the HTML file is deleted.
+
+Tick both `- [ ] spec-impact.html` and `- [ ] spec-impact.md` in `tier.md`.
 
 ---
 
-## Step 5 — Micro-retrospective (HTML artifact)
+## Step 6 — Micro-retrospective (HTML + markdown)
 
-Generate a micro-retro at `c3spec/changes/tier1-<branch-name>/micro-retro.html`.
+Generate a micro-retro. Both an HTML review surface and a durable markdown record are required by the lifecycle contract.
+
+Write the HTML review surface to `c3spec/changes/tier1-${SLUG}/micro-retro.html`.
 
 Answer these three questions with evidence (cite specific files, commit SHAs, test names):
 
@@ -144,6 +204,7 @@ Choose the most actionable option:
 - A constraint to add to the implementer agent manifest
 
 **Immediately after writing the file, print:**
+
 ```
 Micro-retrospective ready — paste into browser:
   file:///[absolute path to micro-retro.html]
@@ -151,9 +212,13 @@ Micro-retrospective ready — paste into browser:
 
 Wait for review and approval.
 
+After approval, save the durable markdown record to `c3spec/changes/tier1-${SLUG}/micro-retro.md` covering the same three questions and any memory-capture decision (entry path or "one-off — no memory entry").
+
+Tick both `- [ ] micro-retro.html` and `- [ ] micro-retro.md` in `tier.md`. Update `tier.md` `Status` to `retrospective` while writing this artifact. Do not set `Status` to `ready-to-archive` yet if memory capture is still pending.
+
 ---
 
-## Step 6 — Memory capture
+## Step 7 — Memory capture
 
 After the user approves the micro-retro, create a memory file if the learning generalizes (i.e. the same class of bug could occur elsewhere in the codebase):
 
@@ -166,6 +231,7 @@ Categories:
 - `design-decisions/` — only if the fix clarified a design decision worth preserving
 
 **Frontmatter:**
+
 ```yaml
 ---
 name: <slug>
@@ -178,15 +244,34 @@ status: active
 ---
 ```
 
-After writing the file, **add a line to `c3spec/memory/MEMORY.md`** under the correct category section.
+After writing the file, **add a line to `c3spec/memory/MEMORY.md`** under the correct category section. Also record the memory entry path in `tier.md` and in `micro-retro.md` so the link survives in the durable record.
 
 If the learning doesn't generalize (one-off, very specific to this code path), note it in the micro-retro as "one-off — no memory entry" and skip this step.
+
+After the memory entry is created and indexed, or after `micro-retro.md` explicitly records "one-off — no memory entry", update `tier.md` `Status` to `ready-to-archive`.
 
 Commit: `docs(memory): add <slug> learning from <branch-name> fix`
 
 ---
 
-## Step 7 — Finish
+## Step 8 — Archive readiness check
+
+Before finishing the branch, run the archive readiness check defined in `c3spec-tier-lifecycle` (Section 6) against this change.
+
+The change is archive-ready only when ALL of the following hold:
+
+- `tier.md` exists and `Status` is `ready-to-archive`.
+- Every T1 required artifact is present on disk: `tier.md`, `mini-plan.md`, `spec-impact.html`, `spec-impact.md`, `micro-retro.html`, `micro-retro.md`.
+- Every checkbox in `mini-plan.md` (and the progress checklist in `tier.md`, if mirrored) is `- [x]`.
+- The required artifact checklist in `tier.md` is fully `- [x]`.
+
+If any required artifact is missing or any checkbox is still `- [ ]`, report the gap and complete it before continuing. Do not silently advance past archive readiness.
+
+When all readiness conditions hold, leave `tier.md` `Status` as `ready-to-archive` until the archive or finish-branch step actually archives the change. Only an archive transition should set `Status` to `archived`.
+
+---
+
+## Step 9 — Finish
 
 ```bash
 superpowers:finishing-a-development-branch
@@ -198,9 +283,11 @@ This confirms tests are green, opens the PR, cleans up the worktree. PR descript
 
 ## What NOT to do
 
-- Do not create a C3Spec change directory (`c3spec/changes/<name>/`) — this is Tier 1, no change directory
-- Do not invoke `superpowers:writing-plans` — use the inline mini plan
+- Do not create full proposal/design/tasks/plan ceremony for a T1 fix — the T1 folder is intentionally limited to `tier.md`, `mini-plan.md`, `spec-impact.{html,md}`, and `micro-retro.{html,md}` per `c3spec-tier-lifecycle`
+- Do not invoke `superpowers:writing-plans` — use the inline `mini-plan.md`
 - Do not skip the spec impact report even if the fix seems obviously localized
+- Do not skip the durable markdown versions of `spec-impact` or `micro-retro` — HTML alone is not the lifecycle record
 - Do not skip memory capture if the bug class generalizes
+- Do not flip `mini-plan.md` checkboxes yourself — checkbox ownership belongs to the controller / `c3spec-subagent-dev` after two-stage review
 - Do not re-interview the user — carry forward context from c3spec-start
 - Do not batch multiple clarifying questions in one message — ask one at a time if follow-up is needed

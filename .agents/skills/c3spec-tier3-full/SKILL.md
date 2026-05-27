@@ -9,6 +9,8 @@ For new capabilities or architectural changes with significant design uncertaint
 
 **Input:** Interview context and alignment from `c3spec-start`. Do not re-interview unless a critical ambiguity blocks planning.
 
+**Lifecycle contract:** Before any artifact work, read `c3spec-tier-lifecycle`. It is the canonical contract for T3 required artifacts (Section 2), `tier.md` metadata (Section 3), pause points (Section 4), apply readiness (Section 5), and archive readiness (Section 6). This skill SHALL NOT redefine that contract; if prose here drifts from the contract, update the contract or this skill rather than forking the rules.
+
 ---
 
 ## Pre-flight: clean source tree
@@ -60,6 +62,26 @@ c3spec new change "<name>"
 
 Use the CLI-reported paths for `planningHome`, `changeRoot`, `artifactPaths`, and `actionContext`. Do not assume hardcoded repo-local paths when the CLI provides resolved paths.
 
+Immediately after the scaffold, write the lifecycle metadata anchor so a fresh agent (new session, fresh subagent, or context reset) can resume the change from disk per `c3spec-tier-lifecycle` Section 3:
+
+```bash
+c3spec/changes/<name>/tier.md
+```
+
+`tier.md` SHALL include:
+
+- Tier: `3`
+- Slug: `<name>`
+- Branch: `<branch>`
+- Goal: one or two sentences describing scope
+- Status: `planning`
+- Required Artifacts checklist with each T3 required artifact (`tier.md`, `brainstorm.md`, `proposal.md`, `design.md`, `specs/<capability>/spec.md`, `tasks.md`, `plan.md`, `verify.md`, `retrospective.md`) marked `- [ ]`
+- Affected Specs: list of capability names, or `none` until specs are scoped
+
+`tier.md` itself counts as the first required artifact — mark its checkbox `- [x]` once the file is written.
+
+Update `Status` and the required-artifacts checklist as the workflow progresses (`planning` → `implementation` → `verifying` → `retrospective` → `ready-to-archive` → `archived`). Do NOT mark `tasks.md` checkboxes from this skill — the controller / `c3spec-subagent-dev` owns that after two-stage review.
+
 ---
 
 ## Step 3 - Brainstorm artifact
@@ -79,6 +101,8 @@ The brainstorm should capture:
 - Options considered
 - Key risks and unknowns
 - Recommended direction
+
+Tick `brainstorm.md` in `tier.md` once the durable markdown record is written.
 
 ---
 
@@ -111,6 +135,8 @@ Wait for user approval. When approved, save the markdown version:
 c3spec/changes/<name>/proposal.md
 ```
 
+Tick `proposal.md` in `tier.md` once the durable markdown record is written.
+
 ---
 
 ## Step 5 - HTML design
@@ -142,6 +168,8 @@ Wait for user approval. When approved, save the markdown version:
 c3spec/changes/<name>/design.md
 ```
 
+Tick `design.md` in `tier.md` once the durable markdown record is written.
+
 ---
 
 ## Step 6 - Delta specs
@@ -155,6 +183,8 @@ c3spec/changes/<name>/specs/<capability>/spec.md
 Use the existing c3spec requirement/scenario style. Focus on externally visible behavior and stable workflow contracts, not implementation details.
 
 Show the spec summary to the user when the behavior contract is new, breaking, or high risk. Wait for approval before tasks when the spec materially changes user-facing behavior.
+
+Tick each produced `specs/<capability>/spec.md` entry in `tier.md` once the delta spec is written and approved.
 
 ---
 
@@ -173,6 +203,8 @@ Show the task list to the user for a quick scan:
 > "Here are the tasks I've derived - anything missing or wrong?"
 
 Wait for confirmation.
+
+Tick `tasks.md` in `tier.md` once the file is written and confirmed.
 
 ---
 
@@ -197,6 +229,8 @@ The plan must declare stage structure:
 ```
 
 Depth: enough for a subagent to act without guessing. No inline code snippets.
+
+Tick `plan.md` in `tier.md` once the file is written. Before invoking implementation, update `tier.md` `Status` to `implementation`.
 
 ---
 
@@ -235,6 +269,8 @@ Include:
 
 If any check fails, fix before proceeding.
 
+Before verification begins, update `tier.md` `Status` to `verifying`. Tick `verify.md` in `tier.md` once the verification record is written.
+
 ---
 
 ## Step 11 - Retrospective
@@ -266,6 +302,8 @@ Wait for approval. When approved, save:
 c3spec/changes/<name>/retrospective.md
 ```
 
+Update `tier.md` `Status` to `retrospective` while writing this artifact. Tick `retrospective.md` in `tier.md` once the durable markdown record is written.
+
 ---
 
 ## Step 12 - Memory capture
@@ -280,17 +318,29 @@ Then add it to `c3spec/memory/MEMORY.md` under the correct category.
 
 Skip memory capture only when the retrospective explicitly says the learning is one-off and does not generalize.
 
+After memory capture is complete, or after the retrospective explicitly records that no memory entry is needed, update `tier.md` `Status` to `ready-to-archive`.
+
 ---
 
 ## Step 13 - Archive and finish
 
-Archive the completed change:
+Before archiving, run the archive readiness check from `c3spec-tier-lifecycle` Section 6. The change is archive-ready ONLY when ALL of the following hold:
+
+1. `tier.md` exists and `Status` is `ready-to-archive` (set after the retrospective is complete).
+2. Every T3 required artifact from `c3spec-tier-lifecycle` Section 2 is present on disk: `tier.md`, `brainstorm.md`, `proposal.md`, `design.md`, every `specs/<capability>/spec.md` delta, `tasks.md`, `plan.md`, `verify.md`, `retrospective.md`.
+3. Every checkbox in `tasks.md` is `- [x]`.
+4. Delta specs under `specs/<capability>/spec.md` have either been synced into `c3spec/specs/<capability>/spec.md` or the user has explicitly chosen "archive without syncing".
+5. The required-artifacts checklist inside `tier.md` is fully `- [x]`.
+
+If any check fails, report the missing artifact or unchecked task as a blocker and STOP. Do not run `c3spec archive` until the user resolves the gap (or explicitly confirms an exception for legacy/pre-fork residue).
+
+Once the readiness check passes, archive the completed change:
 
 ```bash
 c3spec archive -y
 ```
 
-Confirm delta specs have been synced into `c3spec/specs/` as expected.
+Confirm delta specs have been synced into `c3spec/specs/` as expected. Then update `tier.md` `Status` to `archived` if the archive command did not already move/finalize the folder.
 
 Finish the development branch:
 
@@ -305,6 +355,7 @@ PR is last. The PR description should reference the proposal, design, verificati
 ## What NOT to do
 
 - Do not skip the brainstorm for Tier 3 work.
+- Do not skip `tier.md` after `c3spec new change` — a T3 change without `tier.md` cannot be safely resumed from a fresh context.
 - Do not run brainstorm or discovery with numbered question dumps — one question per turn
 - Do not proceed past HTML proposal, design, or retrospective artifacts without printing the `file:///` path and waiting for approval.
 - Do not implement before proposal, design, specs, tasks, and plan exist.
@@ -313,4 +364,5 @@ PR is last. The PR description should reference the proposal, design, verificati
 - Do not let implementer agents mark `tasks.md` checkboxes.
 - Do not skip spec reviewer, quality reviewer, or final whole-implementation review.
 - Do not archive before full verification passes.
+- Do not archive without running the archive readiness check from `c3spec-tier-lifecycle` Section 6.
 - Do not create docs under `docs/superpowers/specs/` or `docs/superpowers/plans/`.

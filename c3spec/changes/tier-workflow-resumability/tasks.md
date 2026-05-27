@@ -6,10 +6,10 @@
 
 ## 2. Tier Workflow Skill Updates
 
-- [ ] 2.1 Update `.agents/skills/c3spec-tier1-fix/SKILL.md` so T1 creates a lightweight `c3spec/changes/tier1-<slug>/` folder with `tier.md`, `mini-plan.md`, `spec-impact.html`, `spec-impact.md`, `micro-retro.html`, and `micro-retro.md`.
-- [ ] 2.2 Update `.agents/skills/c3spec-tier2-feature/SKILL.md` so T2 creates `tier.md`, uses `verify.md` / `retrospective.md` naming consistently, and consults `c3spec-tier-lifecycle` before archive.
-- [ ] 2.3 Update `.agents/skills/c3spec-tier3-full/SKILL.md` so T3 creates `tier.md`, references `c3spec-tier-lifecycle`, and checks tier archive readiness before invoking archive.
-- [ ] 2.4 Update `.agents/skills/c3spec-archive-change/SKILL.md` and related archive helper guidance so agent-driven archive checks required tier artifacts before running the CLI archive command.
+- [x] 2.1 Update `.agents/skills/c3spec-tier1-fix/SKILL.md` so T1 creates a lightweight `c3spec/changes/tier1-<slug>/` folder with `tier.md`, `mini-plan.md`, `spec-impact.html`, `spec-impact.md`, `micro-retro.html`, and `micro-retro.md`.
+- [x] 2.2 Update `.agents/skills/c3spec-tier2-feature/SKILL.md` so T2 creates `tier.md`, uses `verify.md` / `retrospective.md` naming consistently, and consults `c3spec-tier-lifecycle` before archive.
+- [x] 2.3 Update `.agents/skills/c3spec-tier3-full/SKILL.md` so T3 creates `tier.md`, references `c3spec-tier-lifecycle`, and checks tier archive readiness before invoking archive.
+- [x] 2.4 Update `.agents/skills/c3spec-archive-change/SKILL.md` and related archive helper guidance so agent-driven archive checks required tier artifacts before running the CLI archive command.
 
 ## 3. Resume / Apply Helper Realignment
 
