@@ -80,17 +80,7 @@ We need to verify that every workflow actually creates a change folder, lands al
 - Make `c3spec-archive-change` (or an equivalent step) mandatory at the end of every tier flow
 - Add a CLI/skill check that fails if a "completed" change is missing required artifacts or wasn't archived
 
-## 9. Pre-flight clean-tree check at every workflow entry
-
-Every workflow should verify the git working tree is clean before starting work. Right now the user repeatedly has to stash uncommitted changes and clean them up later because skills jump straight into worktree creation, file generation, or commits without checking. A single up-front gate eliminates an entire class of mid-flow surprises.
-
-- Add a clean-tree check to `c3spec-start` so it fires before any tier is even chosen
-- Mirror the check at the top of each tier skill so direct entry is also guarded
-- Define the policy: hard-block on dirty tree, or offer to stash/commit first?
-- Distinguish "dirty tree in source repo" from "dirty tree in worktree" — only the source repo matters for entry
-- Make the check cross-platform (no shell-specific `git status` parsing) and surface a clear remediation message
-
-## 10. Collapse the legacy `skills/` pipeline into `.agents/skills/`
+## 9. Collapse the legacy `skills/` pipeline into `.agents/skills/`
 
 The repo has two parallel skill pipelines (see memory: `workflow/two-skill-pipelines.md`). Root `skills/` is the legacy pipeline that feeds `scripts/generate-templates.js` → `src/core/templates/workflows/`. `.agents/skills/` is the first-class pipeline that feeds host-generation via `REQUIRED_CANONICAL_SKILL_NAMES` in `src/core/host-generation/types.ts`. The source of truth should be `.agents/skills/` only — but root `skills/` contains a mix of (a) duplicates of canonical tier skills already in `.agents/skills/` and (b) legacy-only skills (`c3spec-propose`, `c3spec-archive-change`, `c3spec-apply-change`, `c3spec-continue-change`, `c3spec-new-change`, `c3spec-ff-change`, `c3spec-verify-change`, `c3spec-sync-specs`, `c3spec-bulk-archive-change`, `c3spec-onboard`, `c3spec-explore`) that haven't been migrated yet. We can't just delete `skills/` — the tier skills currently reference some of those legacy skills by name. We need to inventory, decide what to keep, migrate the keepers to `.agents/skills/`, then retire the legacy pipeline.
 
@@ -103,7 +93,7 @@ The repo has two parallel skill pipelines (see memory: `workflow/two-skill-pipel
 - Update `CLAUDE.md` / `AGENTS.md` to declare `.agents/skills/` as the single source of truth so contributors don't reintroduce the legacy path
 - Confirm host-generation regenerates `.cursor/skills/`, `.claude/skills/`, and `.codex/` skill artifacts cleanly after the migration
 
-## 11. Codify the tier workflow contract as a `workflow-routing` spec
+## 10. Codify the tier workflow contract as a `workflow-routing` spec
 
 The tier system (T1/T2/T3, `c3spec-start` as the front door, dedicated skills per tier) currently lives only in `CLAUDE.md` and the skill files themselves. Other system behaviors in this repo have specs under `c3spec/specs/` with explicit requirements and scenarios; the workflow routing contract does not. Spawned from the Tier 3 skill change (archived as `2026-05-27-tier2-tier3-full-skill`) — when authoring that skill the question came up whether to add a spec, and the answer was "not in that change, but worth doing later as its own thing."
 
@@ -114,7 +104,7 @@ The tier system (T1/T2/T3, `c3spec-start` as the front door, dedicated skills pe
 - Define what a tier skill MUST contain (pre-flight, planning, apply, verify, retro, finish, anti-patterns)
 - Specify which existing tests/CI checks enforce each requirement
 
-## 12. Make `tasks.md` more extensive and structured
+## 11. Make `tasks.md` more extensive and structured
 
 The current Tier 2 `tasks.md` template is a flat bulleted checklist (`- [ ] Task 1: ...`). For anything beyond a trivial feature this collapses too much detail and loses the staging that the plan already implies. Tasks should mirror the staged structure of the plan (`Task 1`, `Task 1.1`, `Task 1.2`, ...) so the task list itself communicates dependencies, stages, and grouping — not just an ordered checklist.
 
@@ -124,7 +114,7 @@ The current Tier 2 `tasks.md` template is a flat bulleted checklist (`- [ ] Task
 - Decide whether checkboxes apply per-subtask, per-task, or both, and update the subagent-dev checkbox discipline accordingly
 - Make sure spec-impact, verify, retro, and archive remain visible as their own structured tasks rather than buried in a flat list
 
-## 13. Mandatory context reset before the implementation step
+## 12. Mandatory context reset before the implementation step
 
 Every tier should pause between planning and implementation, either by handing the apply step to a fresh agent or by clearing the orchestrator's context before code is written. Today the same session that did the brainstorm/proposal/design/plan also drives apply, so it carries hundreds of turns of planning chatter into the code-writing phase — which dilutes attention, leaks half-formed ideas into the implementation, and makes review harder. Subagents already get fresh context, but the orchestrator itself does not, and there's no enforced pause point.
 
@@ -134,11 +124,11 @@ Every tier should pause between planning and implementation, either by handing t
 - Encode the pause as an explicit skill step with a checkpoint, not a convention
 - Make sure the context-reset boundary preserves the artifacts the apply step needs (paths to plan.md, specs, change folder) — usually via filesystem, not chat history
 
-## 14. Formalize `IDEAS.md` as the backlog with an "add idea" skill
+## 13. Formalize `IDEAS.md` as the backlog with an "add idea" skill
 
 `IDEAS.md` is already where new work lands, but it's an informal convention — there's no skill to add to it, no schema for entries, and no way to capture an idea mid-flow without derailing whatever the agent is currently doing. Mid-chat ideas get lost or shoehorned into the current conversation. The backlog also goes stale — completed ideas linger because nothing prunes them when a change starts or archives. Formalize the file as the project backlog, give it a dedicated capture skill that works from anywhere in the workflow (T1 fix, T2 plan, T3 brainstorm, idle chat) without breaking the active task, and wire it into the change lifecycle so the backlog stays current automatically.
 
-- Define the entry schema (heading style, summary paragraph, bullet list — match the current shape of #1–#13)
+- Define the entry schema (heading style, summary paragraph, bullet list — match the current shape of #1–#12)
 - Author a `c3spec-add-idea` skill that takes a short user prompt and appends a properly-formatted entry, auto-numbered, without leaving the current workflow
 - Make the skill non-disruptive: it must not switch worktrees, touch the active change folder, or pollute the in-flight plan
 - Decide on auto-numbering vs. date-based slugs and how to handle concurrent edits / merge conflicts
@@ -149,7 +139,7 @@ Every tier should pause between planning and implementation, either by handing t
 - Decide how to associate a backlog entry with its change (explicit `change:` slug field on the entry, or fuzzy match on title) so the lifecycle hooks know what to prune
 - Add an "audit backlog" step (or skill) that flags entries pointing at already-archived changes so completed work doesn't linger
 
-## 15. Interview one question at a time during `c3spec-start` and brainstorming
+## 14. Interview one question at a time during `c3spec-start` and brainstorming
 
 Right now when `c3spec-start` runs the "relentless interview" or `superpowers:brainstorming` runs its discovery, the agent tends to fire a numbered batch of questions all at once — sometimes 6–10 in a single message. That's overwhelming, and the user ends up either answering them out of order, missing some, or spending a long block of time before the agent sees any feedback. The agent also can't adapt — the answer to question 1 frequently makes questions 4–6 irrelevant or reshapes them entirely. Single-question interviews are slower per-turn but converge faster overall and feel like a conversation instead of a quiz.
 

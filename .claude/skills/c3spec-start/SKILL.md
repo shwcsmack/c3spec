@@ -7,6 +7,22 @@ description: "Single front door for all development work. Interview the user, cl
 
 The single entry point for all development work in this project. You interview the user until genuinely aligned, then classify the change into a tier and route to the correct workflow.
 
+## Step 0 — Clean source tree gate (before anything else)
+
+Before memory scan, interview, routing, or tier handoff, verify that the source repo where the workflow is starting has no tracked uncommitted changes:
+
+```bash
+git status --porcelain --untracked-files=no
+```
+
+Untracked files do not block the workflow. If the command returns any output, stop and show the user the changed tracked files. Offer exactly these choices:
+
+1. Stash changes and continue
+2. Commit changes first
+3. Abort so the user can handle it
+
+Do not continue into workflow routing while tracked changes are present unless the user has first stashed or committed them. Do not offer a "continue anyway" option in the interactive flow.
+
 ## Step 1 — Memory scan (before asking anything)
 
 Load `c3spec/memory/MEMORY.md` and read the full index. Note all entries. You will surface relevant ones during the interview when the topic connects.
@@ -84,10 +100,10 @@ After confirmation:
 
 **Tier 1:** Invoke `c3spec-tier1-fix` skill
 **Tier 2:** Invoke `c3spec-tier2-feature` skill
-**Tier 3:** Begin the full superpowers-bridge flow from the brainstorm artifact after creating the change directory with `c3spec new change "<name>"`. Continue through proposal, design, specs, tasks, and plan using the relevant c3spec skills by description rather than slash commands.
+**Tier 3:** Invoke `c3spec-tier3-full` skill
 
 Carry forward everything from the interview as context into the tier skill — the user should not repeat themselves.
 
 <!-- c3spec-generated: true
 c3spec-source: /Users/shayne/code/c3spec/.worktrees/first-class-agent-hosts/.agents/skills/c3spec-start/SKILL.md
-c3spec-hash: 141aaf14e9b7fb40391ffbd7939ceb187c3202eb931c656433465c5ef6b6f2b2 -->
+c3spec-hash: 6bd895010d6bb853052a9ac3c39030195fa1cf9316dc19ad954a627b97843111 -->

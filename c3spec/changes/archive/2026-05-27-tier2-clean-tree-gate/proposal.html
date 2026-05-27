@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tier 2 Proposal: Clean Tree Gate</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f8fb;
+      --card: #ffffff;
+      --ink: #172033;
+      --muted: #596579;
+      --border: #d9deea;
+      --accent: #2454d6;
+      --good: #e9f8ef;
+      --warn: #fff5da;
+      --bad: #ffeded;
+    }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+    }
+    main {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 40px 24px 64px;
+    }
+    header {
+      background: linear-gradient(135deg, #183a9e, #3b72ff);
+      color: white;
+      border-radius: 18px;
+      padding: 32px;
+      box-shadow: 0 16px 40px rgba(36, 84, 214, 0.24);
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: 34px;
+      line-height: 1.1;
+    }
+    h2 {
+      margin-top: 36px;
+      font-size: 24px;
+    }
+    h3 {
+      margin: 0 0 8px;
+    }
+    .meta {
+      opacity: 0.9;
+      font-size: 15px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+    .card, .callout {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 8px 24px rgba(23, 32, 51, 0.06);
+    }
+    .callout {
+      border-left: 5px solid var(--accent);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(23, 32, 51, 0.06);
+    }
+    th, td {
+      text-align: left;
+      vertical-align: top;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    th {
+      background: #eef2ff;
+      color: #20315f;
+      font-weight: 700;
+    }
+    tr:last-child td {
+      border-bottom: 0;
+    }
+    .from {
+      background: var(--bad);
+    }
+    .to {
+      background: var(--good);
+    }
+    .warn {
+      background: var(--warn);
+    }
+    code {
+      background: #eef2f7;
+      border-radius: 6px;
+      padding: 2px 6px;
+      font-size: 0.92em;
+    }
+    ul {
+      padding-left: 20px;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Clean Tree Gate Before Workflow Entry</h1>
+      <div class="meta">Tier 2 Lightweight Feature - proposal - May 26, 2026</div>
+    </header>
+
+    <h2>Why</h2>
+    <section class="callout">
+      <p>
+        c3spec workflows can currently start while the source checkout has tracked,
+        uncommitted changes. That makes worktree setup and later cleanup noisy: the
+        user discovers too late that unrelated edits need to be stashed, committed,
+        or disentangled. The workflow should stop before any tier routing or worktree
+        setup and ask the user how to handle the dirty source tree.
+      </p>
+    </section>
+
+    <h2>What Changes</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Behavior</th>
+          <th>Before</th>
+          <th>After</th>
+          <th>Impact</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Workflow entry</td>
+          <td class="from">The agent can route into a tier and create a worktree while tracked changes are present.</td>
+          <td class="to">The agent checks <code>git status --porcelain --untracked-files=no</code> before tier work begins.</td>
+          <td>Non-breaking workflow guardrail; prevents accidental carryover.</td>
+        </tr>
+        <tr>
+          <td>Dirty tree policy</td>
+          <td class="from">No consistent policy; cleanup happens ad hoc.</td>
+          <td class="to">Soft-block with three choices: stash and continue, commit first, or abort.</td>
+          <td>Keeps the user in control while making the unsafe path explicit.</td>
+        </tr>
+        <tr>
+          <td>Direct tier entry</td>
+          <td class="from">Tier skills rely on worktree setup and do not guard the source repo.</td>
+          <td class="to">Each tier skill mirrors the same clean-tree pre-flight gate.</td>
+          <td>Protects direct/resume paths, not only <code>c3spec-start</code>.</td>
+        </tr>
+        <tr>
+          <td>Untracked files</td>
+          <td class="warn">Unspecified.</td>
+          <td class="to">Untracked files are ignored by the gate.</td>
+          <td>Scratch files and local notes do not block normal work.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>New Capabilities</h2>
+    <div class="grid">
+      <section class="card">
+        <h3><code>workflow-clean-tree-gate</code></h3>
+        <p>
+          Defines the workflow requirement that c3spec checks for tracked
+          uncommitted changes before starting routed tier work.
+        </p>
+      </section>
+      <section class="card">
+        <h3>Skill-only first version</h3>
+        <p>
+          Implements the behavior in canonical skill instructions first, without
+          introducing a new CLI helper. A future change can promote the check into
+          code if instruction drift becomes a problem.
+        </p>
+      </section>
+      <section class="card">
+        <h3>Source repo boundary</h3>
+        <p>
+          The gate applies to the checkout where the workflow starts, before
+          creating a worktree. Newly-created worktrees still get their normal clean
+          baseline checks.
+        </p>
+      </section>
+    </div>
+
+    <h2>Impact</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Area</th>
+          <th>Expected Change</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>.agents/skills/c3spec-start/SKILL.md</code></td>
+          <td>Add Step 0 / pre-flight clean-tree gate before interview routing proceeds.</td>
+        </tr>
+        <tr>
+          <td><code>.agents/skills/c3spec-tier1-fix/SKILL.md</code></td>
+          <td>Mirror the clean-tree gate before commit approval and worktree setup.</td>
+        </tr>
+        <tr>
+          <td><code>.agents/skills/c3spec-tier2-feature/SKILL.md</code></td>
+          <td>Mirror the clean-tree gate before commit approval and worktree setup.</td>
+        </tr>
+        <tr>
+          <td><code>.agents/skills/c3spec-tier3-full/SKILL.md</code></td>
+          <td>Mirror the clean-tree gate before commit approval and worktree setup.</td>
+        </tr>
+        <tr>
+          <td>Generated host artifacts</td>
+          <td>Regenerate host-specific skill copies if the project requires checked-in generated artifacts.</td>
+        </tr>
+      </tbody>
+    </table>
+  </main>
+</body>
+</html>

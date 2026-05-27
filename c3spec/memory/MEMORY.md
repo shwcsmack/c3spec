@@ -6,7 +6,7 @@ One line per entry. Load this index at the start of every `/opsx:start` session 
 <!-- entries added here as bug patterns are captured from cycles -->
 
 ## Workflow
-- [Two Skill Pipelines](workflow/two-skill-pipelines.md) — skills, host-generation, codegen, tier-workflows
+- [Two Skill Pipelines](workflow/two-skill-pipelines.md) — skills, host-generation, codegen, tier-workflows, workflow-gates
 
 ## Constraints
 <!-- entries added here as constraints are discovered -->

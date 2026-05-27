@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Retrospective: Clean Tree Gate</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --ink: #162033;
+      --muted: #5d6678;
+      --border: #dde4ee;
+      --accent: #2454d6;
+      --ok: #eaf8ef;
+      --warn: #fff6df;
+    }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+    }
+    main {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 40px 24px 64px;
+    }
+    header {
+      background: linear-gradient(135deg, #193a9c, #4b78ff);
+      color: white;
+      border-radius: 18px;
+      padding: 30px;
+      box-shadow: 0 14px 36px rgba(36, 84, 214, 0.22);
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: 32px;
+    }
+    h2 {
+      margin-top: 32px;
+      font-size: 23px;
+    }
+    .meta {
+      opacity: 0.9;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+      box-shadow: 0 8px 22px rgba(22, 32, 51, 0.05);
+    }
+    .metric {
+      font-size: 30px;
+      font-weight: 750;
+      color: var(--accent);
+    }
+    .label {
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .ok {
+      background: var(--ok);
+    }
+    .warn {
+      background: var(--warn);
+    }
+    code {
+      background: #edf2f7;
+      border-radius: 6px;
+      padding: 2px 6px;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Retrospective: Clean Tree Gate</h1>
+      <div class="meta">Tier 2 Lightweight Feature - May 26, 2026</div>
+    </header>
+
+    <h2>Evidence</h2>
+    <div class="grid">
+      <section class="card">
+        <div class="metric">14</div>
+        <div class="label">changed tracked files before archive</div>
+      </section>
+      <section class="card">
+        <div class="metric">233 / 11</div>
+        <div class="label">insertions / deletions</div>
+      </section>
+      <section class="card">
+        <div class="metric">8 / 8</div>
+        <div class="label">tasks completed after review</div>
+      </section>
+      <section class="card">
+        <div class="metric">3</div>
+        <div class="label">verification commands passed</div>
+      </section>
+    </div>
+
+    <h2>What Worked</h2>
+    <section class="card ok">
+      <ul>
+        <li>The first pass added the core guard cleanly to the canonical `.agents/skills/` workflow entry points.</li>
+        <li>Reviewers caught real workflow drift: root `skills/` duplicates and generated routing docs would have kept teaching the old order.</li>
+        <li>The final verification path passed: `pnpm run check:codegen`, `pnpm exec tsc --noEmit`, and `pnpm test`.</li>
+      </ul>
+    </section>
+
+    <h2>What Didn't</h2>
+    <section class="card warn">
+      <ul>
+        <li>The original task list was too narrow; it missed the legacy root skill pipeline and generated instruction source.</li>
+        <li>Host sync produced noisy sentinel source-path churn because generated metadata still uses absolute worktree paths.</li>
+      </ul>
+    </section>
+
+    <h2>Learning</h2>
+    <section class="card">
+      <p>
+        Workflow skill changes must consider both current skill pipelines until idea #10 retires the legacy root
+        `skills/` path. A change that only updates `.agents/skills/` can still leave legacy codegen and generated
+        instructions teaching stale behavior.
+      </p>
+    </section>
+  </main>
+</body>
+</html>

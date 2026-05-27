@@ -11,6 +11,24 @@ For bugs, investigations, config tweaks, and simple changes that don't introduce
 
 ---
 
+## Pre-flight: clean source tree
+
+Before commit approval or worktree setup, verify that the source repo where this tier skill is starting has no tracked uncommitted changes:
+
+```bash
+git status --porcelain --untracked-files=no
+```
+
+Untracked files do not block the workflow. If the command returns any output, stop and show the user the changed tracked files. Offer exactly these choices:
+
+1. Stash changes and continue
+2. Commit changes first
+3. Abort so the user can handle it
+
+Do not continue into worktree setup while tracked changes are present unless the user has first stashed or committed them. Do not offer a "continue anyway" option in the interactive flow.
+
+---
+
 ## Pre-flight: commit approval
 
 Before doing anything else, ask:
@@ -188,4 +206,4 @@ This confirms tests are green, opens the PR, cleans up the worktree. PR descript
 
 <!-- c3spec-generated: true
 c3spec-source: /Users/shayne/code/c3spec/.worktrees/first-class-agent-hosts/.agents/skills/c3spec-tier1-fix/SKILL.md
-c3spec-hash: dbe1ce962afbd4facba55e70b9717b54e0f482ba1a601b1521167fdf57f68133 -->
+c3spec-hash: 6f153fab7a5bce731899ed81513b3ec25c96e9e2ba04cd63069dba2dfcdadbe0 -->

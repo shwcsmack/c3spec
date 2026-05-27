@@ -2,7 +2,7 @@
 name: two-skill-pipelines
 description: c3spec has separate pipelines for legacy workflow skills and first-class tier/host skills.
 category: workflow
-tags: [skills, host-generation, codegen, tier-workflows]
+tags: [skills, host-generation, codegen, tier-workflows, workflow-gates]
 source-change: feat/tier3-full-skill
 date: 2026-05-26
 status: active
@@ -31,3 +31,10 @@ c3spec currently has two skill pipelines:
 ## Guidance
 
 Before wiring a skill into codegen, check whether it is a legacy workflow skill or a first-class host/tier skill. Tier skills should be registered through host generation, not `scripts/generate-templates.js`.
+
+When changing workflow behavior that agents must follow (for example pre-flight gates, routing steps, or tier contracts), update every active surface until the legacy pipeline is retired:
+
+- Canonical first-class skills in `.agents/skills/`
+- Legacy root skills in `skills/` when duplicate workflow skills still exist there
+- Generated routing instruction source in `src/core/host-generation/renderers/instructions.ts` when `CLAUDE.md` / `AGENTS.md` describe the same step order
+- Generated host artifacts after source edits, using the project's sync/update path rather than hand-editing generated copies

@@ -7,6 +7,22 @@ description: Single front door for all development work. Interview the user, cla
 
 The single entry point for all development work in this project. You interview the user until genuinely aligned, then classify the change into a tier and route to the correct workflow.
 
+## Step 0 — Clean source tree gate (before anything else)
+
+Before memory scan, interview, routing, or tier handoff, verify that the source repo where the workflow is starting has no tracked uncommitted changes:
+
+```bash
+git status --porcelain --untracked-files=no
+```
+
+Untracked files do not block the workflow. If the command returns any output, stop and show the user the changed tracked files. Offer exactly these choices:
+
+1. Stash changes and continue
+2. Commit changes first
+3. Abort so the user can handle it
+
+Do not continue into workflow routing while tracked changes are present unless the user has first stashed or committed them. Do not offer a "continue anyway" option in the interactive flow.
+
 ## Step 1 — Memory scan (before asking anything)
 
 Load `c3spec/memory/MEMORY.md` and read the full index. Note all entries. You will surface relevant ones during the interview when the topic connects.

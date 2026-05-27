@@ -4,7 +4,17 @@ const ROUTING_BODY = `# C3Spec Workflow Routing
 
 This project uses c3spec for spec-driven development across Cursor, Claude Code, and Codex.
 
-## Step 0 — Memory scan
+## Step 0 — Clean source tree gate
+
+Before starting any c3spec workflow, check for tracked uncommitted changes in the source repo:
+
+\`\`\`bash
+git status --porcelain --untracked-files=no
+\`\`\`
+
+Untracked files do not block the workflow. If tracked changes are present, stop and ask whether to stash changes and continue, commit changes first, or abort so the user can handle it.
+
+## Step 1 — Memory scan
 
 On every session start, load the project memory index:
 

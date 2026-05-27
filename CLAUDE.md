@@ -3,7 +3,17 @@
 
 This project uses c3spec for spec-driven development across Cursor, Claude Code, and Codex.
 
-## Step 0 — Memory scan
+## Step 0 — Clean source tree gate
+
+Before starting any c3spec workflow, check for tracked uncommitted changes in the source repo:
+
+```bash
+git status --porcelain --untracked-files=no
+```
+
+Untracked files do not block the workflow. If tracked changes are present, stop and ask whether to stash changes and continue, commit changes first, or abort so the user can handle it.
+
+## Step 1 — Memory scan
 
 On every session start, load the project memory index:
 
@@ -21,7 +31,7 @@ All development work enters through the `c3spec-start` skill. Do not pick a tier
 | --- | --- | --- |
 | T1 Spec-Aware Fix | Bug fix, investigation, config tweak | Inline fix workflow |
 | T2 Lightweight Feature | New capability, clear scope | `c3spec-tier2-feature` |
-| T3 Full Workflow | Design uncertainty, architecture, breaking change | Full brainstorm, proposal, design, specs, tasks, and apply flow |
+| T3 Full Workflow | Design uncertainty, architecture, breaking change | `c3spec-tier3-full` |
 
 ## Subagent roles
 
@@ -40,4 +50,4 @@ Skills and hook sources live under `.agents/`. Generated host artifacts are deri
 
 <!-- c3spec-generated: true
 c3spec-source: .agents/
-c3spec-hash: e73635beed103f967d863498784d3d5b9d46f85746a4ffb7434f35ef5c6c9afe -->
+c3spec-hash: 76c3586465cb533767a1f26445b31db3b750c6140fd9b2eec02945cb87d2622e -->
