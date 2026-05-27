@@ -147,3 +147,38 @@ Today the only cross-spec enforcement in this repo is `test/specs/source-specs-n
 - Cover the inverse drift case: when a requirement is deleted or renamed via the archive flow, the matching tests/annotations should be flagged for cleanup rather than silently orphaned
 - Surface coverage in a way agents and humans both consume: a `c3spec coverage` subcommand or a generated report under `c3spec/` that shows per-spec status
 - Spawned from the completed workflow-routing spec change — that change deliberately stayed docs-only because no precedent exists for new-test-per-requirement work; this idea is where that precedent gets set
+
+## 14. Trigger native agent answer-picker UIs from c3spec skills
+
+Claude Code, Codex, and Cursor each surface a structured "pick an answer" UI when an agent emits the right shape — Cursor has its `AskQuestion` tool, Codex/Claude Code render multi-choice prompts when the assistant message follows specific patterns. c3spec interview steps (`c3spec-start`, brainstorm, design checkpoints) currently fall back to plain markdown bullet lists, which is fine but inconsistent and easy for the human to miss. Research whether each runtime exposes a public API (tool, MCP surface, output convention) for these widgets, or whether deterministic prompt phrasing can get them to pop up reliably — then standardize how c3spec skills request a structured answer so the experience matches the host's native flow.
+
+- Inventory each runtime's answer-picker mechanism: Cursor `AskQuestion` tool surface, Codex / Claude Code message conventions, MCP-based prompts (e.g. `elicit`), and anything plugin-specific
+- Identify which mechanisms are publicly documented vs. observed-only, and what guarantees each gives (single-select, multi-select, free-text fallback)
+- Test prompt patterns that reliably trigger the picker on each host (numbered options, explicit "choose one" phrasing, structured JSON in fenced blocks) and capture the failure modes
+- Decide on a c3spec convention: either a host-adapter helper that emits the right shape per runtime, or a single output format that degrades gracefully when the picker isn't supported
+- Update tier and interview skills (`c3spec-start`, `c3spec-tier2-feature`, `c3spec-tier3-full`, brainstorm/design checkpoints) to use the new convention instead of ad-hoc bullet lists
+- Document the convention so contributors authoring new skills don't reintroduce inconsistent answer prompts
+
+## 15. Validate `c3spec-continue-change` and `c3spec-apply-change` against the new tier workflows
+
+`c3spec-continue-change` and `c3spec-apply-change` were preserved as canonical skills during the legacy-skill-pipeline collapse so an agent can stop between tier artifacts and resume later (or in a fresh context) without rerunning `c3spec-start`. They were originally authored against the pre-tier workflow shape, so the SKILL.md content references the older artifact set and decision points and likely doesn't match the current Tier 1 / Tier 2 / Tier 3 pause points. Walk both skills end-to-end against the new tier flows and tighten them so the "pause now, resume later" path works the way it's described in the canonical-skills spec — including the fresh-context resume case where the agent only has the on-disk change folder to go on.
+
+- Read `c3spec-continue-change` and `c3spec-apply-change` SKILL.md content against the current tier-1/2/3 skills and identify references to retired artifacts, retired decision points, or retired skill names
+- Define the canonical pause points each tier supports (e.g. after brainstorm, after design approval, after tasks lock, mid-implementation) and confirm both skills cover them
+- Test the fresh-context resume case: spawn a new agent in the change folder with nothing but the on-disk artifacts and confirm `c3spec-continue-change` can correctly identify what step is next
+- Confirm `c3spec-apply-change` can pick up mid-implementation when a subset of tasks is checked off and the worktree still has uncommitted changes
+- Decide whether either skill needs to dispatch into a tier skill (e.g. continue jumping back into `c3spec-tier3-full` at the right step) or whether they own the resume flow themselves
+- Update the canonical-skills spec, the tier skills, and `c3spec-start` so the pause/resume seam is documented in one place, not three
+- Add at least one verification path (manual checklist or test) so future tier changes can confirm the resume helpers still line up
+
+## 16. Audit the standalone `schemas/` system — keep, fold in, or remove
+
+The repo has a `schemas/` directory at the root (`spec-driven`, `workspace-planning`) plus a sibling `c3spec/schemas/superpowers-bridge/`, each shipping a `schema.yaml` and a `templates/` folder. None of the current tier skills, `c3spec-start`, or host-generation pipeline appear to reach into these schemas — the artifact templates the tier skills actually emit live inline in the SKILL.md content under `.agents/skills/`. The runtime validation under `src/core/schemas/` (spec/change Zod schemas) is a separate system and is in active use, so the audit is specifically about the YAML-schema-with-templates directories, not the runtime validators. Figure out whether these schema bundles are still wired in anywhere, whether they're upstream-pre-fork residue (overlaps with idea #12), or whether there's latent value we should fold back into the tier skills.
+
+- Trace every reader of `schemas/spec-driven/`, `schemas/workspace-planning/`, and `c3spec/schemas/superpowers-bridge/` — CLI commands, skill content, host-generation, tests — and document each reference
+- Distinguish "no code reads this" from "code reads this but nothing user-facing exercises it" so we don't delete a path that's just dormant
+- Compare the templates in those bundles against the inline templates the current tier skills emit; flag anything in the schema bundles that's strictly better and worth backporting into the tier skills
+- Check `c3spec/schemas/superpowers-bridge/` specifically — it looks intentional and c3spec-era, decide whether it's part of the long-term plan or an unfinished experiment
+- Decide the disposition per bundle: keep + wire back in, fold useful pieces into the tier skill content and delete, or delete outright with a brief rationale captured in the change retro
+- If deleting, make sure `c3spec list`, validation, and host-generation still pass and that the relevant spec/capability is also updated or retired
+- Coordinate with idea #12 (pre-fork content audit) so we don't do two passes over the same upstream residue
