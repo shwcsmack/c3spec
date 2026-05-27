@@ -33,7 +33,7 @@
 
 ## 6. Change Completion
 
-- [ ] 6.1 Write `verify.md` with commands run, outcomes, spec sync status, generated artifact drift checks, and residual risks.
+- [x] 6.1 Write `verify.md` with commands run, outcomes, spec sync status, generated artifact drift checks, and residual risks.
 - [ ] 6.2 Write `retrospective.html`, present it for review, then save `retrospective.md`.
 - [ ] 6.3 Capture memory if the retrospective identifies a generalizable workflow learning.
 - [ ] 6.4 Archive `tier-workflow-resumability` and finish the branch according to the user's chosen integration path.
