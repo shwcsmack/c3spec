@@ -165,18 +165,32 @@ Tier workflows pause for human approval at well-known points. Resume helpers MUS
 ### Tier 2 pauses
 
 - After `proposal.md` (and any HTML proposal companion) is generated — wait for user approval before producing implementation artifacts
-- After `tasks.md` and `plan.md` are generated — wait for user confirmation before invoking `c3spec-subagent-dev`
-- After verification — wait before writing the retrospective if changes are requested
+- `tasks.md` and `plan.md` are non-pausing artifacts by default
+- `verify.md` is non-blocking when verification passes; pause only when verification fails or changes are requested
 - Before archive — wait for the archive readiness check (Section 6)
 
 ### Tier 3 pauses
 
-- After each HTML review surface when one is generated (`proposal.html`, `design.html`, `retrospective.html`, and any optional brainstorm HTML) — wait for user review before saving the markdown durable record
+- After each required Tier 3 HTML review surface (`proposal.html`, `design.html`, `retrospective.html`) — wait for user review before saving the markdown durable record
 - After markdown-only planning artifacts such as `brainstorm.md` when no HTML companion was generated — wait for user approval if the tier skill says the artifact requires review
-- After `tasks.md` and `plan.md` are generated — wait for user confirmation before invoking `c3spec-subagent-dev`
+- `tasks.md` and `plan.md` are non-pausing artifacts by default
+- `verify.md` is non-blocking when verification passes; pause only when verification fails or changes are requested
 - Before archive — wait for the archive readiness check (Section 6)
 
 Across all tiers: if commit approval is per-commit, also pause at each commit point named in the plan.
+
+### Fast-forward behavior
+
+When the user requests `fast forward`:
+
+- Skip approval pauses
+- Skip HTML generation and use markdown-only artifacts in scope
+- Default scope runs through retrospective unless a narrower scope is explicitly requested
+- Stop after retrospective is generated so the human can review before archive
+
+### Approval interpretation
+
+Approval gates accept clear natural-language affirmatives. Skills SHOULD treat plain-language confirmations (for example, "approved", "looks good", "ship it", or similar clear acceptance) as approval.
 
 ---
 
@@ -233,7 +247,7 @@ When an agent resumes work without prior chat context (a new session, a fresh su
    - Pause point not yet acknowledged → wait for human approval, do not advance
    - Apply-ready → invoke `c3spec-apply-change` / `c3spec-subagent-dev`
    - Implementation complete but no `verify.md` → run verification
-   - Verification complete but no retrospective → write retrospective
+   - Verification complete but no retrospective → write retrospective (do not add an extra approval stop when verification succeeded)
    - All required artifacts present and status `ready-to-archive` → archive
 6. Create at most one artifact per resume invocation. Do not silently chain through multiple human gates.
 

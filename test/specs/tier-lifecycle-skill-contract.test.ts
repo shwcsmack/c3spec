@@ -82,6 +82,26 @@ describe('tier lifecycle skill contract', () => {
         expect(content, `c3spec-tier-lifecycle must reference ${artifact}`).toContain(artifact);
       }
     });
+
+    it('marks tasks.md and plan.md as non-pausing artifacts', async () => {
+      const content = await readSkill('c3spec-tier-lifecycle');
+      expect(content).toMatch(/tasks\.md.*non-pausing/i);
+      expect(content).toMatch(/plan\.md.*non-pausing/i);
+    });
+
+    it('marks verify.md as non-blocking when verification passes', async () => {
+      const content = await readSkill('c3spec-tier-lifecycle');
+      expect(content).toMatch(/verify\.md.*non-blocking.*verification passes/i);
+    });
+
+    it('defines fast-forward behavior through retrospective with stop before archive', async () => {
+      const content = await readSkill('c3spec-tier-lifecycle');
+      expect(content).toMatch(/fast-forward behavior/i);
+      expect(content).toMatch(/skip approval pauses/i);
+      expect(content).toMatch(/skip HTML generation/i);
+      expect(content).toMatch(/through retrospective/i);
+      expect(content).toMatch(/stop after retrospective/i);
+    });
   });
 
   describe('canonical skill registration includes c3spec-tier-lifecycle', () => {
@@ -122,6 +142,25 @@ describe('tier lifecycle skill contract', () => {
         content,
         `${skillName} must mention tier.md so it can read on-disk lifecycle metadata`,
       ).toMatch(/tier\.md/);
+    });
+  });
+
+  describe('tier and resume consumers align with pause policy', () => {
+    it('tier2 no longer requires a blocking pause after verify.md on success', async () => {
+      const content = await readSkill('c3spec-tier2-feature');
+      expect(content).toMatch(/verify\.md.*non-blocking/i);
+    });
+
+    it('tier3 no longer requires tasks.md and plan.md confirmation pause', async () => {
+      const content = await readSkill('c3spec-tier3-full');
+      expect(content).toMatch(/tasks\.md.*non-pausing/i);
+      expect(content).toMatch(/plan\.md.*non-pausing/i);
+    });
+
+    it('continue-change does not require post-plan confirmation pause text', async () => {
+      const content = await readSkill('c3spec-continue-change');
+      expect(content).not.toMatch(/Pause for user confirmation before invoking `c3spec-subagent-dev`\./);
+      expect(content).toMatch(/plan\.md.*non-pausing/i);
     });
   });
 

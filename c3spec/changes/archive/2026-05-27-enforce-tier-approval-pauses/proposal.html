@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Proposal: enforce-tier-approval-pauses</title>
+    <style>
+      :root {
+        --bg: #f7f8fa;
+        --panel: #ffffff;
+        --text: #17202a;
+        --muted: #4a5868;
+        --line: #d9e1ea;
+        --accent: #0f6d5f;
+      }
+      body {
+        margin: 0;
+        font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+      }
+      .wrap {
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 28px 20px 48px;
+      }
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 16px;
+      }
+      h1, h2 { margin: 0 0 12px; }
+      h1 { font-size: 28px; }
+      h2 { font-size: 20px; }
+      p, li { line-height: 1.5; color: var(--muted); }
+      .meta { color: var(--muted); font-size: 14px; margin-top: 6px; }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 8px;
+      }
+      th, td {
+        border: 1px solid var(--line);
+        text-align: left;
+        vertical-align: top;
+        padding: 10px;
+        font-size: 14px;
+      }
+      th {
+        background: #eef4f8;
+        color: #10273d;
+      }
+      .pill {
+        display: inline-block;
+        background: #e7f7f4;
+        color: var(--accent);
+        border: 1px solid #b5e6dd;
+        border-radius: 999px;
+        padding: 4px 10px;
+        font-size: 12px;
+        margin-right: 8px;
+      }
+      code {
+        background: #f1f5f9;
+        padding: 1px 4px;
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="card">
+        <h1>Proposal: enforce-tier-approval-pauses</h1>
+        <div class="meta">
+          <span class="pill">Tier 3</span>
+          <span class="pill">Date: 2026-05-27</span>
+          Branch: <code>feat/enforce-tier-approval-pauses</code>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Why</h2>
+        <p>
+          Tier workflows currently have inconsistent pause behavior and inconsistent HTML-to-markdown handoff timing.
+          This reduces user trust in approvals, causes artifact drift, and weakens fresh-context resumability.
+        </p>
+        <p>
+          The lifecycle contract already exists as the intended single source of truth, so this change formalizes and enforces
+          the pause and handoff behavior there and aligns all tier/resume consumers.
+        </p>
+      </div>
+
+      <div class="card">
+        <h2>What Changes</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Area</th>
+              <th>Before</th>
+              <th>After</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Pause behavior</td>
+              <td>Partially duplicated across tier skills; inconsistent gate behavior.</td>
+              <td>Canonicalized in <code>c3spec-tier-lifecycle</code> and consumed by tier/resume flows.</td>
+            </tr>
+            <tr>
+              <td><code>tasks.md</code> / <code>plan.md</code></td>
+              <td>Could act like pause points in practice.</td>
+              <td>Explicitly non-pausing artifacts.</td>
+            </tr>
+            <tr>
+              <td><code>verify.md</code></td>
+              <td>Pause semantics ambiguous.</td>
+              <td>Non-blocking unless verification fails.</td>
+            </tr>
+            <tr>
+              <td>HTML review usage</td>
+              <td>Mixed expectations per tier/artifact.</td>
+              <td>Tier 3 requires HTML for proposal/design/retrospective; Tier 1/2 optional.</td>
+            </tr>
+            <tr>
+              <td>Handoff ordering</td>
+              <td>Markdown could be saved before review in some flows.</td>
+              <td>When HTML is used: HTML -> approval -> markdown durable record.</td>
+            </tr>
+            <tr>
+              <td><code>fast forward</code></td>
+              <td>No canonical cross-tier behavior.</td>
+              <td>Skips pauses and HTML generation, defaults through retrospective, stops after retro for review.</td>
+            </tr>
+            <tr>
+              <td>Approval parsing</td>
+              <td>Keyword assumptions varied.</td>
+              <td>Clear natural-language affirmative acceptance.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <h2>Impact</h2>
+        <ul>
+          <li>Affected skills: <code>c3spec-tier-lifecycle</code>, <code>c3spec-tier1-fix</code>, <code>c3spec-tier2-feature</code>, <code>c3spec-tier3-full</code>, <code>c3spec-continue-change</code>.</li>
+          <li>Affected specs likely include <code>workflow-routing</code> and <code>canonical-skills</code>.</li>
+          <li>Focused tests under <code>test/specs/</code> will be updated/added to lock pause and handoff rules.</li>
+          <li>No intended behavior change to unrelated CLI command surfaces.</li>
+        </ul>
+      </div>
+    </div>
+  </body>
+</html>

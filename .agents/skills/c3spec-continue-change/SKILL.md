@@ -83,10 +83,10 @@ Cross-reference `tier.md` `Status:` and required-artifacts checklist against the
 | Proposal approved, `design.md` deemed required but missing | Create `design.md`. |
 | Proposal approved, delta spec required but `specs/<capability>/spec.md` missing | Create exactly one delta spec, named after a capability listed in the proposal. |
 | `tasks.md` missing | Create `tasks.md`. |
-| `plan.md` missing | Create `plan.md`. Pause for user confirmation before invoking `c3spec-subagent-dev`. STOP. |
+| `plan.md` missing | Create `plan.md`. `plan.md` is non-pausing by default. |
 | `tasks.md` has unchecked `- [ ]` items | Hand off to `c3spec-apply-change` / `c3spec-subagent-dev`. Do not flip checkboxes yourself. |
 | All `tasks.md` checkboxes are `- [x]` and `verify.md` missing | Run verification and write `verify.md`. |
-| Verification done, `retrospective.md` missing | Generate the retrospective HTML companion if review is needed, then save `retrospective.md`. |
+| Verification done, `retrospective.md` missing | When verification passed, proceed to retrospective without an extra pause; if verification failed or user requested fixes, pause and resolve first. |
 | All required T2 artifacts present and `Status:` is `ready-to-archive` | Run the archive readiness check and route to `c3spec-archive-change`. |
 
 #### Tier 3 — `c3spec/changes/<slug>/`
@@ -98,17 +98,17 @@ Cross-reference `tier.md` `Status:` and required-artifacts checklist against the
 | `design.md` missing | Create `design.md`. Pause after the HTML review surface if used. STOP. |
 | Any required `specs/<capability>/spec.md` delta missing | Create exactly one delta spec, named after a capability listed in the proposal. |
 | `tasks.md` missing | Create `tasks.md`. |
-| `plan.md` missing | Create `plan.md`. Pause for user confirmation before invoking `c3spec-subagent-dev`. STOP. |
+| `plan.md` missing | Create `plan.md`. `plan.md` is non-pausing by default. |
 | `tasks.md` has unchecked `- [ ]` items | Hand off to `c3spec-apply-change` / `c3spec-subagent-dev`. |
 | All `tasks.md` checkboxes are `- [x]` and `verify.md` missing | Run verification and write `verify.md`. |
-| Verification done, `retrospective.md` missing | Generate the retrospective HTML companion, pause for review, then save `retrospective.md`. |
+| Verification done, `retrospective.md` missing | When verification passed, proceed to retrospective without an extra pause; if verification failed or user requested fixes, pause and resolve first. |
 | All required T3 artifacts present and `Status:` is `ready-to-archive` | Run the archive readiness check and route to `c3spec-archive-change`. |
 
 When multiple rows look plausible, pick the topmost one — the lifecycle contract is ordered from earliest to latest in the workflow. When no row matches because the state is genuinely ambiguous, surface what was found on disk and ask the user one clarifying question rather than guessing.
 
 ### 5. Honor pause points
 
-`c3spec-tier-lifecycle` Section 4 lists pause points per tier. This skill SHALL NOT silently advance past them. When the next action is "wait for user review" or "wait for user approval" (HTML review surface, post-proposal approval, post-plan approval, archive readiness, per-commit approval, etc.), report the gate and STOP without creating the next downstream artifact.
+`c3spec-tier-lifecycle` Section 4 lists pause points per tier. This skill SHALL NOT silently advance past them. When the next action is "wait for user review" or "wait for user approval" (HTML review surface, post-proposal approval, archive readiness, per-commit approval, etc.), report the gate and STOP without creating the next downstream artifact.
 
 ### 6. Create at most one artifact per invocation
 
@@ -147,7 +147,7 @@ After each invocation, show:
 
 - **One artifact per invocation.** Even when the next artifact also looks safe, stop and let the user re-invoke.
 - **Read `tier.md` before anything else.** Schema status output supplements lifecycle metadata; it does not replace it.
-- **Never silently bypass a pause point.** HTML review gates, post-proposal/plan approvals, and archive readiness must surface explicitly.
+- **Never silently bypass a pause point.** HTML review gates, post-proposal approvals, and archive readiness must surface explicitly.
 - **Do not mutate `tasks.md` checkboxes.** Implementation flow owns that.
 - **Update `tier.md`** when a phase completes (status transitions, required-artifacts checklist).
 - **Warn loudly when lifecycle metadata is missing** rather than fabricating it. Fall back to folder/artifact inference and tell the user the resume decision is best-effort.

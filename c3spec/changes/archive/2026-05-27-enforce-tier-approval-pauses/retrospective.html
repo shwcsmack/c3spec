@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Retrospective: enforce-tier-approval-pauses</title>
+    <style>
+      :root {
+        --bg: #f6f8fb;
+        --panel: #fff;
+        --text: #16212d;
+        --muted: #4a5968;
+        --line: #d8e2ec;
+      }
+      body { margin: 0; font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Arial, sans-serif; background: var(--bg); color: var(--text); }
+      .wrap { max-width: 920px; margin: 0 auto; padding: 26px 20px 40px; }
+      .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 18px; margin-bottom: 14px; }
+      h1, h2 { margin: 0 0 10px; }
+      p, li { color: var(--muted); line-height: 1.5; }
+      code { background: #eef3f8; border-radius: 4px; padding: 1px 4px; }
+      table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+      th, td { border: 1px solid var(--line); text-align: left; padding: 9px; font-size: 14px; }
+      th { background: #eef5fc; }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="panel">
+        <h1>Retrospective: enforce-tier-approval-pauses</h1>
+        <p>Tier 3 lifecycle-policy hardening for pause gates, HTML handoff ordering, and fast-forward semantics.</p>
+      </div>
+
+      <div class="panel">
+        <h2>Evidence</h2>
+        <table>
+          <thead><tr><th>Metric</th><th>Result</th></tr></thead>
+          <tbody>
+            <tr><td>Planning artifacts</td><td>`brainstorm`, `proposal`, `design`, `tasks`, `plan`, delta specs all produced</td></tr>
+            <tr><td>Focused verification</td><td><code>pnpm vitest run test/specs/tier-lifecycle-skill-contract.test.ts</code> passed (31 tests)</td></tr>
+            <tr><td>Primary files touched</td><td>Lifecycle contract skill, Tier 2/3 skills, continue-change skill, docs, focused spec tests</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="panel">
+        <h2>What Worked</h2>
+        <ul>
+          <li>Decision-first brainstorm made policy implementation straightforward and low-churn.</li>
+          <li>Lifecycle-first editing kept consumers aligned and avoided local-rule drift.</li>
+          <li>Focused tests gave immediate confidence that contract language changes are enforced.</li>
+        </ul>
+      </div>
+
+      <div class="panel">
+        <h2>What Did Not Work</h2>
+        <ul>
+          <li>Small patch context mismatch in `tier.md` required a second pass.</li>
+          <li>Current coverage is focused; full workflow regression suite was not run in this iteration.</li>
+        </ul>
+      </div>
+
+      <div class="panel">
+        <h2>Learning</h2>
+        <p>Lifecycle behavior changes land cleanly when policy is first captured in explicit decision bullets, then codified in one contract skill, then asserted by focused tests before broader workflow execution.</p>
+      </div>
+    </div>
+  </body>
+</html>
