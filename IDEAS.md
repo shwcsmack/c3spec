@@ -70,4 +70,39 @@ We already have human-in-the-loop checkpoints (HTML artifact approvals, commit a
 - Identify spots where we over-interrupt and could move to HOTL
 - Propose concrete changes to skills / routing / CLAUDE.md
 
-8. theres no skill.md for the tier 3 flow. where is the agent getting instructions from?
+## 8. Author a `c3spec-tier3-full` SKILL.md
+
+Tier 1 and Tier 2 each have a dedicated skill file (`c3spec-tier1-fix`, `c3spec-tier2-feature`) that lays out every step. Tier 3 currently doesn't — `c3spec-start` Step 4 hands off with a single sentence ("Begin the full superpowers-bridge flow...") and the agent then stitches together `c3spec-propose`, `c3spec-apply-change`, `superpowers:brainstorming`, etc. on the fly. The result is inconsistent Tier 3 runs and silent drift between sessions.
+
+- Capture the canonical Tier 3 flow end-to-end (brainstorm → proposal → design → specs → tasks → plan → apply → verify → retro → archive)
+- Define HTML-review checkpoints at each planning artifact, matching the Tier 2 pattern
+- Spell out which existing skills to invoke at each step (`c3spec-propose`, `c3spec-subagent-dev`, `c3spec-archive-change`, etc.) so the agent isn't improvising
+- Update `c3spec-start` Step 4 to route to the new skill by name instead of describing the flow inline
+- Mirror the "What NOT to do" anti-pattern section from `c3spec-tier1-fix`
+
+9. We need to verify that we are creating changes in a change folder, creating all the artifacts in that change folder, and then archiving that change so that we are keeping a record of all the changes made just like the openspec flow did.
+10. Every one of the workflows should verify the git tree is clean first before starting work. There are too many times that I have to deal with stashing things and cleaning them up later.
+11. Do we need the /agents folder, everything should be in .agents now right?
+
+## 12. Codify the tier workflow contract as a `workflow-routing` spec
+
+The tier system (T1/T2/T3, `c3spec-start` as the front door, dedicated skills per tier) currently lives only in `CLAUDE.md` and the skill files themselves. Other system behaviors in this repo have specs under `c3spec/specs/` with explicit requirements and scenarios; the workflow routing contract does not. Spawned from the Tier 3 skill change (idea #8) — when authoring that skill the question came up whether to add a spec, and the answer was "not in that change, but worth doing later as its own thing."
+
+- Define what counts as a tier and how many there are
+- Define the required entry path (`c3spec-start` → tier skill)
+- Define the canonical skill set per tier and how that list is enforced (constants in `init.ts`/`update.ts`, host-generation coverage)
+- Define the routing classifier contract (signals per tier, ambiguous-case rule, user-confirmation gate)
+- Define what a tier skill MUST contain (pre-flight, planning, apply, verify, retro, finish, anti-patterns)
+- Specify which existing tests/CI checks enforce each requirement
+
+## 13. Make `tasks.md` more extensive and structured
+
+The current Tier 2 `tasks.md` template is a flat bulleted checklist (`- [ ] Task 1: ...`). For anything beyond a trivial feature this collapses too much detail and loses the staging that the plan already implies. Tasks should mirror the staged structure of the plan (`Task 1`, `Task 1.1`, `Task 1.2`, ...) so the task list itself communicates dependencies, stages, and grouping — not just an ordered checklist.
+
+- Define a richer task schema (top-level task → subtasks, grouped by stage)
+- Mirror stage boundaries from `plan.md` so tasks and plan share a structure
+- Update the Tier 2 (and Tier 3, once it lands) skill so the generated `tasks.md` follows the new structure
+- Decide whether checkboxes apply per-subtask, per-task, or both, and update the subagent-dev checkbox discipline accordingly
+- Make sure spec-impact, verify, retro, and archive remain visible as their own structured tasks rather than buried in a flat list
+
+14. We should always pause before implimenting step, either to run it on a different agent or to clear the context before writing the code. Maybe check if the agents we are using can clear their own context and that would automate the process.
