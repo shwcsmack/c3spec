@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Retrospective: Workflow Routing Spec</title>
+  <style>
+    :root {
+      --bg: #f8f7f3;
+      --panel: #ffffff;
+      --ink: #1f2933;
+      --muted: #667085;
+      --border: #d8ddd6;
+      --accent: #2f6fed;
+      --green: #0f766e;
+      --amber: #b45309;
+      --soft-green: #e8f5f1;
+      --soft-blue: #eaf1ff;
+      --soft-amber: #fff4df;
+    }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+    }
+    main {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 40px 24px 56px;
+    }
+    header {
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 28px;
+      padding-bottom: 20px;
+    }
+    h1 {
+      font-size: 2.15rem;
+      margin: 0 0 8px;
+      line-height: 1.15;
+    }
+    h2 {
+      margin-top: 30px;
+      font-size: 1.25rem;
+    }
+    .eyebrow {
+      color: var(--accent);
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-size: 0.78rem;
+    }
+    .summary {
+      color: var(--muted);
+      max-width: 760px;
+      font-size: 1.04rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+      margin: 18px 0;
+    }
+    .metric, .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: 0 1px 2px rgba(31, 41, 51, 0.04);
+    }
+    .metric strong {
+      display: block;
+      font-size: 1.6rem;
+      line-height: 1.1;
+      color: var(--green);
+    }
+    .metric span {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    code {
+      background: #eef1f4;
+      border-radius: 6px;
+      padding: 0.15rem 0.35rem;
+      font-size: 0.92em;
+    }
+    .ok {
+      background: var(--soft-green);
+      border-color: #a8d8ca;
+    }
+    .note {
+      background: var(--soft-blue);
+      border-color: #b7cafb;
+    }
+    .watch {
+      background: var(--soft-amber);
+      border-color: #f0c36a;
+    }
+    li {
+      margin: 0.4rem 0;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div class="eyebrow">Tier 2 Retrospective · 2026-05-26</div>
+      <h1>Workflow Routing Spec</h1>
+      <p class="summary">
+        A docs-only Tier 2 change added a delta spec for c3spec's existing workflow-routing contract.
+        The implementation stayed intentionally narrow: no code, no tests beyond verification, no skill edits,
+        and no generated host artifact changes.
+      </p>
+    </header>
+
+    <section>
+      <h2>Evidence</h2>
+      <div class="grid">
+        <div class="metric"><strong>1</strong><span>implementation commit: <code>de4ef55</code></span></div>
+        <div class="metric"><strong>5</strong><span>files added in the change directory</span></div>
+        <div class="metric"><strong>501</strong><span>insertions before retro/archive</span></div>
+        <div class="metric"><strong>4/6</strong><span>tasks complete before retro/archive</span></div>
+      </div>
+      <div class="card ok">
+        <ul>
+          <li><code>pnpm exec vitest run test/specs/source-specs-normalization.test.ts</code>: 1 test passed.</li>
+          <li><code>pnpm test</code>: 79 test files passed, 1417 tests passed.</li>
+          <li><code>pnpm exec tsc --noEmit</code>: passed.</li>
+          <li>No new files were found under <code>docs/superpowers/specs/*.md</code>.</li>
+          <li>Spec sync remains pending until archive, which is the next workflow step for a delta spec.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="card ok">
+      <h2>What Worked</h2>
+      <ul>
+        <li>The docs-only scope stayed clean. The change added proposal, plan, tasks, and delta spec artifacts without touching runtime code, generated host instructions, or skill files.</li>
+        <li>The two-stage review loop caught real wording drift before completion: memory scan timing, the T1 artifact nuance, the heading length convention, and canonical hook enforcement all got tightened.</li>
+        <li>Baseline and final verification were both green in the isolated worktree, making the doc-only nature of the change easy to trust.</li>
+      </ul>
+    </section>
+
+    <section class="card watch">
+      <h2>What Didn't</h2>
+      <ul>
+        <li>The Tier 2 task list includes verification, retro, and archive tasks, so "all tasks complete" is slightly recursive during the verify step. The controller handled this by treating Tasks 1-4 as implementation/verification complete and leaving retro/archive for their dedicated steps.</li>
+        <li>The current workflow has no automated delta-spec validator. The focused normalization test only covers source-of-truth specs under <code>c3spec/specs/</code>, so delta structure was reviewed manually.</li>
+      </ul>
+    </section>
+
+    <section class="card note">
+      <h2>Learning</h2>
+      <p>
+        No new memory entry is needed from this change. The generalizable learning was identified before implementation:
+        c3spec needs a future design for requirement-to-test enforcement across all specs, and that follow-up is already
+        captured as <code>IDEAS.md #15</code>.
+      </p>
+    </section>
+  </main>
+</body>
+</html>
