@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Proposal: Remove Upstream Telemetry</title>
+  <style>
+    :root {
+      --bg: #f7f8fb;
+      --card: #ffffff;
+      --ink: #182033;
+      --muted: #637083;
+      --line: #dce3ee;
+      --accent: #3657d8;
+      --danger: #b42318;
+      --danger-bg: #fff1f0;
+      --ok: #146c43;
+      --ok-bg: #ecfdf3;
+      --warn: #8a5a00;
+      --warn-bg: #fff7df;
+    }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: linear-gradient(180deg, #eef2ff 0, var(--bg) 280px);
+    }
+    main {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 48px 28px 72px;
+    }
+    header {
+      margin-bottom: 28px;
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: 42px;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+    }
+    .meta {
+      color: var(--muted);
+      font-size: 15px;
+    }
+    section {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 24px;
+      margin: 18px 0;
+      box-shadow: 0 18px 40px rgba(24, 32, 51, 0.06);
+    }
+    h2 {
+      margin: 0 0 14px;
+      font-size: 22px;
+    }
+    p {
+      line-height: 1.6;
+    }
+    .callout {
+      border-left: 5px solid var(--accent);
+      background: #eef2ff;
+      padding: 16px 18px;
+      border-radius: 12px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+    }
+    th, td {
+      padding: 13px 14px;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+    }
+    th {
+      background: #f1f4f9;
+      font-size: 13px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    tr:last-child td {
+      border-bottom: 0;
+    }
+    .from {
+      background: var(--danger-bg);
+    }
+    .to {
+      background: var(--ok-bg);
+    }
+    code {
+      background: #f1f4f9;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 2px 5px;
+      font-size: 0.92em;
+    }
+    ul {
+      margin: 8px 0 0 20px;
+      padding: 0;
+    }
+    li {
+      margin: 8px 0;
+      line-height: 1.5;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 14px;
+    }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 16px;
+      background: #fbfcff;
+    }
+    .badge {
+      display: inline-block;
+      border-radius: 999px;
+      padding: 3px 10px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .badge-danger {
+      color: var(--danger);
+      background: var(--danger-bg);
+    }
+    .badge-ok {
+      color: var(--ok);
+      background: var(--ok-bg);
+    }
+    .badge-warn {
+      color: var(--warn);
+      background: var(--warn-bg);
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Remove Upstream Telemetry</h1>
+      <div class="meta">Tier 2 proposal · May 26, 2026 · c3spec</div>
+    </header>
+
+    <section>
+      <h2>Why</h2>
+      <div class="callout">
+        c3spec is a clean fork of upstream OpenSpec and should not carry a telemetry capability, PostHog history, or opt-out UX that implies events may be sent. The current implementation is already a no-op, but live specs, CLI hooks, tests, docs, and one archived PostHog change still describe telemetry as part of the product. This change removes telemetry as a first-class capability instead of preserving a disabled shell.
+      </div>
+    </section>
+
+    <section>
+      <h2>What Changes</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Area</th>
+            <th>From</th>
+            <th>To</th>
+            <th>Impact</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="from">
+            <td>CLI startup</td>
+            <td><code>src/cli/index.ts</code> imports telemetry hooks and calls notice, track, and shutdown functions.</td>
+            <td>CLI startup keeps global color handling only; no telemetry import or lifecycle hook remains.</td>
+            <td><span class="badge badge-ok">Runtime simplification</span></td>
+          </tr>
+          <tr class="from">
+            <td>Telemetry module</td>
+            <td><code>src/telemetry/</code> exists as a disabled no-op plus config helpers.</td>
+            <td>The telemetry module and its tests are deleted.</td>
+            <td><span class="badge badge-danger">Capability removed</span></td>
+          </tr>
+          <tr class="from">
+            <td>Specs</td>
+            <td><code>c3spec/specs/telemetry/spec.md</code> requires PostHog behavior; global config requires telemetry fields.</td>
+            <td>The telemetry spec is deleted; global config no longer mentions telemetry state.</td>
+            <td><span class="badge badge-danger">Spec removal</span></td>
+          </tr>
+          <tr class="from">
+            <td>Historical archive</td>
+            <td><code>c3spec/changes/archive/2026-01-09-add-posthog-analytics/</code> preserves the upstream PostHog change.</td>
+            <td>The PostHog archive folder is deleted as part of complete excision.</td>
+            <td><span class="badge badge-warn">History prune</span></td>
+          </tr>
+          <tr class="from">
+            <td>Docs and tests</td>
+            <td>CLI docs and feedback/global config specs reference telemetry opt-outs and behavior.</td>
+            <td>Live docs/specs/tests no longer reference telemetry, PostHog, or telemetry opt-out variables.</td>
+            <td><span class="badge badge-ok">Consistency cleanup</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>Capabilities</h2>
+      <div class="grid">
+        <div class="card">
+          <span class="badge badge-danger">Removed</span>
+          <h3><code>telemetry</code></h3>
+          <p>The product no longer specifies, exposes, stores, or tests telemetry behavior.</p>
+        </div>
+        <div class="card">
+          <span class="badge badge-ok">Modified</span>
+          <h3><code>global-config</code></h3>
+          <p>Global config remains responsible for user-level settings and schema evolution, but not telemetry state.</p>
+        </div>
+        <div class="card">
+          <span class="badge badge-ok">Modified</span>
+          <h3><code>cli-feedback</code></h3>
+          <p>Feedback submission remains independent of environment and CI state, without mentioning telemetry settings.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Impact</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Path</th>
+            <th>Planned action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>src/cli/index.ts</code></td>
+            <td>Remove telemetry import and command tracking/shutdown calls.</td>
+          </tr>
+          <tr>
+            <td><code>src/telemetry/</code></td>
+            <td>Delete telemetry implementation files.</td>
+          </tr>
+          <tr>
+            <td><code>test/telemetry/</code></td>
+            <td>Delete telemetry-specific tests.</td>
+          </tr>
+          <tr>
+            <td><code>c3spec/specs/telemetry/</code></td>
+            <td>Delete the telemetry capability spec.</td>
+          </tr>
+          <tr>
+            <td><code>c3spec/specs/global-config/spec.md</code></td>
+            <td>Remove telemetry config requirements and scenarios.</td>
+          </tr>
+          <tr>
+            <td><code>c3spec/specs/cli-feedback/spec.md</code></td>
+            <td>Remove the telemetry-disabled feedback scenario and keep CI behavior.</td>
+          </tr>
+          <tr>
+            <td><code>docs/cli.md</code></td>
+            <td>Remove telemetry config examples and environment variables.</td>
+          </tr>
+          <tr>
+            <td><code>c3spec/changes/archive/2026-01-09-add-posthog-analytics/</code></td>
+            <td>Delete the archived upstream PostHog change.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</body>
+</html>
