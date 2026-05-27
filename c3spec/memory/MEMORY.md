@@ -11,7 +11,7 @@ One line per entry. Load this index at the start of every `/opsx:start` session 
 - [Complete Excision Active Surfaces](workflow/complete-excision-active-surfaces.md) — cleanup, telemetry, lockfiles, tests, excision, workflow-gates
 
 ## Constraints
-<!-- entries added here as constraints are discovered -->
+- [Vitest Subprocess CLI Tests](constraints/vitest-subprocess-cli-tests.md) — tests, vitest, subprocess, runCLI, timeouts, ci-stability
 
 ## Design Decisions
 - [First-Class Host JSON Sidecars](design-decisions/first-class-agent-host-json-sidecars.md) — host-generation, json, drift-detection, cursor, claude, codex
