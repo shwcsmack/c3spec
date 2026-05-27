@@ -174,20 +174,7 @@ Investigate "pi agent" as a potential runtime or collaborator for c3spec — fir
 - Measure before/after: report wall-clock time for the full suite and for `workspace.test.ts` alone so the win is visible
 - Coordinate with idea #11 (spec → backing-test enforcement) — that work will add tests; if the new tests use `runCLI`, they benefit immediately from the in-process refactor
 
-## 16. Enforce per-artifact approval pauses and HTML→markdown handoff across tiers
-
-The tier workflows are supposed to pause after every planning artifact (brainstorm, proposal, design, specs, tasks, plan, verify, retrospective) so the human can review and either approve, request changes, or fast-forward — and for the artifacts that have an HTML review variant, the contract is "render HTML for the human, then save the durable markdown for the agent". In practice neither half is happening consistently: the agent sometimes chains multiple artifacts back-to-back without stopping, and the HTML→markdown two-step is skipped or reordered (markdown saved before review, HTML produced without ever saving markdown, or only one of the two for the same artifact). The result is the human loses control of the pace and the on-disk record drifts from what the human actually saw and approved. Audit where this breaks and harden it so "pause and ask" plus "HTML to review, markdown to keep" are explicit, testable steps — with one named opt-out for fast-forward.
-
-- Walk every tier skill (`c3spec-tier1-fix`, `c3spec-tier2-feature`, `c3spec-tier3-full`) and list every planning artifact it produces, marking which ones currently say "pause for approval" vs. which silently flow into the next artifact
-- Pin the canonical contract in `c3spec-tier-lifecycle` (rather than duplicated in each tier skill) so there is one source of truth for "which artifacts pause" and "which artifacts need an HTML companion"
-- Define the HTML→markdown sequence as a single named step the skills consume — generate HTML, surface it to the human, wait for approval, then save markdown — and forbid markdown-first ordering for artifacts in scope
-- Define the fast-forward opt-out as an explicit phrase (e.g. "fast forward", "ff", "skip pauses through X") and have each tier skill check for it before chaining artifacts; without that phrase the default is "pause every time"
-- Decide what "approval" means precisely — explicit word ("approve", "approved", "ok"), structured answer-picker click, or both — and make it consistent across hosts (coordinates with idea #12 native answer-picker UIs)
-- Audit which artifacts genuinely need an HTML companion vs. markdown-only — proposal/design/retrospective are clear candidates; specs/tasks/plan are probably markdown-only; lock the list rather than letting each tier skill decide
-- Add focused tests in `test/specs/` (alongside the tier lifecycle contract tests) asserting each tier skill references the pause-points and HTML→markdown contract from `c3spec-tier-lifecycle`, so this can't silently regress again
-- Document the pause/fast-forward behavior in `CLAUDE.md` / `AGENTS.md` so the human knows the lever exists and the agent knows to honor it
-
-## 17. Investigate why quality-review subagents run so slowly
+## 16. Investigate why quality-review subagents run so slowly
 
 Quality review (`quality-reviewer` subagent dispatched from `c3spec-subagent-dev`) consistently takes much longer than other subagent roles in the same workflow — minutes per task even on small skill-content changes — and it's noticeable enough that it has become the long pole of every tier change. Today there's no measurement, no profiling, and no breakdown of where the time goes (model latency, tool-call count, repeated file reads, oversized context, prompt verbosity, parallelism limits, host-specific overhead). Treat this as a measurement problem first, not a tuning problem: find out where the time actually goes, then decide what to fix.
 
@@ -201,7 +188,7 @@ Quality review (`quality-reviewer` subagent dispatched from `c3spec-subagent-dev
 - Output a short profiling report under `docs/research/` summarizing where the time goes and proposing the smallest fix that closes the gap, before opening a follow-up implementation idea
 - Coordinate with idea #15 (in-process `runCLI` refactor) only if the profiling shows subprocess overhead is part of the slowdown — otherwise keep these tracks separate
 
-## 18. Make the git workflow opinionated end-to-end
+## 17. Make the git workflow opinionated end-to-end
 
 Every tier skill (`c3spec-tier1-fix`, `c3spec-tier2-feature`, `c3spec-tier3-full`) front-loads the same battery of git questions before doing any work — "approve all commits upfront, or confirm each one individually?", a stash/commit/abort prompt when the tree isn't clean, and at the close `superpowers:finishing-a-development-branch` opens yet another decision loop (merge / PR / cleanup). The net effect is the human has to drive the git lifecycle by hand even on small fixes, and the end of a change regularly needs explicit re-prompting like "now commit this", "now push", "now open the PR" before the agent acts. c3spec should pick defaults and live with them — branch naming, commit cadence, push timing, PR opening, cleanup — so the agent commits, pushes, and opens PRs on its own under a single named policy, with one explicit opt-out for the rare case the human wants to deviate.
 
@@ -215,3 +202,15 @@ Every tier skill (`c3spec-tier1-fix`, `c3spec-tier2-feature`, `c3spec-tier3-full
 - Audit `superpowers:finishing-a-development-branch` — decide whether to keep it, fork it as a c3spec-native finisher with fewer prompts, or skip it entirely in favor of an opinionated archive→commit→push→PR sequence baked into the tier skills (coordinates with idea #3 vendoring superpowers)
 - Surface the policy in `CLAUDE.md` / `AGENTS.md` so it's discoverable, and pin it in `c3spec-tier-lifecycle` so the tier skills consume one source of truth instead of each re-implementing the prompts
 - Coordinate with idea #6 (HITL/HOTL methodologies) and idea #16 (per-artifact approval pauses) — git decisions are a major HITL surface and the same "opinionated default + one named opt-out" pattern should apply consistently across both
+ 
+## 18. Deepen the brainstorm interview workflow
+
+The brainstorm step is one of the highest-leverage points in the c3spec flow, but right now interview quality can vary by host, context length, and operator habits. We should tighten this into a more opinionated interview experience: thorough discovery, one question at a time, and clear recommendations paired with each question so the user can make fast decisions without losing nuance.
+
+- Define a brainstorm interview contract that requires one question per turn and forbids bundled numbered question dumps
+- Require each question to be either open-ended or multiple-choice, and document when each mode is preferred
+- Require the agent to include a recommendation with every question (for multiple-choice: recommended option first; for open-ended: suggested direction and why)
+- Clarify what “thorough” means for brainstorming depth: problem framing, constraints, alternatives, risks, and acceptance signals before moving to proposal
+- Update `c3spec-explore`, `c3spec-start`, and any brainstorm step in tier skills so they all use the same interview posture
+- Add focused tests (or skill-contract assertions) that catch regressions to multi-question dumps or missing recommendations
+- Decide how to reflect user-selected answers in downstream artifacts so recommendations are traceable into proposal/design

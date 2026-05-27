@@ -39,6 +39,15 @@ Before doing anything else, ask:
 
 Wait for answer. Remember the preference for this change.
 
+## Fast-forward mode
+
+If the user requests `fast forward`, follow `c3spec-tier-lifecycle` fast-forward semantics:
+
+- Skip approval pauses
+- Skip HTML generation and use markdown-only artifacts in scope
+- Default scope runs through retrospective unless the user specifies a narrower scope
+- Stop after retrospective is generated so the human can review before archive
+
 ---
 
 ## Step 1 - Worktree setup
@@ -182,7 +191,7 @@ c3spec/changes/<name>/specs/<capability>/spec.md
 
 Use the existing c3spec requirement/scenario style. Focus on externally visible behavior and stable workflow contracts, not implementation details.
 
-Show the spec summary to the user when the behavior contract is new, breaking, or high risk. Wait for approval before tasks when the spec materially changes user-facing behavior.
+Show the spec summary to the user when the behavior contract is new, breaking, or high risk. Approval can be a clear natural-language affirmative.
 
 Tick each produced `specs/<capability>/spec.md` entry in `tier.md` once the delta spec is written and approved.
 
@@ -202,9 +211,9 @@ Show the task list to the user for a quick scan:
 
 > "Here are the tasks I've derived - anything missing or wrong?"
 
-Wait for confirmation.
+`tasks.md` is non-pausing by default under `c3spec-tier-lifecycle` unless the user explicitly asks to stop here.
 
-Tick `tasks.md` in `tier.md` once the file is written and confirmed.
+Tick `tasks.md` in `tier.md` once the file is written.
 
 ---
 
@@ -230,7 +239,7 @@ The plan must declare stage structure:
 
 Depth: enough for a subagent to act without guessing. No inline code snippets.
 
-Tick `plan.md` in `tier.md` once the file is written. Before invoking implementation, update `tier.md` `Status` to `implementation`.
+Tick `plan.md` in `tier.md` once the file is written. `plan.md` is non-pausing by default under `c3spec-tier-lifecycle`. Before invoking implementation, update `tier.md` `Status` to `implementation`.
 
 ---
 
@@ -270,6 +279,8 @@ Include:
 If any check fails, fix before proceeding.
 
 Before verification begins, update `tier.md` `Status` to `verifying`. Tick `verify.md` in `tier.md` once the verification record is written.
+
+When verification succeeds, `verify.md` is non-blocking under `c3spec-tier-lifecycle`; proceed to retrospective without an extra approval gate.
 
 ---
 

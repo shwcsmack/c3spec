@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Design: enforce-tier-approval-pauses</title>
+    <style>
+      :root {
+        --bg: #f6f7fb;
+        --panel: #ffffff;
+        --text: #1a2430;
+        --muted: #4a5868;
+        --line: #d8e1ea;
+        --accent: #0b6e4f;
+      }
+      body {
+        margin: 0;
+        font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+      }
+      .wrap {
+        max-width: 1020px;
+        margin: 0 auto;
+        padding: 28px 20px 44px;
+      }
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 14px;
+      }
+      h1, h2, h3 { margin: 0 0 10px; }
+      h1 { font-size: 28px; }
+      h2 { font-size: 21px; }
+      h3 { font-size: 17px; }
+      p, li { color: var(--muted); line-height: 1.5; }
+      code {
+        background: #eef3f8;
+        border-radius: 4px;
+        padding: 1px 4px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 8px;
+      }
+      th, td {
+        border: 1px solid var(--line);
+        text-align: left;
+        vertical-align: top;
+        padding: 10px;
+        font-size: 14px;
+      }
+      th { background: #eef5fb; color: #16314c; }
+      .flow {
+        background: #f8fbfd;
+        border: 1px dashed #b8d1e8;
+        border-radius: 8px;
+        padding: 12px;
+      }
+      .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; color: #2f445b; }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="panel">
+        <h1>Design: enforce-tier-approval-pauses</h1>
+        <p>Define one lifecycle-owned policy for pause gates, HTML handoff ordering, fast-forward behavior, and approval interpretation across T1/T2/T3.</p>
+      </div>
+
+      <div class="panel">
+        <h2>Core Decisions</h2>
+        <table>
+          <thead>
+            <tr><th>Decision</th><th>Design Choice</th><th>Reason</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Source of truth</td>
+              <td>All pause/handoff policy defined in <code>c3spec-tier-lifecycle</code>.</td>
+              <td>Prevents drift from repeated local rules in tier skills.</td>
+            </tr>
+            <tr>
+              <td>Tier 3 HTML rule</td>
+              <td>Require HTML for proposal, design, retrospective.</td>
+              <td>Tier 3 is highest-risk planning surface and benefits from explicit review gates.</td>
+            </tr>
+            <tr>
+              <td>Tier 1/2 HTML rule</td>
+              <td>Optional HTML companions; when used enforce ordered handoff.</td>
+              <td>Keeps lower tiers lightweight without losing consistency.</td>
+            </tr>
+            <tr>
+              <td>Non-pausing artifacts</td>
+              <td><code>tasks.md</code> and <code>plan.md</code> are non-pausing.</td>
+              <td>Reduces unnecessary interaction overhead.</td>
+            </tr>
+            <tr>
+              <td>Verification gate</td>
+              <td><code>verify.md</code> non-blocking unless verification fails.</td>
+              <td>Keeps momentum while preserving quality stop on failure.</td>
+            </tr>
+            <tr>
+              <td>Fast-forward semantics</td>
+              <td>Skip pauses and skip HTML generation, default through retrospective, stop after retro for review.</td>
+              <td>Gives explicit acceleration path while keeping archive review safety.</td>
+            </tr>
+            <tr>
+              <td>Approval interpretation</td>
+              <td>Accept clear natural-language affirmative approvals.</td>
+              <td>More human-friendly than brittle keyword matching.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="panel">
+        <h2>Contract Model</h2>
+        <div class="flow">
+          <div class="mono">IF artifact has HTML companion and HTML is in effect:</div>
+          <div class="mono">generate HTML -> show review path -> wait for approval (unless fast forward) -> save markdown durable record</div>
+          <br />
+          <div class="mono">IF artifact is markdown-only:</div>
+          <div class="mono">save markdown -> continue (pause only when lifecycle marks artifact as gate and not fast forward)</div>
+          <br />
+          <div class="mono">IF fast forward active:</div>
+          <div class="mono">skip approval pauses + skip HTML generation -> continue through retrospective -> stop for retro review before archive</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Files To Update</h2>
+        <ul>
+          <li><code>.agents/skills/c3spec-tier-lifecycle/SKILL.md</code>: canonical policy text.</li>
+          <li><code>.agents/skills/c3spec-tier1-fix/SKILL.md</code>: consume lifecycle policy and remove local contradictions.</li>
+          <li><code>.agents/skills/c3spec-tier2-feature/SKILL.md</code>: align pause points and optional HTML semantics.</li>
+          <li><code>.agents/skills/c3spec-tier3-full/SKILL.md</code>: enforce required HTML artifacts and fast-forward policy.</li>
+          <li><code>.agents/skills/c3spec-continue-change/SKILL.md</code>: resume behavior for new policy and fast-forward stop rule.</li>
+          <li><code>test/specs/tier-lifecycle-skill-contract.test.ts</code> plus new focused tests for policy assertions.</li>
+          <li><code>AGENTS.md</code> and <code>CLAUDE.md</code>: document user-facing pause/fast-forward behavior.</li>
+        </ul>
+      </div>
+
+      <div class="panel">
+        <h2>Risks And Mitigations</h2>
+        <h3>Risk: Divergent prose between lifecycle and tier skills</h3>
+        <p>Mitigation: lifecycle-first edits, then consumer updates in same change, with focused tests asserting references and key clauses.</p>
+
+        <h3>Risk: Ambiguous fast-forward state when resuming</h3>
+        <p>Mitigation: define deterministic default behavior in resume skill and ensure stop-after-retro is explicit.</p>
+
+        <h3>Risk: Approval interpretation too loose</h3>
+        <p>Mitigation: define examples of clear affirmatives in skill prose and keep non-affirmative replies as pending-review state.</p>
+      </div>
+
+      <div class="panel">
+        <h2>Open Questions</h2>
+        <ul>
+          <li>Whether fast-forward state should be represented in `tier.md` metadata or inferred from current invocation context only.</li>
+          <li>Whether to add explicit approval phrase examples in lifecycle contract vs host adapter guidance.</li>
+        </ul>
+      </div>
+    </div>
+  </body>
+  </html>
