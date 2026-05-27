@@ -1,28 +1,22 @@
 /**
  * Profile System
  *
- * Defines workflow profiles that control which workflows are installed.
- * Profiles determine WHICH workflows; delivery (in global config) determines HOW.
+ * Defines workflow profiles that control which utility skills workspace setup installs.
+ * Tier routing skills are always installed via host generation.
  */
 
 import type { Profile } from './global-config.js';
 
 /**
- * Core workflows included in the 'core' profile.
- * These provide the streamlined experience for new users.
+ * Core utility workflows for workspace skill installation.
  */
-export const CORE_WORKFLOWS = ['propose', 'explore', 'apply', 'sync', 'archive'] as const;
+export const CORE_WORKFLOWS = ['explore', 'sync', 'archive'] as const;
 
 /**
- * All available workflows in the system.
+ * All utility workflows available for custom profiles and migration scanning.
  */
 export const ALL_WORKFLOWS = [
-  'propose',
   'explore',
-  'new',
-  'continue',
-  'apply',
-  'ff',
   'sync',
   'archive',
   'bulk-archive',
@@ -35,9 +29,6 @@ export type CoreWorkflowId = (typeof CORE_WORKFLOWS)[number];
 
 /**
  * Resolves which workflows should be active for a given profile configuration.
- *
- * - 'core' profile always returns CORE_WORKFLOWS
- * - 'custom' profile returns the provided customWorkflows, or empty array if not provided
  */
 export function getProfileWorkflows(
   profile: Profile,

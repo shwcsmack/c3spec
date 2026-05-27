@@ -3,26 +3,22 @@ import * as fs from 'fs';
 import { AI_TOOLS } from './config.js';
 import type { Delivery } from './global-config.js';
 import { ALL_WORKFLOWS } from './profiles.js';
+import { WORKFLOW_TO_CANONICAL_SKILL } from './shared/canonical-skills.js';
 import { CommandAdapterRegistry } from './command-generation/index.js';
 import { COMMAND_IDS, getConfiguredTools } from './shared/index.js';
 
 type WorkflowId = (typeof ALL_WORKFLOWS)[number];
 
 /**
- * Maps workflow IDs to their skill directory names.
+ * Maps workflow IDs to canonical `.agents/skills/` directory names.
  */
 export const WORKFLOW_TO_SKILL_DIR: Record<WorkflowId, string> = {
-  'explore': 'c3spec-explore',
-  'new': 'c3spec-new-change',
-  'continue': 'c3spec-continue-change',
-  'apply': 'c3spec-apply-change',
-  'ff': 'c3spec-ff-change',
-  'sync': 'c3spec-sync-specs',
-  'archive': 'c3spec-archive-change',
-  'bulk-archive': 'c3spec-bulk-archive-change',
-  'verify': 'c3spec-verify-change',
-  'onboard': 'c3spec-onboard',
-  'propose': 'c3spec-propose',
+  explore: WORKFLOW_TO_CANONICAL_SKILL.explore,
+  sync: WORKFLOW_TO_CANONICAL_SKILL.sync,
+  archive: WORKFLOW_TO_CANONICAL_SKILL.archive,
+  'bulk-archive': WORKFLOW_TO_CANONICAL_SKILL['bulk-archive'],
+  verify: WORKFLOW_TO_CANONICAL_SKILL.verify,
+  onboard: WORKFLOW_TO_CANONICAL_SKILL.onboard,
 };
 
 function toKnownWorkflows(workflows: readonly string[]): WorkflowId[] {

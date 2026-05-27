@@ -3,6 +3,7 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import os from 'os';
 import { randomUUID } from 'crypto';
+import { REQUIRED_CANONICAL_SKILL_NAMES } from '../../../src/core/host-generation/types.js';
 import {
   SKILL_NAMES,
   getToolsWithSkillsDir,
@@ -27,19 +28,11 @@ describe('tool-detection', () => {
   });
 
   describe('SKILL_NAMES', () => {
-    it('should contain all skill names matching COMMAND_IDS', () => {
-      expect(SKILL_NAMES).toHaveLength(11);
+    it('should list all required canonical skills', () => {
+      expect(SKILL_NAMES).toEqual(REQUIRED_CANONICAL_SKILL_NAMES);
+      expect(SKILL_NAMES).toContain('c3spec-start');
       expect(SKILL_NAMES).toContain('c3spec-explore');
-      expect(SKILL_NAMES).toContain('c3spec-new-change');
-      expect(SKILL_NAMES).toContain('c3spec-continue-change');
-      expect(SKILL_NAMES).toContain('c3spec-apply-change');
-      expect(SKILL_NAMES).toContain('c3spec-ff-change');
-      expect(SKILL_NAMES).toContain('c3spec-sync-specs');
-      expect(SKILL_NAMES).toContain('c3spec-archive-change');
-      expect(SKILL_NAMES).toContain('c3spec-bulk-archive-change');
-      expect(SKILL_NAMES).toContain('c3spec-verify-change');
       expect(SKILL_NAMES).toContain('c3spec-onboard');
-      expect(SKILL_NAMES).toContain('c3spec-propose');
     });
   });
 
@@ -76,17 +69,15 @@ describe('tool-detection', () => {
       expect(status.skillCount).toBe(1);
     });
 
-    it('should detect when all skills exist', async () => {
-      for (const skillName of SKILL_NAMES) {
-        const skillDir = path.join(testDir, '.claude', 'skills', skillName);
-        await fs.mkdir(skillDir, { recursive: true });
-        await fs.writeFile(path.join(skillDir, 'SKILL.md'), 'test content');
-      }
+    it('should detect when host-generation marker exists', async () => {
+      const skillDir = path.join(testDir, '.claude', 'skills', 'c3spec-start');
+      await fs.mkdir(skillDir, { recursive: true });
+      await fs.writeFile(path.join(skillDir, 'SKILL.md'), 'test content');
 
       const status = getToolSkillStatus(testDir, 'claude');
       expect(status.configured).toBe(true);
       expect(status.fullyConfigured).toBe(true);
-      expect(status.skillCount).toBe(SKILL_NAMES.length);
+      expect(status.skillCount).toBe(REQUIRED_CANONICAL_SKILL_NAMES.length);
     });
   });
 

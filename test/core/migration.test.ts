@@ -63,14 +63,14 @@ describe('migration', () => {
 
   it('migrates to custom skills delivery when only managed skills are detected', async () => {
     await writeSkill(projectDir, 'c3spec-explore');
-    await writeSkill(projectDir, 'c3spec-apply-change');
+    await writeSkill(projectDir, 'c3spec-sync-specs');
 
     migrateIfNeeded(projectDir, [ensureClaudeTool()]);
 
     const config = readRawConfig();
     expect(config.profile).toBe('custom');
     expect(config.delivery).toBe('skills');
-    expect(config.workflows).toEqual(['explore', 'apply']);
+    expect(config.workflows).toEqual(['explore', 'sync']);
   });
 
   it('migrates to custom commands delivery when only managed commands are detected', async () => {
@@ -87,14 +87,14 @@ describe('migration', () => {
 
   it('migrates to custom both delivery when managed skills and commands are detected', async () => {
     await writeSkill(projectDir, 'c3spec-explore');
-    await writeManagedCommand(projectDir, 'apply');
+    await writeManagedCommand(projectDir, 'archive');
 
     migrateIfNeeded(projectDir, [ensureClaudeTool()]);
 
     const config = readRawConfig();
     expect(config.profile).toBe('custom');
     expect(config.delivery).toBe('both');
-    expect(config.workflows).toEqual(['explore', 'apply']);
+    expect(config.workflows).toEqual(['explore', 'archive']);
   });
 
   it('does not migrate when profile is already explicitly configured', async () => {

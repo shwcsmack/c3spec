@@ -7,90 +7,47 @@
 import path from 'path';
 import * as fs from 'fs';
 import { AI_TOOLS } from '../config.js';
+import {
+  CANONICAL_SKILL_NAMES,
+  type CanonicalSkillName,
+} from './canonical-skills.js';
+import { REQUIRED_CANONICAL_SKILL_NAMES } from '../host-generation/types.js';
+
+export type { CanonicalSkillName };
+export { CANONICAL_SKILL_NAMES, CANONICAL_SKILL_NAMES as SKILL_NAMES };
+export type SkillName = CanonicalSkillName;
 
 /**
- * Names of skill directories created by c3spec init.
- */
-export const SKILL_NAMES = [
-  'c3spec-explore',
-  'c3spec-new-change',
-  'c3spec-continue-change',
-  'c3spec-apply-change',
-  'c3spec-ff-change',
-  'c3spec-sync-specs',
-  'c3spec-archive-change',
-  'c3spec-bulk-archive-change',
-  'c3spec-verify-change',
-  'c3spec-onboard',
-  'c3spec-propose',
-] as const;
-
-export type SkillName = (typeof SKILL_NAMES)[number];
-
-/**
- * IDs of command templates created by c3spec init.
+ * IDs of command templates used for legacy slash-command drift detection.
  */
 export const COMMAND_IDS = [
   'explore',
-  'new',
-  'continue',
-  'apply',
-  'ff',
   'sync',
   'archive',
   'bulk-archive',
   'verify',
   'onboard',
-  'propose',
 ] as const;
 
 export type CommandId = (typeof COMMAND_IDS)[number];
 
-/**
- * Status of skill configuration for a tool.
- */
 export interface ToolSkillStatus {
-  /** Whether the tool has any skills configured */
   configured: boolean;
-  /** Whether all skills are configured */
   fullyConfigured: boolean;
-  /** Number of skills currently configured */
   skillCount: number;
 }
 
-/**
- * Version information for a tool's skills.
- */
 export interface ToolVersionStatus {
-  /** The tool ID */
   toolId: string;
-  /** The tool's display name */
   toolName: string;
-  /** Whether the tool has any skills configured */
   configured: boolean;
-  /** The generatedBy version found in the skill files, or null if not found */
   generatedByVersion: string | null;
-  /** Whether the tool needs updating (version mismatch or missing) */
   needsUpdate: boolean;
 }
 
-/**
- * Gets the list of tools with skillsDir configured.
- */
 export function getToolsWithSkillsDir(): string[] {
   return AI_TOOLS.filter((t) => t.skillsDir).map((t) => t.value);
 }
-
-/**
- * Checks which skill files exist for a tool.
- */
-const HOST_GENERATION_SKILL_NAMES = [
-  'c3spec-start',
-  'c3spec-tier1-fix',
-  'c3spec-tier2-feature',
-  'c3spec-subagent-dev',
-  'c3spec-host-adapter',
-] as const;
 
 export function getToolSkillStatus(projectRoot: string, toolId: string): ToolSkillStatus {
   const tool = AI_TOOLS.find((t) => t.value === toolId);
@@ -101,28 +58,36 @@ export function getToolSkillStatus(projectRoot: string, toolId: string): ToolSki
   const hostMarker = path.join(projectRoot, '.agents', 'skills', 'c3spec-start', 'SKILL.md');
   if (toolId === 'cursor' || toolId === 'codex') {
     if (fs.existsSync(hostMarker)) {
-      return { configured: true, fullyConfigured: true, skillCount: HOST_GENERATION_SKILL_NAMES.length };
+      return {
+        configured: true,
+        fullyConfigured: true,
+        skillCount: REQUIRED_CANONICAL_SKILL_NAMES.length,
+      };
     }
   }
 
   if (toolId === 'claude') {
     const claudeMarker = path.join(projectRoot, '.claude', 'skills', 'c3spec-start', 'SKILL.md');
     if (fs.existsSync(claudeMarker)) {
-      return { configured: true, fullyConfigured: true, skillCount: HOST_GENERATION_SKILL_NAMES.length };
+      return {
+        configured: true,
+        fullyConfigured: true,
+        skillCount: REQUIRED_CANONICAL_SKILL_NAMES.length,
+      };
     }
   }
 
   const skillsDir = path.join(projectRoot, tool.skillsDir, 'skills');
   let skillCount = 0;
 
-  for (const skillName of [...HOST_GENERATION_SKILL_NAMES, ...SKILL_NAMES]) {
+  for (const skillName of REQUIRED_CANONICAL_SKILL_NAMES) {
     const skillFile = path.join(skillsDir, skillName, 'SKILL.md');
     if (fs.existsSync(skillFile)) {
       skillCount++;
     }
   }
 
-  const expectedCount = HOST_GENERATION_SKILL_NAMES.length;
+  const expectedCount = REQUIRED_CANONICAL_SKILL_NAMES.length;
 
   return {
     configured: skillCount > 0,
@@ -131,9 +96,6 @@ export function getToolSkillStatus(projectRoot: string, toolId: string): ToolSki
   };
 }
 
-/**
- * Gets the skill status for all tools with skillsDir configured.
- */
 export function getToolStates(projectRoot: string): Map<string, ToolSkillStatus> {
   const states = new Map<string, ToolSkillStatus>();
   const toolIds = AI_TOOLS.filter((t) => t.skillsDir).map((t) => t.value);
@@ -145,10 +107,6 @@ export function getToolStates(projectRoot: string): Map<string, ToolSkillStatus>
   return states;
 }
 
-/**
- * Extracts the generatedBy version from a skill file's YAML frontmatter.
- * Returns null if the field is not found or the file doesn't exist.
- */
 export function extractGeneratedByVersion(skillFilePath: string): string | null {
   try {
     if (!fs.existsSync(skillFilePath)) {
@@ -156,16 +114,6 @@ export function extractGeneratedByVersion(skillFilePath: string): string | null 
     }
 
     const content = fs.readFileSync(skillFilePath, 'utf-8');
-
-    // Look for generatedBy in the YAML frontmatter
-    // The file format is:
-    // ---
-    // ...
-    // metadata:
-    //   author: c3spec
-    //   version: "1.0"
-    //   generatedBy: "0.23.0"
-    // ---
     const generatedByMatch = content.match(/^\s*generatedBy:\s*["']?([^"'\n]+)["']?\s*$/m);
 
     if (generatedByMatch && generatedByMatch[1]) {
@@ -178,9 +126,6 @@ export function extractGeneratedByVersion(skillFilePath: string): string | null 
   }
 }
 
-/**
- * Gets version status for a tool by reading the first available skill file.
- */
 export function getToolVersionStatus(
   projectRoot: string,
   toolId: string,
@@ -200,8 +145,7 @@ export function getToolVersionStatus(
   const skillsDir = path.join(projectRoot, tool.skillsDir, 'skills');
   let generatedByVersion: string | null = null;
 
-  // Find the first skill file that exists and read its version
-  for (const skillName of SKILL_NAMES) {
+  for (const skillName of REQUIRED_CANONICAL_SKILL_NAMES) {
     const skillFile = path.join(skillsDir, skillName, 'SKILL.md');
     if (fs.existsSync(skillFile)) {
       generatedByVersion = extractGeneratedByVersion(skillFile);
@@ -210,7 +154,8 @@ export function getToolVersionStatus(
   }
 
   const configured = getToolSkillStatus(projectRoot, toolId).configured;
-  const needsUpdate = configured && (generatedByVersion === null || generatedByVersion !== currentVersion);
+  const needsUpdate =
+    configured && (generatedByVersion === null || generatedByVersion !== currentVersion);
 
   return {
     toolId,
@@ -221,24 +166,16 @@ export function getToolVersionStatus(
   };
 }
 
-/**
- * Gets all configured tools in the project.
- */
 export function getConfiguredTools(projectRoot: string): string[] {
-  return AI_TOOLS
-    .filter((t) => t.skillsDir && getToolSkillStatus(projectRoot, t.value).configured)
-    .map((t) => t.value);
+  return AI_TOOLS.filter((t) => t.skillsDir && getToolSkillStatus(projectRoot, t.value).configured).map(
+    (t) => t.value
+  );
 }
 
-/**
- * Gets version status for all configured tools.
- */
 export function getAllToolVersionStatus(
   projectRoot: string,
   currentVersion: string
 ): ToolVersionStatus[] {
   const configuredTools = getConfiguredTools(projectRoot);
-  return configuredTools.map((toolId) =>
-    getToolVersionStatus(projectRoot, toolId, currentVersion)
-  );
+  return configuredTools.map((toolId) => getToolVersionStatus(projectRoot, toolId, currentVersion));
 }

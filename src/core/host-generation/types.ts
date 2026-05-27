@@ -9,6 +9,12 @@ export const REQUIRED_CANONICAL_SKILL_NAMES = [
   'c3spec-tier3-full',
   'c3spec-subagent-dev',
   'c3spec-host-adapter',
+  'c3spec-explore',
+  'c3spec-sync-specs',
+  'c3spec-archive-change',
+  'c3spec-bulk-archive-change',
+  'c3spec-verify-change',
+  'c3spec-onboard',
 ] as const;
 
 export type RequiredCanonicalSkillName = (typeof REQUIRED_CANONICAL_SKILL_NAMES)[number];

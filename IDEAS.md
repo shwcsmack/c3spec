@@ -71,19 +71,6 @@ We need to verify that every workflow actually creates a change folder, lands al
 - Make `c3spec-archive-change` (or an equivalent step) mandatory at the end of every tier flow
 - Add a CLI/skill check that fails if a "completed" change is missing required artifacts or wasn't archived
 
-## 8. Collapse the legacy `skills/` pipeline into `.agents/skills/`
-
-The repo has two parallel skill pipelines (see memory: `workflow/two-skill-pipelines.md`). Root `skills/` is the legacy pipeline that feeds `scripts/generate-templates.js` → `src/core/templates/workflows/`. `.agents/skills/` is the first-class pipeline that feeds host-generation via `REQUIRED_CANONICAL_SKILL_NAMES` in `src/core/host-generation/types.ts`. The source of truth should be `.agents/skills/` only — but root `skills/` contains a mix of (a) duplicates of canonical tier skills already in `.agents/skills/` and (b) legacy-only skills (`c3spec-propose`, `c3spec-archive-change`, `c3spec-apply-change`, `c3spec-continue-change`, `c3spec-new-change`, `c3spec-ff-change`, `c3spec-verify-change`, `c3spec-sync-specs`, `c3spec-bulk-archive-change`, `c3spec-onboard`, `c3spec-explore`) that haven't been migrated yet. We can't just delete `skills/` — the tier skills currently reference some of those legacy skills by name. We need to inventory, decide what to keep, migrate the keepers to `.agents/skills/`, then retire the legacy pipeline.
-
-- Inventory every skill under `skills/`: classify each as "duplicate of `.agents/` canonical", "still-needed legacy", or "obsolete"
-- Grep `.agents/skills/` and `c3spec/specs/` for references to each legacy skill name to find which ones the first-class flow still depends on
-- For duplicates: confirm `.agents/skills/` is authoritative and delete the root copy
-- For still-needed legacy skills: migrate them under `.agents/skills/` and add their names to `REQUIRED_CANONICAL_SKILL_NAMES` so host-generation picks them up
-- For obsolete skills: delete with a brief rationale captured in the change retro
-- Remove `scripts/generate-templates.js` and `src/core/templates/workflows/` once nothing reads from `skills/` anymore
-- Update `CLAUDE.md` / `AGENTS.md` to declare `.agents/skills/` as the single source of truth so contributors don't reintroduce the legacy path
-- Confirm host-generation regenerates `.cursor/skills/`, `.claude/skills/`, and `.codex/` skill artifacts cleanly after the migration
-
 ## 9. Make `tasks.md` more extensive and structured
 
 The current Tier 2 `tasks.md` template is a flat bulleted checklist (`- [ ] Task 1: ...`). For anything beyond a trivial feature this collapses too much detail and loses the staging that the plan already implies. Tasks should mirror the staged structure of the plan (`Task 1`, `Task 1.1`, `Task 1.2`, ...) so the task list itself communicates dependencies, stages, and grouping — not just an ordered checklist.

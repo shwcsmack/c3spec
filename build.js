@@ -11,30 +11,19 @@ const runTsc = (args = []) => {
   execFileSync(process.execPath, [tscPath, ...args], { stdio: 'inherit' });
 };
 
-console.log('🔨 Building OpenSpec...\n');
+console.log('🔨 Building c3spec...\n');
 
-// Regenerate skill templates from skills/ source-of-truth
-console.log('Generating skill templates from skills/...');
-try {
-  execFileSync(process.execPath, ['scripts/generate-templates.js'], { stdio: 'inherit' });
-} catch (error) {
-  console.error('\n❌ Skill template generation failed!');
-  process.exit(1);
-}
-
-// Clean dist directory
 if (existsSync('dist')) {
   console.log('Cleaning dist directory...');
   rmSync('dist', { recursive: true, force: true });
 }
 
-// Run TypeScript compiler (use local version explicitly)
 console.log('Compiling TypeScript...');
 try {
   runTsc(['--version']);
   runTsc();
   console.log('\n✅ Build completed successfully!');
-} catch (error) {
+} catch {
   console.error('\n❌ Build failed!');
   process.exit(1);
 }
