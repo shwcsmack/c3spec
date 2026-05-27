@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Design: Tier 3 Full Workflow Skill</title>
+  <style>
+    :root {
+      --bg: #f7f8fb;
+      --card: #ffffff;
+      --ink: #172033;
+      --muted: #61708a;
+      --line: #d9e0ec;
+      --accent: #335cff;
+      --accent-bg: #eaf0ff;
+      --green: #16794c;
+      --yellow: #9b6400;
+      --red: #a33b3b;
+    }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    main {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 48px 24px 72px;
+    }
+    header, section, .decision {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: 0 12px 30px rgba(23, 32, 51, 0.06);
+      margin-bottom: 22px;
+      padding: 28px;
+    }
+    h1, h2, h3 {
+      line-height: 1.15;
+      margin: 0 0 14px;
+    }
+    h1 {
+      font-size: 38px;
+      letter-spacing: -0.03em;
+    }
+    h2 {
+      font-size: 24px;
+    }
+    h3 {
+      font-size: 19px;
+    }
+    p {
+      margin: 0 0 14px;
+    }
+    ul, ol {
+      margin: 10px 0 0;
+      padding-left: 22px;
+    }
+    li {
+      margin: 6px 0;
+    }
+    code {
+      background: #f1f4f9;
+      border: 1px solid #e2e7f0;
+      border-radius: 6px;
+      padding: 1px 5px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.92em;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 14px;
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: #f2f5fb;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .meta {
+      color: var(--muted);
+      font-size: 15px;
+      margin-bottom: 0;
+    }
+    .label {
+      display: inline-block;
+      border-radius: 999px;
+      background: var(--accent-bg);
+      border: 1px solid #cfdbff;
+      color: var(--accent);
+      font-weight: 650;
+      padding: 4px 10px;
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+    .chosen {
+      color: var(--green);
+      font-weight: 700;
+    }
+    .risk-medium {
+      color: var(--yellow);
+      font-weight: 700;
+    }
+    .risk-high {
+      color: var(--red);
+      font-weight: 700;
+    }
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .step {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fafcff;
+      padding: 14px;
+      min-height: 82px;
+    }
+    .step strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <p class="meta">Tier 2 Design · May 26, 2026</p>
+      <h1>Design: <code>c3spec-tier3-full</code></h1>
+      <p>
+        This design fixes where the new skill lives, how it is generated, and what workflow
+        contract it gives agents when <code>c3spec-start</code> routes a change to Tier 3.
+      </p>
+    </header>
+
+    <section>
+      <h2>Workflow Shape</h2>
+      <p>
+        Tier 3 remains the full c3spec workflow. The new skill does not implement new CLI behavior;
+        it makes the agent instructions first-class and reviewable.
+      </p>
+      <div class="flow">
+        <div class="step"><strong>1. Pre-flight</strong>Commit approval, worktree, baseline.</div>
+        <div class="step"><strong>2. Brainstorm</strong>Explore uncertainty before proposal.</div>
+        <div class="step"><strong>3. Proposal</strong>HTML review, then markdown.</div>
+        <div class="step"><strong>4. Design</strong>HTML review, then markdown.</div>
+        <div class="step"><strong>5. Specs</strong>Delta specs for affected capabilities.</div>
+        <div class="step"><strong>6. Tasks & Plan</strong>Task list plus staged implementation plan.</div>
+        <div class="step"><strong>7. Apply</strong><code>c3spec-subagent-dev</code> with Tier 3 review.</div>
+        <div class="step"><strong>8. Verify & Retro</strong>Full verification, memory, archive, finish.</div>
+      </div>
+    </section>
+
+    <div class="decision">
+      <span class="label">Decision 1</span>
+      <h2>Author the Skill in Both Existing Skill Surfaces</h2>
+      <p><span class="chosen">Chosen:</span> Add <code>skills/c3spec-tier3-full/SKILL.md</code> for the bundled CLI fallback and <code>.agents/skills/c3spec-tier3-full/SKILL.md</code> for first-class agent hosts.</p>
+      <p><strong>Reason:</strong> The repo currently has two skill surfaces with different jobs. The root <code>skills/</code> directory feeds TypeScript template codegen. The <code>.agents/skills/</code> directory is the canonical source for host-rendered agent artifacts used by Cursor, Claude Code, and Codex.</p>
+      <p><strong>Note:</strong> Per idea #3 (codebase audit, Sprint 2), the continued existence of the root <code>skills/</code> directory will be reassessed. Until then, parity is maintained so the bundled CLI fallback stays consistent with the canonical host-facing skill set.</p>
+      <p><strong>Alternatives considered:</strong></p>
+      <ul>
+        <li>Only add <code>.agents/skills/</code>: host agents would improve, but bundled CLI fallback generation would not know about the skill.</li>
+        <li>Only add <code>skills/</code>: generated fallback content would exist, but first-class host workflows would still lack the Tier 3 route.</li>
+        <li>Refactor to one source of truth first: desirable long term, too broad for this contained workflow fix.</li>
+      </ul>
+    </div>
+
+    <div class="decision">
+      <span class="label">Decision 2</span>
+      <h2>Register Tier 3 in Host Generation Instead of Template Codegen</h2>
+      <p><span class="chosen">Chosen:</span> Add <code>c3spec-tier3-full</code> to <code>REQUIRED_CANONICAL_SKILL_NAMES</code> in <code>src/core/host-generation/types.ts</code> and update the injected routing guidance in <code>src/core/host-generation/renderers/instructions.ts</code>.</p>
+      <p><strong>Reason:</strong> Tier skills are installed through the first-class host-generation pipeline, not the legacy workflow template codegen path. Existing Tier 1 and Tier 2 skills are enumerated by <code>REQUIRED_CANONICAL_SKILL_NAMES</code>, and init/update tests mirror that canonical list. Tier 3 should follow that established path.</p>
+      <p><strong>Alternatives considered:</strong></p>
+      <ul>
+        <li>Add Tier 3 to <code>scripts/generate-templates.js</code>: wrong pipeline for tier skills; that script covers legacy workflow templates such as apply, archive, propose, and verify.</li>
+        <li>Hand-maintain only test constants: would make tests pass locally while missing the actual host-generation source of truth.</li>
+      </ul>
+    </div>
+
+    <div class="decision">
+      <span class="label">Decision 3</span>
+      <h2>Route by Skill Name from <code>c3spec-start</code></h2>
+      <p><span class="chosen">Chosen:</span> Replace the inline Tier 3 handoff sentence in <code>c3spec-start</code> with an explicit instruction to invoke <code>c3spec-tier3-full</code>.</p>
+      <p><strong>Reason:</strong> The purpose of this change is to stop improvisation at the route boundary. The start skill should classify and confirm; the Tier 3 skill should own Tier 3 execution details.</p>
+      <p><strong>Alternatives considered:</strong></p>
+      <ul>
+        <li>Keep a summarized Tier 3 flow in <code>c3spec-start</code>: useful context, but risks becoming a second copy that drifts.</li>
+        <li>Route through <code>c3spec-propose</code>: skips Tier 3-specific pre-flight, HTML checkpoint, verify, retro, and archive discipline.</li>
+      </ul>
+    </div>
+
+    <section>
+      <h2>Risks and Mitigations</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Risk</th>
+            <th>Severity</th>
+            <th>Mitigation</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Multiple skill surfaces drift apart.</td>
+            <td><span class="risk-high">High</span></td>
+            <td>Keep content intentionally parallel in this change and add tests that enumerate the canonical skill list.</td>
+          </tr>
+          <tr>
+            <td>Host generation misses the new skill.</td>
+            <td><span class="risk-medium">Medium</span></td>
+            <td>Update <code>REQUIRED_CANONICAL_SKILL_NAMES</code>, injected routing instructions, and init/update test mirrors together.</td>
+          </tr>
+          <tr>
+            <td>Tier 3 skill becomes too prescriptive and conflicts with existing c3spec CLI instructions.</td>
+            <td><span class="risk-medium">Medium</span></td>
+            <td>Describe stage responsibilities and artifact gates, but keep CLI command details delegated to existing c3spec skills where possible.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+  </main>
+</body>
+</html>
