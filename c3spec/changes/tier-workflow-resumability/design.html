@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Design - Tier Workflow Resumability</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #172033;
+      --muted: #64748b;
+      --border: #d9e2ef;
+      --blue: #2563eb;
+      --green: #16803c;
+      --yellow: #9a6700;
+      --red: #b42318;
+      --purple: #7c3aed;
+    }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    }
+    main {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 36px 24px 72px;
+    }
+    h1 { margin: 0 0 6px; font-size: 28px; letter-spacing: -0.02em; }
+    h2 { margin: 0 0 12px; font-size: 18px; }
+    h3 { margin: 18px 0 8px; font-size: 15px; }
+    p { margin: 8px 0; }
+    code {
+      background: #eef2f7;
+      border: 1px solid #dfe6f0;
+      border-radius: 5px;
+      padding: 1px 5px;
+      font-size: 13px;
+    }
+    ul { margin: 8px 0 0 20px; padding: 0; }
+    li { margin: 5px 0; }
+    .subtitle { color: var(--muted); margin-bottom: 26px; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    }
+    .context { border-left: 5px solid var(--blue); background: #eff6ff; }
+    .decision { border-left: 5px solid var(--green); }
+    .risk { border-left: 5px solid var(--yellow); background: #fff9e8; }
+    .tag {
+      display: inline-block;
+      border-radius: 999px;
+      padding: 3px 9px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-right: 6px;
+    }
+    .tag.chosen { background: #dcfce7; color: var(--green); }
+    .tag.alt { background: #eef2f7; color: #475569; }
+    .tag.defer { background: #fef3c7; color: var(--yellow); }
+    .tag.contract { background: #ede9fe; color: var(--purple); }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    th, td {
+      border-bottom: 1px solid var(--border);
+      padding: 10px 12px;
+      vertical-align: top;
+      text-align: left;
+    }
+    th {
+      background: #f1f5f9;
+      color: #475569;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    tr:last-child td { border-bottom: 0; }
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .step {
+      position: relative;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      min-height: 86px;
+    }
+    .step strong { display: block; margin-bottom: 4px; color: var(--blue); }
+    .step:not(:last-child)::after {
+      content: "→";
+      position: absolute;
+      right: -16px;
+      top: 36px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+    .contract-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .tier {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      background: #fff;
+    }
+    .tier h3 { margin-top: 0; color: var(--purple); }
+    @media (max-width: 960px) {
+      .flow, .contract-grid { grid-template-columns: 1fr; }
+      .step:not(:last-child)::after { content: ""; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Design: Tier Workflow Resumability</h1>
+    <p class="subtitle">
+      Technical design for a canonical tier lifecycle contract, lightweight T1 change folders,
+      tier-aware resume/apply helpers, and archive readiness checks.
+    </p>
+
+    <section class="card context">
+      <h2>Context</h2>
+      <p>
+        Current c3spec workflows are implemented primarily in canonical skills under
+        <code>.agents/skills/</code>. The CLI artifact graph exists and works for schema-backed
+        changes, but the tier skills already define richer behavior than the schema can express:
+        HTML review gates, human approvals, worktree setup, subagent dispatch, verification,
+        retrospective, and memory capture.
+      </p>
+      <p>
+        The design therefore keeps tier behavior in the canonical skill layer and uses CLI
+        support only where it already exists or where a small validation check is useful. A full
+        schema migration for T1/T2/T3 is explicitly deferred.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>Goals / Non-Goals</h2>
+      <table>
+        <thead><tr><th>Goals</th><th>Non-Goals</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>
+              <ul>
+                <li>Define one canonical lifecycle contract for T1/T2/T3 artifact sets.</li>
+                <li>Make Tier 1 produce a durable, lightweight change folder.</li>
+                <li>Make <code>continue-change</code> and <code>apply-change</code> safe in fresh context.</li>
+                <li>Add a visible readiness check before archive/completion.</li>
+                <li>Update specs and tests so drift is caught later.</li>
+              </ul>
+            </td>
+            <td>
+              <ul>
+                <li>No full rewrite of workflow schemas into CLI YAML.</li>
+                <li>No richer staged <code>tasks.md</code> schema beyond what apply/resume needs.</li>
+                <li>No mandatory context reset implementation.</li>
+                <li>No cleanup of pre-fork archived changes.</li>
+              </ul>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card decision">
+      <h2>D1: Canonical Lifecycle Contract</h2>
+      <p><span class="tag chosen">Chosen</span>Add a new required reference skill: <code>c3spec-tier-lifecycle</code>.</p>
+      <p>
+        This skill is not a workflow entry point. It is a shared contract that tier skills,
+        resume helpers, apply helpers, archive helpers, and reviewers consult. It defines:
+      </p>
+      <ul>
+        <li>tier identity and change folder conventions,</li>
+        <li>required and optional artifacts per tier,</li>
+        <li>pause points and human approval gates,</li>
+        <li>apply readiness and archive readiness,</li>
+        <li>fresh-context resume rules.</li>
+      </ul>
+      <p>
+        <strong>Reason:</strong> A sidecar file under <code>.agents/</code> would not necessarily
+        be bundled into installed host skill sets. A required canonical skill is already supported
+        by the host-generation and validation pipeline and can be referenced consistently by agents.
+      </p>
+      <p>
+        <span class="tag alt">Alternative</span>Put the contract only in <code>c3spec-start</code>.
+        Rejected because resume/apply can be invoked without rerunning start, and the contract would
+        be too easy to miss in fresh context.
+      </p>
+      <p>
+        <span class="tag defer">Deferred</span>Machine-readable tier YAML/JSON. Useful later, but
+        this pass does not need a new config parser or generated artifact pipeline.
+      </p>
+    </section>
+
+    <section class="card decision">
+      <h2>D2: Tier Artifact Sets</h2>
+      <p><span class="tag chosen">Chosen</span>Every tier gets a markdown durable record, even when HTML is used for review.</p>
+      <div class="contract-grid">
+        <div class="tier">
+          <h3>T1 Spec-Aware Fix</h3>
+          <p><strong>Folder:</strong> <code>c3spec/changes/tier1-&lt;slug&gt;/</code></p>
+          <p><strong>Required:</strong></p>
+          <ul>
+            <li><code>tier.md</code> with tier, goal, branch, status, affected specs</li>
+            <li><code>mini-plan.md</code></li>
+            <li><code>spec-impact.html</code> and <code>spec-impact.md</code></li>
+            <li><code>micro-retro.html</code> and <code>micro-retro.md</code></li>
+          </ul>
+          <p><strong>Optional:</strong> memory entry reference.</p>
+        </div>
+        <div class="tier">
+          <h3>T2 Lightweight Feature</h3>
+          <p><strong>Folder:</strong> <code>c3spec/changes/tier2-&lt;slug&gt;/</code></p>
+          <p><strong>Required:</strong></p>
+          <ul>
+            <li><code>tier.md</code></li>
+            <li><code>proposal.md</code></li>
+            <li><code>tasks.md</code></li>
+            <li><code>plan.md</code></li>
+            <li><code>verify.md</code></li>
+            <li><code>retrospective.md</code></li>
+          </ul>
+          <p><strong>Optional:</strong> <code>design.md</code>, delta specs, HTML review companions.</p>
+        </div>
+        <div class="tier">
+          <h3>T3 Full Workflow</h3>
+          <p><strong>Folder:</strong> <code>c3spec/changes/&lt;slug&gt;/</code></p>
+          <p><strong>Required:</strong></p>
+          <ul>
+            <li><code>tier.md</code></li>
+            <li><code>brainstorm.md</code></li>
+            <li><code>proposal.md</code></li>
+            <li><code>design.md</code></li>
+            <li><code>specs/*/spec.md</code></li>
+            <li><code>tasks.md</code>, <code>plan.md</code>, <code>verify.md</code>, <code>retrospective.md</code></li>
+          </ul>
+          <p><strong>Optional:</strong> HTML review companions retained beside markdown.</p>
+        </div>
+      </div>
+      <p>
+        <strong>Reason:</strong> Markdown artifacts are durable and diffable. HTML files remain
+        review surfaces, but they are not the only record.
+      </p>
+    </section>
+
+    <section class="card decision">
+      <h2>D3: Tier Metadata</h2>
+      <p><span class="tag chosen">Chosen</span>Use <code>tier.md</code> as the human-readable metadata and resume anchor.</p>
+      <p>
+        Each tier folder starts with a <code>tier.md</code> file. It includes:
+      </p>
+      <ul>
+        <li>Tier: <code>1</code>, <code>2</code>, or <code>3</code></li>
+        <li>Change slug and branch</li>
+        <li>Goal / scope summary</li>
+        <li>Status: planning, implementation, verifying, retrospective, ready-to-archive, archived</li>
+        <li>Required artifacts checklist</li>
+        <li>Affected specs</li>
+      </ul>
+      <p>
+        <strong>Reason:</strong> Fresh agents can read one file first and understand what kind of
+        workflow they are resuming. Markdown avoids adding a parser while still being easy to validate
+        with simple skill/test checks.
+      </p>
+      <p>
+        <span class="tag alt">Alternative</span>Use <code>.c3spec.yaml</code> for all tiers.
+        Rejected for this pass because schema-backed status currently treats the schema as an artifact
+        graph. T1 and T2 need lifecycle metadata, not a forced fake graph.
+      </p>
+    </section>
+
+    <section class="card decision">
+      <h2>D4: Resume Helper Behavior</h2>
+      <p><span class="tag chosen">Chosen</span><code>c3spec-continue-change</code> becomes tier-aware, but remains conservative.</p>
+      <div class="flow">
+        <div class="step">
+          <strong>1. Select</strong>
+          Choose a change folder via explicit name or structured host question.
+        </div>
+        <div class="step">
+          <strong>2. Identify Tier</strong>
+          Read <code>tier.md</code>; fall back to folder/artifact inference only with a warning.
+        </div>
+        <div class="step">
+          <strong>3. Inspect</strong>
+          Read required artifact checklist; use <code>c3spec status</code> for schema-backed T3/T2 when useful.
+        </div>
+        <div class="step">
+          <strong>4. Route</strong>
+          Report the next safe action: create artifact, wait for approval, implement, verify, retro, archive.
+        </div>
+        <div class="step">
+          <strong>5. Stop</strong>
+          Create at most one artifact or hand off; do not silently skip human gates.
+        </div>
+      </div>
+      <p>
+        The helper should prefer safety over automation: if it cannot determine the next step from
+        disk, it asks one clarifying question rather than guessing.
+      </p>
+    </section>
+
+    <section class="card decision">
+      <h2>D5: Apply Helper Behavior</h2>
+      <p><span class="tag chosen">Chosen</span><code>c3spec-apply-change</code> delegates implementation to <code>c3spec-subagent-dev</code>.</p>
+      <p>
+        The apply helper should not implement tasks directly or mark checkboxes itself. It should:
+      </p>
+      <ul>
+        <li>select and identify the change and tier,</li>
+        <li>verify required planning artifacts exist for that tier,</li>
+        <li>read context artifacts and task/plan files,</li>
+        <li>detect blocked / ready / all-done state,</li>
+        <li>invoke <code>c3spec-subagent-dev</code> with the tier, plan, and relevant memory context.</li>
+      </ul>
+      <p>
+        <strong>Reason:</strong> Checkbox ownership and two-stage review already live in
+        <code>c3spec-subagent-dev</code>. Duplicating task execution in apply would recreate drift.
+      </p>
+    </section>
+
+    <section class="card decision">
+      <h2>D6: Archive Readiness Check</h2>
+      <p><span class="tag chosen">Chosen</span>Implement readiness primarily in skills, with tests that lock the contract.</p>
+      <p>
+        The tier lifecycle skill defines archive readiness. Tier skills and
+        <code>c3spec-archive-change</code> must consult it before calling the CLI archive command.
+        The CLI archive command remains focused on moving folders and syncing specs; it is not forced
+        to understand every tier in this pass.
+      </p>
+      <p>
+        <strong>Reason:</strong> This satisfies the “CLI/skill check” goal through a skill-level
+        readiness check while avoiding a larger CLI schema migration. Tests can assert the required
+        skill references and lifecycle content so future edits do not remove the check.
+      </p>
+      <p>
+        <span class="tag defer">Deferred</span>A future CLI command like
+        <code>c3spec verify-lifecycle --change &lt;name&gt;</code>. That becomes attractive after the
+        lifecycle contract proves stable.
+      </p>
+    </section>
+
+    <section class="card decision">
+      <h2>D7: Host Adapter Correction</h2>
+      <p><span class="tag chosen">Chosen</span>Update <code>c3spec-host-adapter</code> to describe current Cursor dispatch accurately.</p>
+      <p>
+        The existing host adapter says Cursor dispatches named agents via generated files under
+        <code>.cursor/agents/&lt;name&gt;.md</code>, but in this Cursor environment the roles are exposed as
+        native subagent types (<code>implementer</code>, <code>spec-reviewer</code>, and
+        <code>quality-reviewer</code>) rather than repo-local generated files. The adapter should describe
+        the role mapping without requiring non-existent paths.
+      </p>
+    </section>
+
+    <section class="card risk">
+      <h2>Risks / Trade-offs</h2>
+      <table>
+        <thead><tr><th>Risk / Trade-off</th><th>Mitigation / Accepted Reason</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Adding a new required skill increases the canonical surface.</td>
+            <td>Accepted because it creates a single durable contract and fits the existing host-generation validation model.</td>
+          </tr>
+          <tr>
+            <td>Markdown <code>tier.md</code> is less machine-checkable than JSON/YAML.</td>
+            <td>Use simple required headings/checklists now; defer parser work until the contract stabilizes.</td>
+          </tr>
+          <tr>
+            <td>Skill-level archive checks can still be bypassed by running <code>c3spec archive</code> directly.</td>
+            <td>Accept for this pass. The c3spec workflow routes agents through skills; CLI hard enforcement is a follow-up if bypasses become common.</td>
+          </tr>
+          <tr>
+            <td>Existing active or archived pre-fork changes may not satisfy the new contract.</td>
+            <td>Apply the lifecycle contract prospectively to tier workflows; do not retroactively fail old upstream residue.</td>
+          </tr>
+          <tr>
+            <td>Added tests that call the CLI may slow the suite.</td>
+            <td>Use focused tests and the existing vitest timeout constraint. Avoid repeated <code>runCLI</code> calls where direct unit tests can validate skill content.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card">
+      <h2>Migration Plan</h2>
+      <ol>
+        <li>Add <code>c3spec-tier-lifecycle</code> under <code>.agents/skills/</code> and register it in canonical skill validation.</li>
+        <li>Update specs for <code>workflow-routing</code>, <code>canonical-skills</code>, <code>cli-artifact-workflow</code>, and <code>cli-archive</code>.</li>
+        <li>Update tier skills to create <code>tier.md</code>, required markdown artifacts, and archive readiness checks.</li>
+        <li>Update continue/apply helpers to consult the lifecycle contract and route safely from disk state.</li>
+        <li>Update host adapter wording for Cursor subagent dispatch.</li>
+        <li>Add tests for canonical skill presence, lifecycle references, helper drift, and any minimal CLI/artifact behavior needed.</li>
+        <li>Run <code>pnpm check:canonical-skills</code>, <code>pnpm test</code>, and generated artifact drift checks.</li>
+      </ol>
+      <p>
+        <strong>Rollback:</strong> revert the branch before archive. No persisted data, DB, external APIs, or package dependencies are affected.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>Open Questions</h2>
+      <p>
+        None blocking. The design intentionally picks a skill-level lifecycle contract now and defers CLI hard enforcement until the contract is proven through one or two workflow cycles.
+      </p>
+    </section>
+  </main>
+</body>
+</html>

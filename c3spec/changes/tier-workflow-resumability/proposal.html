@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Proposal - Tier Workflow Resumability</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #172033;
+      --muted: #64748b;
+      --border: #d9e2ef;
+      --blue: #2563eb;
+      --green: #16803c;
+      --yellow: #9a6700;
+      --red: #b42318;
+      --purple: #7c3aed;
+    }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    }
+    main {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 36px 24px 72px;
+    }
+    h1 { margin: 0 0 6px; font-size: 28px; letter-spacing: -0.02em; }
+    h2 { margin: 0 0 12px; font-size: 18px; }
+    h3 { margin: 18px 0 8px; font-size: 15px; }
+    p { margin: 8px 0; }
+    code {
+      background: #eef2f7;
+      border: 1px solid #dfe6f0;
+      border-radius: 5px;
+      padding: 1px 5px;
+      font-size: 13px;
+    }
+    ul { margin: 8px 0 0 20px; padding: 0; }
+    li { margin: 5px 0; }
+    .subtitle { color: var(--muted); margin-bottom: 26px; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    }
+    .why {
+      border-left: 5px solid var(--blue);
+      background: #eff6ff;
+    }
+    .capability-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .capability {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      background: #fff;
+    }
+    .capability strong { display: block; margin-bottom: 6px; color: var(--purple); }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    th, td {
+      border-bottom: 1px solid var(--border);
+      padding: 10px 12px;
+      vertical-align: top;
+      text-align: left;
+    }
+    th {
+      background: #f1f5f9;
+      color: #475569;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    tr:last-child td { border-bottom: 0; }
+    .tag {
+      display: inline-block;
+      border-radius: 999px;
+      padding: 3px 9px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-right: 6px;
+    }
+    .tag.modify { background: #ede9fe; color: var(--purple); }
+    .tag.nonbreaking { background: #dcfce7; color: var(--green); }
+    .tag.warn { background: #fef3c7; color: var(--yellow); }
+    .from { color: var(--red); }
+    .to { color: var(--green); }
+    @media (max-width: 860px) {
+      .capability-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Proposal: Tier Workflow Resumability</h1>
+    <p class="subtitle">
+      Change <code>tier-workflow-resumability</code> combines IDEAS #7 and #15:
+      enforce tier artifact discipline and realign resume/apply helpers with the current tier workflows.
+    </p>
+
+    <section class="card why">
+      <h2>Why</h2>
+      <p>
+        c3spec's tiered workflow now routes development through T1, T2, and T3, but its durable artifact story is inconsistent. T1 says it has no change directory while still writing review artifacts under <code>c3spec/changes/</code>; T2 and T3 create different artifact sets; and the resume helpers still assume the pre-tier artifact sequence. This makes the workflow harder to audit and unsafe to resume from a fresh agent context. We need a small, explicit tier lifecycle contract so every tier leaves enough on-disk evidence to continue, verify, and archive without relying on chat memory.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>What Changes</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Behavior</th>
+            <th>From</th>
+            <th>To</th>
+            <th>Impact</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Tier artifact lifecycle</td>
+            <td class="from">Tier artifact sets are described separately in prose, and T1 contradicts itself about change folders.</td>
+            <td class="to">Each tier has a canonical artifact contract: required artifacts, optional artifacts, pause points, completion criteria, and archive readiness.</td>
+            <td><span class="tag nonbreaking">Non-breaking</span>Clarifies current workflow and tightens future changes.</td>
+          </tr>
+          <tr>
+            <td>Tier 1 audit trail</td>
+            <td class="from">T1 avoids a registered change directory but writes HTML artifacts under a tier-specific path.</td>
+            <td class="to">T1 gets a lightweight, explicit change folder and completion record suitable for fresh-context resume and archive checks.</td>
+            <td><span class="tag warn">Workflow change</span>More durable audit trail for fixes; no full proposal/design ceremony.</td>
+          </tr>
+          <tr>
+            <td>Resume helper behavior</td>
+            <td class="from"><code>c3spec-continue-change</code> walks schema artifacts and references retired generic patterns.</td>
+            <td class="to"><code>c3spec-continue-change</code> identifies tier state and directs the agent to the next artifact, approval gate, or blocked condition.</td>
+            <td><span class="tag nonbreaking">Non-breaking</span>Improves paused workflow recovery.</td>
+          </tr>
+          <tr>
+            <td>Apply helper behavior</td>
+            <td class="from"><code>c3spec-apply-change</code> loops through tasks itself and marks checkboxes directly.</td>
+            <td class="to"><code>c3spec-apply-change</code> uses on-disk context, respects tier pause points, and hands implementation to <code>c3spec-subagent-dev</code> so checkbox ownership and reviews stay consistent.</td>
+            <td><span class="tag nonbreaking">Non-breaking</span>Aligns helper behavior with the canonical subagent workflow.</td>
+          </tr>
+          <tr>
+            <td>Archive/completion discipline</td>
+            <td class="from">Archive mostly checks tasks completion and spec sync, with no tier-specific required artifact validation.</td>
+            <td class="to">The workflow gains a visible check path that fails or warns when a tier is called complete without its required artifacts or archive step.</td>
+            <td><span class="tag warn">Guardrail</span>Prevents incomplete audit trails from being treated as done.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card">
+      <h2>Capabilities</h2>
+      <h3>New Capabilities</h3>
+      <p>
+        None expected. This change tightens existing workflow, canonical skill, artifact workflow, and archive contracts rather than creating a new product capability.
+      </p>
+
+      <h3>Modified Capabilities</h3>
+      <div class="capability-grid">
+        <div class="capability">
+          <strong><code>workflow-routing</code></strong>
+          Tier workflow shape changes: T1 gains a durable lightweight change folder; all tiers gain explicit artifact/pause/archive contracts.
+        </div>
+        <div class="capability">
+          <strong><code>canonical-skills</code></strong>
+          Resume helper requirements become tier-aware and fresh-context-safe; host-adapter wording should match actual Cursor subagent dispatch.
+        </div>
+        <div class="capability">
+          <strong><code>cli-artifact-workflow</code></strong>
+          Status/instructions behavior may need to expose enough tier context or artifact readiness to support resume helpers without guessing.
+        </div>
+        <div class="capability">
+          <strong><code>cli-archive</code></strong>
+          Archive/readiness expectations should account for tier-required artifacts, not just task checkbox state.
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Impact</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Area</th>
+            <th>Expected files / surfaces</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Canonical skills</td>
+            <td><code>.agents/skills/c3spec-tier1-fix/SKILL.md</code>, <code>c3spec-tier2-feature</code>, <code>c3spec-tier3-full</code>, <code>c3spec-continue-change</code>, <code>c3spec-apply-change</code>, <code>c3spec-host-adapter</code></td>
+            <td>Main implementation surface; must respect the canonical skill pipeline memory.</td>
+          </tr>
+          <tr>
+            <td>Specs</td>
+            <td><code>c3spec/changes/tier-workflow-resumability/specs/*/spec.md</code></td>
+            <td>Delta specs for modified capabilities listed above.</td>
+          </tr>
+          <tr>
+            <td>CLI/tests</td>
+            <td>Likely <code>src/cli/index.ts</code>, artifact workflow helpers, archive command tests, or skill validation tests</td>
+            <td>Keep CLI work minimal unless required for enforcement; avoid a full schema rewrite.</td>
+          </tr>
+          <tr>
+            <td>Generated artifacts</td>
+            <td>Potential host-generated skill copies / validation fixtures</td>
+            <td>Need drift checks after canonical skill edits.</td>
+          </tr>
+          <tr>
+            <td>Risk</td>
+            <td>Existing archived/pre-fork changes</td>
+            <td>Do not require old archived upstream changes to satisfy new tier contracts in this pass.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</body>
+</html>
