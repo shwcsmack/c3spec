@@ -181,3 +181,17 @@ Investigate "pi agent" as a potential runtime or collaborator for c3spec — fir
 - Surface blockers and open questions up front — licensing, prompt-format compatibility, missing primitives (subagent dispatch? hooks? structured answer-picker?) — so the research is honest about what we don't know
 - Cross-reference with idea #4 (bundled agent tooling survey) and idea #14 (native answer-picker UIs) — overlap is likely and worth coordinating instead of duplicating
 - Output: a single research doc under `docs/research/pi-agent-fit.md` (or similar), plus 0–N follow-up ideas appended to `IDEAS.md` if the research surfaces concrete work
+
+## 18. Refactor `runCLI` test helper to in-process invocation
+
+`test/helpers/run-cli.ts` spawns a real `dist/cli/index.js` Node subprocess for every CLI invocation in a test. With 4 test files (`workspace.test.ts`, `validate.test.ts`, `artifact-workflow.test.ts`, `cli-e2e/basic.test.ts`) issuing 5–10 `runCLI` calls per test, the per-subprocess cold-start cost (~0.5–1.5s on a warm cache) reliably exceeds vitest's default 10s `testTimeout` — the bandaid for that lives in `vitest.config.ts` today (`testTimeout: 30000`, see comment + IDEAS #18 backref). The bandaid hides real latency: a single workspace test that issues 8 CLI calls is paying ~8–12s of pure subprocess overhead to assert on output text. Refactor `runCLI` to invoke the CLI in-process — import the program builder, call `parseAsync` against a fresh `Command` instance, capture stdout/stderr through a writable buffer — so tests cost milliseconds instead of seconds and we can drop the timeout bump.
+
+- Audit `runCLI` call sites across the 4 affected test files; document how each one depends on subprocess semantics (process exit code, signal handling, env isolation, stdio framing)
+- Design an in-process replacement that preserves the public `RunCLIResult` shape (`exitCode`, `signal`, `stdout`, `stderr`, `timedOut`, `command`) so tests don't need rewrites
+- Handle Commander's `process.exit` calls — either configure the program with `exitOverride()` and translate thrown `CommanderError` into the result, or run inside a stubbed `process.exit` interceptor
+- Capture stdout/stderr by patching `process.stdout.write` / `process.stderr.write` for the duration of the call (with strict cleanup in `finally`) instead of relying on real pipes
+- Reset module state between invocations if the CLI carries top-level mutable state (env caches, config singletons, registries) — surface what state actually leaks
+- Preserve a subprocess fallback for the small number of cases that genuinely need it (e.g., `cli-e2e/basic.test.ts` smoke checks asserting the bin actually launches) so we don't over-collapse
+- After landing, revert `vitest.config.ts` timeouts to defaults (or document why a smaller bump is still needed) and remove the IDEAS #18 backref from the config comment
+- Measure before/after: report wall-clock time for the full suite and for `workspace.test.ts` alone so the win is visible
+- Coordinate with idea #13 (spec → backing-test enforcement) — that work will add tests; if the new tests use `runCLI`, they benefit immediately from the in-process refactor
