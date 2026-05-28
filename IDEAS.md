@@ -1,4 +1,4 @@
-<!-- c3spec:ideas-digest 8153dc0340d9f5867a5e0e7491cdf96690793b5770f157077c3079480304ac3b -->
+<!-- c3spec:ideas-digest dbf5c35a48e9bc5d0b9f429a880988b7fae26242612fd8305d7aa6d05011cf9a -->
 # Ideas
 
 Backlog of ideas to pick up later. Each entry is intentionally light - flesh out via `/c3spec:start` when ready to work on it.
@@ -144,3 +144,12 @@ Harden the branch-finalization flow so every workflow consistently ends with a r
 - Standardize end-of-workflow invocation contract, including required inputs and expected outputs.
 - Improve failure handling/retry guidance when finalization checks fail.
 - Add tests ensuring each workflow path reaches finishing-development-branch under the correct conditions.
+
+## 15. Auto-resolve ideas after implementation with idea-specific workflow
+
+Design a reliable mechanism to remove or mark ideas complete once the corresponding fix/feature is delivered, potentially via an idea-linked workflow that tracks implementation-to-backlog closure.
+
+- Define how a change links to one or more idea IDs from planning through archive.
+- Decide completion behavior: delete idea, mark completed with archive reference, or move to a completed section/log.
+- Add an idea-aware workflow step (or dedicated workflow) that enforces closure at archive/finish time.
+- Add safeguards for partial fulfillment and multi-idea changes so unresolved scope is not accidentally removed.
