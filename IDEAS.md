@@ -161,3 +161,23 @@ Today Tier workflows still ask the user at the beginning whether to approve all 
 - Update tier skills and lifecycle docs to treat the prompt as conditional on mode, not mandatory
 - Add tests covering default behavior, override behavior, and backward compatibility when no setting exists
 - Document migration behavior for existing users so current flows continue to work unless they opt in
+
+## 15. Research a Rust port for CLI tooling
+
+Investigate whether c3spec’s CLI should be ported from the current TypeScript/Node stack to Rust to improve startup speed, binary distribution, reliability, and long-term maintainability. This is research-only and should end with a concrete recommendation and migration posture.
+
+- Inventory the current CLI architecture and runtime dependencies that a Rust implementation would need to preserve
+- Compare Rust implementation approaches (single static binary, plugin/extension model, config handling, markdown/spec parsing)
+- Evaluate migration strategies: full rewrite, hybrid bridge, or incremental command-by-command port
+- Assess ecosystem impacts for npm, Homebrew, and Nix install/update flows
+- Produce a go/no-go recommendation with risks, prerequisites, and a suggested pilot scope
+
+## 16. Research converting the project into a pi package and going all-in on pi agent
+
+Investigate what it would take to repackage c3spec as a first-class pi package and treat pi agent as the primary runtime/host model instead of maintaining equal-first-class support patterns for multiple hosts. This is research-only and should conclude with a fit assessment and phased recommendation.
+
+- Map current c3spec host/runtime assumptions (Cursor, Claude Code, Codex) against pi package and pi agent primitives
+- Identify required changes to skill delivery, host adapter behavior, workflow entrypoints, and developer UX when pi becomes primary
+- Evaluate tradeoffs of “pi-first” strategy: maintenance load, compatibility loss, ecosystem lock-in, and contributor workflow impact
+- Define migration options: additive support, staged default switch, or full strategic pivot
+- Produce a recommendation document with explicit success criteria, blockers, and follow-up ideas
