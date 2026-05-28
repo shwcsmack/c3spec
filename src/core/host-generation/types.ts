@@ -19,6 +19,8 @@ export const REQUIRED_CANONICAL_SKILL_NAMES = [
   'c3spec-verify-change',
   'c3spec-onboard',
   'c3spec-add-idea',
+  'c3spec-using-git-worktrees',
+  'c3spec-finishing-development-branch',
 ] as const;
 
 export type RequiredCanonicalSkillName = (typeof REQUIRED_CANONICAL_SKILL_NAMES)[number];

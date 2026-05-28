@@ -171,29 +171,19 @@ Tier workflows SHALL treat `c3spec-tier-lifecycle` as the single source of truth
 
 ### Requirement: Canonical skill and review-agent surfaces
 
-The workflow-routing contract SHALL be backed by a fixed set of canonical skill and review-agent surfaces that supported hosts can dispatch.
+The workflow-routing contract SHALL include local c3spec-owned replacements for critical external superpowers dependencies used by tier/archive workflows.
 
-#### Scenario: Canonical skill surfaces exist
+#### Scenario: Tier workflows invoke local vendored workspace skill
 
-- **WHEN** the c3spec workflow contract is in effect
-- **THEN** the following canonical skills SHALL exist and be referenced by the routing contract:
-  - `c3spec-start`
-  - `c3spec-tier1-fix`
-  - `c3spec-tier2-feature`
-  - `c3spec-tier3-full`
-  - `c3spec-tier-lifecycle`
-  - `c3spec-subagent-dev`
-  - `c3spec-host-adapter`
-- **AND** these skills SHALL be treated as the canonical entry points for routing, tier execution, subagent-driven development, and host dispatch
+- **WHEN** a tier workflow performs worktree setup
+- **THEN** it SHALL invoke `c3spec-using-git-worktrees`
+- **AND** it SHALL NOT require external `superpowers:using-git-worktrees` availability for critical-path execution
 
-#### Scenario: Canonical review-agent roles exist
+#### Scenario: Archive and tier endgame invoke local vendored finish skill
 
-- **WHEN** a tier workflow dispatches implementation or review work
-- **THEN** the following named agent roles SHALL be the canonical surfaces:
-  - `implementer` — executes one bounded task at a time
-  - `spec-reviewer` — verifies the result against proposal, design, specs, and tasks
-  - `quality-reviewer` — reviews correctness, tests, maintainability, and generated artifact drift
-- **AND** host-specific dispatch SHALL be mediated by `c3spec-host-adapter` rather than by skills naming host-specific subagent mechanisms directly
+- **WHEN** tier or archive flow performs branch finalization
+- **THEN** it SHALL invoke `c3spec-finishing-development-branch`
+- **AND** it SHALL NOT require external `superpowers:finishing-a-development-branch` availability for critical-path execution
 
 ### Requirement: Subagent workflow expectations
 
@@ -247,7 +237,7 @@ c3spec machine enforcement SHALL guarantee that the canonical skill, agent, and 
 #### Scenario: Canonical artifact presence is enforced
 
 - **WHEN** c3spec validates or generates host artifacts
-- **THEN** the required canonical skill names (`c3spec-start`, `c3spec-tier1-fix`, `c3spec-tier2-feature`, `c3spec-tier3-full`, `c3spec-tier-lifecycle`, `c3spec-subagent-dev`, `c3spec-host-adapter`, `c3spec-continue-change`, `c3spec-apply-change`, `c3spec-explore`, `c3spec-sync-specs`, `c3spec-archive-change`, `c3spec-bulk-archive-change`, `c3spec-verify-change`, `c3spec-onboard`) SHALL be required to exist under `.agents/skills/`
+- **THEN** the required canonical skill names (`c3spec-start`, `c3spec-tier1-fix`, `c3spec-tier2-feature`, `c3spec-tier3-full`, `c3spec-tier-lifecycle`, `c3spec-subagent-dev`, `c3spec-host-adapter`, `c3spec-continue-change`, `c3spec-apply-change`, `c3spec-explore`, `c3spec-sync-specs`, `c3spec-archive-change`, `c3spec-bulk-archive-change`, `c3spec-verify-change`, `c3spec-onboard`, `c3spec-using-git-worktrees`, `c3spec-finishing-development-branch`) SHALL be required to exist under `.agents/skills/`
 - **AND** the required canonical agent role names (`implementer`, `spec-reviewer`, `quality-reviewer`) SHALL be required to exist under `.agents/agents/`
 - **AND** the required canonical hook name (`c3spec-memory-scan`) SHALL be required to exist under `.agents/hooks/`
 

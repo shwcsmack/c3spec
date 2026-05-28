@@ -22,22 +22,13 @@ The repository SHALL maintain one `SKILL.md` per canonical skill under `.agents/
 
 ### Requirement: Required canonical skills are enforced
 
-Host generation and validation SHALL require the tier routing skills, tier lifecycle contract, resumption helpers, and utility skills: `c3spec-start`, `c3spec-tier1-fix`, `c3spec-tier2-feature`, `c3spec-tier3-full`, `c3spec-tier-lifecycle`, `c3spec-subagent-dev`, `c3spec-host-adapter`, `c3spec-continue-change`, `c3spec-apply-change`, `c3spec-explore`, `c3spec-sync-specs`, `c3spec-archive-change`, `c3spec-bulk-archive-change`, `c3spec-verify-change`, and `c3spec-onboard`.
+Host generation and validation SHALL require the tier routing skills, tier lifecycle contract, resumption helpers, utility skills, and local replacements for critical superpowers dependencies: `c3spec-using-git-worktrees` and `c3spec-finishing-development-branch`.
 
-`c3spec-tier-lifecycle` SHALL exist so that tier skills and resume/apply/archive helpers share the same artifact, pause point, apply readiness, and archive readiness contract.
+#### Scenario: Validation fails when vendored critical skill is missing
 
-`c3spec-continue-change` and `c3spec-apply-change` SHALL exist so that an agent can resume a paused tier workflow — either after an explicit stop between artifacts or in a fresh context — without re-running `c3spec-start` from scratch.
-
-#### Scenario: Validation fails when a required skill is missing
-
-- **WHEN** `discoverCanonicalArtifacts` runs and a required skill directory is absent
+- **WHEN** `discoverCanonicalArtifacts` runs and `c3spec-using-git-worktrees` or `c3spec-finishing-development-branch` is absent
 - **THEN** validation SHALL report a missing required canonical skill error
-
-#### Scenario: Lifecycle skill is bundled
-
-- **WHEN** host generation or workspace skill installation reads bundled canonical skills
-- **THEN** `c3spec-tier-lifecycle` SHALL be present alongside the tier routing and resume helper skills
-- **AND** installed agents SHALL be able to consult it without using a repo-local-only path
+- **AND** host artifacts SHALL NOT be generated as fully valid
 
 ### Requirement: CI checks canonical skill presence
 

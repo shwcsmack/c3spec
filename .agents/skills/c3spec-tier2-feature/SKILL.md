@@ -36,7 +36,7 @@ Do not continue into worktree setup while tracked changes are present. Do not of
 SLUG="<short-description>"
 BRANCH="feat/${SLUG}"
 
-superpowers:using-git-worktrees
+c3spec-using-git-worktrees
 ```
 
 Standard setup with basic test baseline — confirm the suite is green before starting.
@@ -309,7 +309,7 @@ Archives the compact change directory (`tier.md`, `proposal.md`, optional `desig
 Only the archive transition should flip `tier.md` `Status` to `archived`.
 
 ```bash
-superpowers:finishing-a-development-branch
+c3spec-finishing-development-branch
 ```
 
 PR is last. PR description should reference the proposal and any memory entries created.

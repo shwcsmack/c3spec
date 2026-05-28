@@ -34,7 +34,7 @@ Do not continue into worktree setup while tracked changes are present. Do not of
 SLUG="<short-description>"
 BRANCH="fix/${SLUG}"
 
-superpowers:using-git-worktrees
+c3spec-using-git-worktrees
 ```
 
 Fast setup — create the worktree and branch. No full test baseline required. Just confirm the worktree is clean.
@@ -263,7 +263,7 @@ Run archive first, then automatically finish the branch:
 
 ```bash
 c3spec archive -y
-superpowers:finishing-a-development-branch
+c3spec-finishing-development-branch
 ```
 
 This confirms tests are green, opens the PR, cleans up the worktree. PR description should reference the spec impact report findings and the memory entry if one was created.

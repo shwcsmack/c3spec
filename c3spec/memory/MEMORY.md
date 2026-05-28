@@ -9,6 +9,7 @@ One line per entry. Load this index at the start of every `/opsx:start` session 
 - [Fork Bootstrap Provenance Classification](workflow/fork-bootstrap-provenance-classification.md) — cleanup, provenance, fork, changes, archive, workflow-gates
 - [Tier Lifecycle Contract Ownership](workflow/tier-lifecycle-contract-ownership.md) — tier-workflows, lifecycle, skills, resumability, archive-readiness
 - [Single Canonical Skill Pipeline](workflow/single-canonical-skill-pipeline.md) — skills, host-generation, canonical, workflow-gates
+- [Critical-Path Vendor-First Skill Dependencies](workflow/critical-path-vendor-first-skill-dependencies.md) — skills, dependencies, vendoring, risk-reduction, workflow-planning
 - [Two Skill Pipelines](workflow/two-skill-pipelines.md) — skills, host-generation, codegen, tier-workflows, workflow-gates (historical)
 - [Complete Excision Active Surfaces](workflow/complete-excision-active-surfaces.md) — cleanup, telemetry, lockfiles, tests, excision, workflow-gates
 - [Fork Residue Cleanup via Risk Bands](workflow/fork-residue-risk-banded-cleanup.md) — cleanup, fork, risk-bands, approval-gates, safety

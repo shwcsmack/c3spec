@@ -23,6 +23,8 @@ const REQUIRED = [
   'c3spec-verify-change',
   'c3spec-onboard',
   'c3spec-add-idea',
+  'c3spec-using-git-worktrees',
+  'c3spec-finishing-development-branch',
 ];
 
 const missing = [];

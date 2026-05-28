@@ -123,7 +123,7 @@ Archive a completed change in the experimental workflow.
    Immediately after a successful archive, run:
 
    ```bash
-   superpowers:finishing-a-development-branch
+   c3spec-finishing-development-branch
    ```
 
    This is the default endgame behavior. If finishing fails, keep archive marked complete and report actionable recovery steps.
@@ -147,7 +147,7 @@ Archive a completed change in the experimental workflow.
 **Schema:** <schema-name>
 **Archived to:** the archive path derived from `planningHome.changesDir`/YYYY-MM-DD-<name>/
 **Specs:** ✓ Synced to main specs (or "No delta specs" or "Sync skipped")
-**Finish branch:** ✓ `superpowers:finishing-a-development-branch` ran (or "failed — see recovery guidance")
+**Finish branch:** ✓ `c3spec-finishing-development-branch` ran (or "failed — see recovery guidance")
 
 All artifacts complete. All tasks complete.
 ```

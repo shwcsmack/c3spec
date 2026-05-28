@@ -42,7 +42,7 @@ If the user requests `fast forward`, follow `c3spec-tier-lifecycle` fast-forward
 
 ```bash
 BRANCH="feat/<short-description>"
-superpowers:using-git-worktrees
+c3spec-using-git-worktrees
 ```
 
 Standard setup with dependency install and baseline verification. Run the project-appropriate test command before planning or implementing. If the baseline fails, report the failure and ask whether to investigate or proceed.
@@ -344,7 +344,7 @@ Confirm delta specs have been synced into `c3spec/specs/` as expected. Then upda
 Finish the development branch:
 
 ```bash
-superpowers:finishing-a-development-branch
+c3spec-finishing-development-branch
 ```
 
 PR is last. The PR description should reference the proposal, design, verification, retrospective, and memory entries if any were created.
