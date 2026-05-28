@@ -31,17 +31,7 @@ We already have human-in-the-loop checkpoints (HTML artifact approvals, commit a
 - Identify spots where we over-interrupt and could move to HOTL
 - Propose concrete changes to skills / routing / CLAUDE.md
 
-## 4. Make `tasks.md` more extensive and structured
-
-The current Tier 2 `tasks.md` template is a flat bulleted checklist (`- [ ] Task 1: ...`). For anything beyond a trivial feature this collapses too much detail and loses the staging that the plan already implies. Tasks should mirror the staged structure of the plan (`Task 1`, `Task 1.1`, `Task 1.2`, ...) so the task list itself communicates dependencies, stages, and grouping — not just an ordered checklist.
-
-- Define a richer task schema (top-level task → subtasks, grouped by stage)
-- Mirror stage boundaries from `plan.md` so tasks and plan share a structure
-- Update the Tier 2 (and Tier 3, once it lands) skill so the generated `tasks.md` follows the new structure
-- Decide whether checkboxes apply per-subtask, per-task, or both, and update the subagent-dev checkbox discipline accordingly
-- Make sure spec-impact, verify, retro, and archive remain visible as their own structured tasks rather than buried in a flat list
-
-## 5. Mandatory context reset before the implementation step
+## 4. Mandatory context reset before the implementation step
 
 Every tier should pause between planning and implementation, either by handing the apply step to a fresh agent or by clearing the orchestrator's context before code is written. Today the same session that did the brainstorm/proposal/design/plan also drives apply, so it carries hundreds of turns of planning chatter into the code-writing phase — which dilutes attention, leaks half-formed ideas into the implementation, and makes review harder. Subagents already get fresh context, but the orchestrator itself does not, and there's no enforced pause point.
 
@@ -51,7 +41,7 @@ Every tier should pause between planning and implementation, either by handing t
 - Encode the pause as an explicit skill step with a checkpoint, not a convention
 - Make sure the context-reset boundary preserves the artifacts the apply step needs (paths to plan.md, specs, change folder) — usually via filesystem, not chat history
 
-## 6. Enforce requirements of ALL specs with backing tests
+## 5. Enforce requirements of ALL specs with backing tests
 
 Today the only cross-spec enforcement in this repo is `test/specs/source-specs-normalization.test.ts`, which checks the *shape* of every `c3spec/specs/*/spec.md` (Purpose + Requirements sections, no delta headers, no placeholder text, parseable requirements). Behavioral alignment between each `### Requirement: …` and the code that implements it is trusted entirely to human discipline and `opsx-verify-skill` runs at change time — there is no CI signal when a requirement loses its backing test, or when an implementation drifts away from the requirement it was supposed to satisfy. We dogfood spec-driven development, so the bar should be higher: every requirement in every spec should be traceable to at least one test that exercises it, and CI should fail when that link breaks. Explore what this looks like end-to-end before committing to an implementation.
 
@@ -65,7 +55,7 @@ Today the only cross-spec enforcement in this repo is `test/specs/source-specs-n
 - Surface coverage in a way agents and humans both consume: a `c3spec coverage` subcommand or a generated report under `c3spec/` that shows per-spec status
 - Spawned from the completed workflow-routing spec change — that change deliberately stayed docs-only because no precedent exists for new-test-per-requirement work; this idea is where that precedent gets set
 
-## 7. Trigger native agent answer-picker UIs from c3spec skills
+## 6. Trigger native agent answer-picker UIs from c3spec skills
 
 Claude Code, Codex, and Cursor each surface a structured "pick an answer" UI when an agent emits the right shape — Cursor has its `AskQuestion` tool, Codex/Claude Code render multi-choice prompts when the assistant message follows specific patterns. c3spec interview steps (`c3spec-start`, brainstorm, design checkpoints) currently fall back to plain markdown bullet lists, which is fine but inconsistent and easy for the human to miss. Research whether each runtime exposes a public API (tool, MCP surface, output convention) for these widgets, or whether deterministic prompt phrasing can get them to pop up reliably — then standardize how c3spec skills request a structured answer so the experience matches the host's native flow.
 
@@ -76,7 +66,7 @@ Claude Code, Codex, and Cursor each surface a structured "pick an answer" UI whe
 - Update tier and interview skills (`c3spec-start`, `c3spec-tier2-feature`, `c3spec-tier3-full`, brainstorm/design checkpoints) to use the new convention instead of ad-hoc bullet lists
 - Document the convention so contributors authoring new skills don't reintroduce inconsistent answer prompts
 
-## 8. Audit the standalone `schemas/` system — keep, fold in, or remove
+## 7. Audit the standalone `schemas/` system — keep, fold in, or remove
 
 The repo has a `schemas/` directory at the root (`spec-driven`, `workspace-planning`) plus a sibling `c3spec/schemas/superpowers-bridge/`, each shipping a `schema.yaml` and a `templates/` folder. None of the current tier skills, `c3spec-start`, or host-generation pipeline appear to reach into these schemas — the artifact templates the tier skills actually emit live inline in the SKILL.md content under `.agents/skills/`. The runtime validation under `src/core/schemas/` (spec/change Zod schemas) is a separate system and is in active use, so the audit is specifically about the YAML-schema-with-templates directories, not the runtime validators. Figure out whether these schema bundles are still wired in anywhere, whether they're upstream-pre-fork residue (overlaps with completed pre-fork cleanup work), or whether there's latent value we should fold back into the tier skills.
 
@@ -88,7 +78,7 @@ The repo has a `schemas/` directory at the root (`spec-driven`, `workspace-plann
 - If deleting, make sure `c3spec list`, validation, and host-generation still pass and that the relevant spec/capability is also updated or retired
 - Coordinate with the completed pre-fork cleanup so we don't do two passes over the same upstream residue
 
-## 9. Default commit approval mode to always approve all
+## 8. Default commit approval mode to always approve all
 
 Today Tier workflows still ask the user at the beginning whether to approve all commits upfront or confirm each commit. For users who always choose the same answer, this prompt is repeated friction. Add a persistent default so commit approval can be preconfigured and the question is skipped unless explicitly overridden.
 
@@ -100,7 +90,7 @@ Today Tier workflows still ask the user at the beginning whether to approve all 
 - Add tests covering default behavior, override behavior, and backward compatibility when no setting exists
 - Document migration behavior for existing users so current flows continue to work unless they opt in
 
-## 10. Research a Rust port for CLI tooling
+## 9. Research a Rust port for CLI tooling
 
 Investigate whether c3spec’s CLI should be ported from the current TypeScript/Node stack to Rust to improve startup speed, binary distribution, reliability, and long-term maintainability. This is research-only and should end with a concrete recommendation and migration posture.
 
@@ -110,7 +100,7 @@ Investigate whether c3spec’s CLI should be ported from the current TypeScript/
 - Assess ecosystem impacts for npm, Homebrew, and Nix install/update flows
 - Produce a go/no-go recommendation with risks, prerequisites, and a suggested pilot scope
 
-## 11. Research converting the project into a pi package and going all-in on pi agent
+## 10. Research converting the project into a pi package and going all-in on pi agent
 
 Investigate what it would take to repackage c3spec as a first-class pi package and treat pi agent as the primary runtime/host model instead of maintaining equal-first-class support patterns for multiple hosts. This is research-only and should conclude with a fit assessment and phased recommendation.
 
@@ -119,3 +109,13 @@ Investigate what it would take to repackage c3spec as a first-class pi package a
 - Evaluate tradeoffs of “pi-first” strategy: maintenance load, compatibility loss, ecosystem lock-in, and contributor workflow impact
 - Define migration options: additive support, staged default switch, or full strategic pivot
 - Produce a recommendation document with explicit success criteria, blockers, and follow-up ideas
+
+## 11. Research workflow for idea-driven and explicit research requests
+
+Create a dedicated workflow path that routes to research mode when the user asks to investigate, survey, or analyze options (including idea triage follow-ups), instead of forcing feature/fix tier flows.
+
+- Define routing signals in c3spec-start for research intent (e.g., 'research', 'investigate', 'compare', 'evaluate').
+- Design a lightweight research artifact set (question, scope, findings, recommendations, next steps).
+- Add a dedicated skill/flow for research execution with clear pause/approval points.
+- Specify handoff rules from research flow back into T1/T2/T3 implementation when a direction is chosen.
+- Add tests/spec updates so routing behavior and research flow expectations are enforced.
