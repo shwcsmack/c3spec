@@ -32,13 +32,13 @@ When the user asks to triage ideas/backlog priority, run the CLI triage command 
 c3spec ideas triage
 \`\`\`
 
-If `c3spec` is not on PATH, run:
+If \`c3spec\` is not on PATH, run:
 
 \`\`\`bash
 node bin/c3spec.js ideas triage
 \`\`\`
 
-Do not manually rank by reading `IDEAS.md` unless both commands are unavailable.
+Do not manually rank by reading \`IDEAS.md\` unless both commands are unavailable.
 
 ## Single front door
 

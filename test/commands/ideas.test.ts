@@ -93,8 +93,44 @@ describe('ideas command', () => {
     }
   });
 
+  it('uses OPENAI_MODEL when C3SPEC_TRIAGE_MODEL is unset', async () => {
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        choices: [
+          {
+            message: {
+              content: JSON.stringify({
+                ranked: [
+                  { id: 1, score: 88, confidence: 0.8, rationale: 'Good fit.' },
+                  { id: 2, score: 50, confidence: 0.7, rationale: 'Lower impact.' },
+                ],
+              }),
+            },
+          },
+        ],
+      }),
+    });
+
+    const originalFetch = globalThis.fetch;
+    (globalThis as any).fetch = mockFetch;
+
+    try {
+      const result = await runCLI(['ideas', 'triage'], {
+        cwd: testDir,
+        env: { OPENAI_API_KEY: 'test-key', OPENAI_MODEL: 'gpt-4o-mini' },
+      });
+
+      expect(result.exitCode).toBe(0);
+      expect(result.stdout).toContain('#1 [88] First');
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+    } finally {
+      (globalThis as any).fetch = originalFetch;
+    }
+  });
+
   it('supports compact triage output', async () => {
-    const result = await runCLI(['ideas', 'triage', '--compact'], { cwd: testDir });
+    const result = await runCLI(['ideas', 'triage', '--compact'], { cwd: testDir, env: { C3SPEC_TRIAGE_PI: '0' } });
     expect(result.exitCode).toBe(0);
     expect(result.stdout).toContain('Idea triage (highest score first):');
     expect(result.stdout).not.toContain('confidence:');
@@ -108,11 +144,11 @@ describe('ideas command', () => {
     try {
       const result = await runCLI(['ideas', 'triage'], {
         cwd: testDir,
-        env: { OPENAI_API_KEY: 'test-key', C3SPEC_TRIAGE_MODEL: 'gpt-4o-mini' },
+        env: { OPENAI_API_KEY: 'test-key', C3SPEC_TRIAGE_MODEL: 'gpt-4o-mini', C3SPEC_TRIAGE_PI: '0' },
       });
 
       expect(result.exitCode).toBe(0);
-      expect(result.stderr).toContain('Model triage failed; using heuristic fallback');
+      expect(result.stderr).toContain('Model triage failed; using fallback');
       expect(result.stdout).toContain('rationale: Heuristic fallback: keyword-based score.');
     } finally {
       (globalThis as any).fetch = originalFetch;

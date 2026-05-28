@@ -1,6 +1,7 @@
 import { Command } from 'commander';
 import { promises as fs } from 'node:fs';
 import * as path from 'node:path';
+import { execFileSync } from 'node:child_process';
 
 type IdeaEntry = {
   title: string;
@@ -117,62 +118,12 @@ function coerceJsonArray(text: string): unknown[] {
   return parsed;
 }
 
-async function rankIdeasWithModel(
-  doc: IdeasDocument,
-  options: { model?: string; apiKeyEnv?: string; baseUrl?: string }
-): Promise<RankedIdea[] | null> {
-  const model = options.model ?? process.env.C3SPEC_TRIAGE_MODEL;
-  const apiKeyEnv = options.apiKeyEnv ?? 'OPENAI_API_KEY';
-  const apiKey = process.env[apiKeyEnv];
-  if (!model || !apiKey) return null;
-
-  const baseUrl = (options.baseUrl ?? 'https://api.openai.com/v1').replace(/\/$/, '');
-  const ideasPayload = doc.entries.map((entry, index) => ({
-    id: index + 1,
-    title: entry.title,
-    body: entry.body.join('\n').trim(),
-  }));
-
-  const prompt = [
-    'You are ranking software project backlog ideas for implementation priority.',
-    'Return ONLY a JSON array with one object per input idea.',
-    'Each object MUST include: id (number), score (0-100), confidence (0-1), rationale (short string).',
-    'Higher score means higher priority. Consider impact, urgency, effort-to-value, strategic alignment, and risk.',
-    'Be concise and deterministic.',
-    '',
-    JSON.stringify(ideasPayload),
-  ].join('\n');
-
-  const response = await fetch(`${baseUrl}/chat/completions`, {
-    method: 'POST',
-    headers: {
-      'content-type': 'application/json',
-      authorization: `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({
-      model,
-      temperature: 0,
-      response_format: { type: 'json_object' },
-      messages: [
-        { role: 'system', content: 'Return valid JSON only.' },
-        { role: 'user', content: `{"ranked": ${prompt}}` },
-      ],
-    }),
-  });
-
-  if (!response.ok) {
-    throw new Error(`Model triage HTTP ${response.status}`);
-  }
-
-  const payload = await response.json() as any;
-  const content = payload?.choices?.[0]?.message?.content;
-  if (typeof content !== 'string') throw new Error('Model triage returned empty content.');
-
+function parseRankedIdeas(content: string, doc: IdeasDocument, source: 'model' | 'heuristic' = 'model'): RankedIdea[] {
   let parsed: unknown[];
   try {
     const asObject = JSON.parse(content);
     if (Array.isArray(asObject)) parsed = asObject;
-    else if (Array.isArray(asObject?.ranked)) parsed = asObject.ranked;
+    else if (Array.isArray((asObject as any)?.ranked)) parsed = (asObject as any).ranked;
     else parsed = coerceJsonArray(content);
   } catch {
     parsed = coerceJsonArray(content);
@@ -193,7 +144,7 @@ async function rankIdeasWithModel(
       score: Math.max(0, Math.min(100, score)),
       confidence: Math.max(0, Math.min(1, confidence)),
       rationale,
-      source: 'model',
+      source,
     });
   }
 
@@ -202,6 +153,90 @@ async function rankIdeasWithModel(
   }
 
   return [...byId.values()].sort((a, b) => b.score - a.score || b.confidence - a.confidence || a.id - b.id);
+}
+
+function buildTriagePrompt(doc: IdeasDocument): string {
+  const ideasPayload = doc.entries.map((entry, index) => ({
+    id: index + 1,
+    title: entry.title,
+    body: entry.body.join('\n').trim(),
+  }));
+
+  return [
+    'You are ranking software project backlog ideas for implementation priority.',
+    'Return ONLY valid JSON in this shape: {"ranked":[{"id":number,"score":0-100,"confidence":0-1,"rationale":string}]}.',
+    'Include exactly one ranked object per input idea id.',
+    'Higher score means higher priority. Consider impact, urgency, effort-to-value, strategic alignment, and risk.',
+    'Be concise and deterministic.',
+    '',
+    `Input ideas: ${JSON.stringify(ideasPayload)}`,
+  ].join('\n');
+}
+
+async function rankIdeasWithModel(
+  doc: IdeasDocument,
+  options: { model?: string; apiKeyEnv?: string; baseUrl?: string }
+): Promise<RankedIdea[] | null> {
+  const model = options.model ?? process.env.C3SPEC_TRIAGE_MODEL ?? process.env.OPENAI_MODEL ?? 'gpt-4o-mini';
+  const apiKeyEnv = options.apiKeyEnv ?? 'OPENAI_API_KEY';
+  const apiKey = process.env[apiKeyEnv];
+  if (!apiKey) return null;
+
+  const baseUrl = (options.baseUrl ?? 'https://api.openai.com/v1').replace(/\/$/, '');
+  const prompt = buildTriagePrompt(doc);
+
+  const response = await fetch(`${baseUrl}/chat/completions`, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model,
+      temperature: 0,
+      response_format: { type: 'json_object' },
+      messages: [
+        { role: 'system', content: 'Return valid JSON only.' },
+        { role: 'user', content: prompt },
+      ],
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Model triage HTTP ${response.status}`);
+  }
+
+  const payload = await response.json() as any;
+  const content = payload?.choices?.[0]?.message?.content;
+  if (typeof content !== 'string') throw new Error('Model triage returned empty content.');
+
+  return parseRankedIdeas(content, doc, 'model');
+}
+
+function rankIdeasWithPiAgent(doc: IdeasDocument, options: { model?: string; provider?: string; enabled?: boolean }): RankedIdea[] | null {
+  if (options.enabled === false || process.env.C3SPEC_TRIAGE_PI === '0') return null;
+
+  const prompt = buildTriagePrompt(doc);
+  const args = ['-p', '--mode', 'text', '--no-tools', '--no-context-files'];
+
+  const model = options.model ?? process.env.C3SPEC_TRIAGE_MODEL ?? process.env.OPENAI_MODEL;
+  const provider = options.provider ?? process.env.C3SPEC_TRIAGE_PROVIDER;
+  if (provider) args.push('--provider', provider);
+  if (model) args.push('--model', model);
+  args.push(prompt);
+
+  try {
+    const output = execFileSync('pi', args, {
+      encoding: 'utf-8',
+      stdio: ['ignore', 'pipe', 'pipe'],
+      timeout: 120_000,
+    });
+
+    if (!output || !output.trim()) throw new Error('pi returned empty content.');
+    return parseRankedIdeas(output, doc, 'model');
+  } catch {
+    return null;
+  }
 }
 
 async function loadIdeasFile(targetPath = ideasPath()): Promise<IdeasDocument> {
@@ -358,7 +393,8 @@ export function registerIdeasCommand(program: Command): void {
     .option('--model <name>', 'Model name override (default: C3SPEC_TRIAGE_MODEL env)')
     .option('--api-key-env <name>', 'Environment variable name for API key', 'OPENAI_API_KEY')
     .option('--base-url <url>', 'OpenAI-compatible base URL', 'https://api.openai.com/v1')
-    .action(async (options?: { json?: boolean; compact?: boolean; model?: string; apiKeyEnv?: string; baseUrl?: string }) => {
+    .option('--no-pi', 'Disable pi-agent fallback triage')
+    .action(async (options?: { json?: boolean; compact?: boolean; model?: string; apiKeyEnv?: string; baseUrl?: string; pi?: boolean }) => {
       const doc = await loadIdeasFile();
 
       let ranked: RankedIdea[];
@@ -368,10 +404,17 @@ export function registerIdeasCommand(program: Command): void {
           apiKeyEnv: options?.apiKeyEnv,
           baseUrl: options?.baseUrl,
         });
-        ranked = modelRanked ?? rankIdeasHeuristically(doc);
+
+        if (modelRanked) {
+          ranked = modelRanked;
+        } else {
+          const piRanked = rankIdeasWithPiAgent(doc, { model: options?.model, enabled: options?.pi });
+          ranked = piRanked ?? rankIdeasHeuristically(doc);
+        }
       } catch (error) {
-        console.error(`Model triage failed; using heuristic fallback. ${(error as Error).message}`);
-        ranked = rankIdeasHeuristically(doc);
+        console.error(`Model triage failed; using fallback. ${(error as Error).message}`);
+        const piRanked = rankIdeasWithPiAgent(doc, { model: options?.model, enabled: options?.pi });
+        ranked = piRanked ?? rankIdeasHeuristically(doc);
       }
 
       if (options?.json) {
