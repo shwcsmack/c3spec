@@ -82,11 +82,12 @@ Dispatch the **spec-reviewer** agent first, then the **quality-reviewer** agent 
 
 ## Model selection
 
-- Mechanical implementation (1-2 files, complete spec): fast model (haiku)
-- Integration / multi-file coordination: standard model (sonnet)
-- Architecture / judgment / debugging: most capable model (opus)
-- Reviewers: standard model (sonnet) — they read and reason, not generate
-- Final code reviewer (Tier 3): most capable model
+- Routine/simple implementation (small, mechanical, low ambiguity): `gpt-5.4-mini`
+- Code-focused implementation where stronger coding priors help: `gpt-5.3-codex`
+- Integration / medium-complexity multi-file coordination: `gpt-5.4`
+- Architecture / hardest judgment / debugging tasks: `gpt-5.5`
+- Reviewers: `gpt-5.4` by default; escalate to `gpt-5.5` for high-risk review
+- Final code reviewer (Tier 3): `gpt-5.5`
 
 ## Implementer status handling
 
@@ -122,7 +123,7 @@ This is mandatory. The user works exclusively from the command line.
 
 **Tier 3:**
 - Stage declarations required for plans with 15+ tasks
-- Run final whole-implementation code review (most capable model)
+- Run final whole-implementation code review (`gpt-5.5`)
 - After all tasks: full verify.md, full retro with memory direct capture
 
 ## Red flags (never do)
@@ -136,4 +137,4 @@ This is mandatory. The user works exclusively from the command line.
 
 <!-- c3spec-generated: true
 c3spec-source: /Users/shayne/code/c3spec/.agents/skills/c3spec-subagent-dev/SKILL.md
-c3spec-hash: 721c4f4dc8d6aab00ca901d2860dea006183a513ee4d438f00bf8d77cda9a0d5 -->
+c3spec-hash: e7ee07650595c1322a87d6aa8b27642a0cce082d72b3863b4c0b5f0d7c7fe807 -->
