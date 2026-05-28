@@ -15,7 +15,6 @@ import { ShowCommand } from '../commands/show.js';
 import { CompletionCommand } from '../commands/completion.js';
 import { FeedbackCommand } from '../commands/feedback.js';
 import { registerConfigCommand } from '../commands/config.js';
-import { registerSchemaCommand } from '../commands/schema.js';
 import {
   registerWorkspaceCommand,
   runWorkspaceUpdateForRoot,
@@ -27,14 +26,9 @@ import {
   statusCommand,
   instructionsCommand,
   applyInstructionsCommand,
-  templatesCommand,
-  schemasCommand,
   newChangeCommand,
-  DEFAULT_SCHEMA,
   type StatusOptions,
   type InstructionsOptions,
-  type TemplatesOptions,
-  type SchemasOptions,
   type NewChangeOptions,
 } from '../commands/workflow/index.js';
 
@@ -278,7 +272,6 @@ program
 
 registerSpecCommand(program);
 registerConfigCommand(program);
-registerSchemaCommand(program);
 registerWorkspaceCommand(program);
 registerMemoryCommand(program);
 registerIdeasCommand(program);
@@ -421,7 +414,6 @@ program
   .command('status')
   .description('Display artifact completion status for a change')
   .option('--change <id>', 'Change name to show status for')
-  .option('--schema <name>', 'Schema override (auto-detected from config.yaml)')
   .option('--json', 'Output as JSON')
   .action(async (options: StatusOptions) => {
     try {
@@ -438,7 +430,6 @@ program
   .command('instructions [artifact]')
   .description('Output enriched instructions for creating an artifact or applying tasks')
   .option('--change <id>', 'Change name')
-  .option('--schema <name>', 'Schema override (auto-detected from config.yaml)')
   .option('--json', 'Output as JSON')
   .action(async (artifactId: string | undefined, options: InstructionsOptions) => {
     try {
@@ -455,37 +446,6 @@ program
     }
   });
 
-// Templates command
-program
-  .command('templates')
-  .description('Show resolved template paths for all artifacts in a schema')
-  .option('--schema <name>', `Schema to use (default: ${DEFAULT_SCHEMA})`)
-  .option('--json', 'Output as JSON mapping artifact IDs to template paths')
-  .action(async (options: TemplatesOptions) => {
-    try {
-      await templatesCommand(options);
-    } catch (error) {
-      console.log();
-      ora().fail(`Error: ${(error as Error).message}`);
-      process.exit(1);
-    }
-  });
-
-// Schemas command
-program
-  .command('schemas')
-  .description('List available workflow schemas with descriptions')
-  .option('--json', 'Output as JSON (for agent use)')
-  .action(async (options: SchemasOptions) => {
-    try {
-      await schemasCommand(options);
-    } catch (error) {
-      console.log();
-      ora().fail(`Error: ${(error as Error).message}`);
-      process.exit(1);
-    }
-  });
-
 // New command group with change subcommand
 const newCmd = program.command('new').description('Create new items');
 
@@ -495,7 +455,6 @@ newCmd
   .option('--description <text>', 'Description to add to README.md')
   .option('--goal <text>', 'Workspace product goal to store with the change')
   .option('--areas <names>', 'Comma-separated affected workspace link names')
-  .option('--schema <name>', `Workflow schema to use (default: ${DEFAULT_SCHEMA})`)
   .action(async (name: string, options: NewChangeOptions) => {
     try {
       await newChangeCommand(name, options);

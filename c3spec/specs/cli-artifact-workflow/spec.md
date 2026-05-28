@@ -431,3 +431,20 @@ Workflow commands SHALL use the workspace planning schema instructions for works
 - **THEN** instruction output SHALL guide the agent to organize area-specific requirements under workspace-scoped `specs/` paths
 - **AND** it SHALL not require all affected areas to be finalized before planning can continue
 - **AND** it SHALL not instruct the agent to create repo-local spec files while the change is still in workspace planning
+
+### Requirement: Artifact workflow uses fixed c3spec contract
+
+Artifact workflow commands SHALL operate using c3spec's fixed workflow contract and SHALL NOT require schema resolution from package/project schema directories.
+
+#### Scenario: Change creation without schema flag
+
+- **WHEN** a user creates a new change with default workflow commands
+- **THEN** the command SHALL create workflow metadata and artifact paths using built-in c3spec behavior
+- **AND** it SHALL NOT require or expose a `--schema` selector for standard operation
+
+#### Scenario: Schema directories are not runtime dependencies
+
+- **WHEN** workflow status/instructions are loaded
+- **THEN** the runtime SHALL not resolve templates from `schemas/*` or `c3spec/schemas/*`
+- **AND** workflow guidance SHALL come from fixed command/skill logic
+

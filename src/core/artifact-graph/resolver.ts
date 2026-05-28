@@ -1,9 +1,7 @@
-import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { getGlobalDataDir } from '../global-config.js';
 import { C3SPEC_DIR_NAME } from '../config.js';
-import { parseSchema, SchemaValidationError } from './schema.js';
 import type { SchemaYaml } from './types.js';
 
 /**
@@ -20,195 +18,88 @@ export class SchemaLoadError extends Error {
   }
 }
 
-/**
- * Gets the package's built-in schemas directory path.
- * Uses import.meta.url to resolve relative to the current module.
- */
+const SPEC_DRIVEN_SCHEMA: SchemaYaml = {
+  name: 'spec-driven',
+  version: 1,
+  description: 'Default OpenSpec workflow - proposal → specs → design → tasks',
+  artifacts: [
+    { id: 'proposal', generates: 'proposal.md', description: 'Initial proposal document outlining the change', template: 'proposal.md', requires: [] },
+    { id: 'specs', generates: 'specs/**/*.md', description: 'Detailed specifications for the change', template: 'spec.md', requires: ['proposal'] },
+    { id: 'design', generates: 'design.md', description: 'Technical design document with implementation details', template: 'design.md', requires: ['proposal'] },
+    { id: 'tasks', generates: 'tasks.md', description: 'Implementation checklist with trackable tasks', template: 'tasks.md', requires: ['specs', 'design'] },
+  ],
+  apply: { requires: ['tasks'], tracks: 'tasks.md', instruction: 'Read context files, work through pending tasks, mark complete as you go.\nPause if you hit blockers or need clarification.' },
+};
+
+const WORKSPACE_PLANNING_SCHEMA: SchemaYaml = {
+  name: 'workspace-planning',
+  version: 1,
+  description: 'Workspace planning workflow for cross-area changes',
+  artifacts: [
+    { id: 'proposal', generates: 'proposal.md', description: 'Shared workspace proposal with the product goal, scope, affected areas, and impact', template: 'proposal.md', requires: [] },
+    { id: 'specs', generates: 'specs/**/*.md', description: 'Workspace-scoped specs organized by affected area and capability', template: 'spec.md', requires: ['proposal'] },
+    { id: 'design', generates: 'design.md', description: 'Cross-area technical design and coordination decisions', template: 'design.md', requires: ['proposal'] },
+    { id: 'tasks', generates: 'tasks.md', description: 'Coordination checklist for workspace planning and later affected-area implementation', template: 'tasks.md', requires: ['specs', 'design'] },
+  ],
+  apply: { requires: ['tasks'], tracks: 'tasks.md', instruction: 'Read the workspace planning context from status and instructions output before applying.\nSelect an affected area and confirm an allowed edit root before making implementation edits.\nUntil an explicit implementation context is available, treat linked repos and folders as read-only exploration context.' },
+};
+
+const SCHEMAS: Record<string, SchemaYaml> = {
+  'spec-driven': SPEC_DRIVEN_SCHEMA,
+  'workspace-planning': WORKSPACE_PLANNING_SCHEMA,
+  'superpowers-bridge': WORKSPACE_PLANNING_SCHEMA,
+};
+
+const TEMPLATES: Record<string, Record<string, string>> = {
+  'spec-driven': {
+    'proposal.md': `## Why\n\n<!-- Explain the motivation for this change. What problem does this solve? Why now? -->\n\n## What Changes\n\n<!-- Describe what will change. Be specific about new capabilities, modifications, or removals. -->\n\n## Capabilities\n\n### New Capabilities\n<!-- Capabilities being introduced. Replace <name> with kebab-case identifier (e.g., user-auth, data-export, api-rate-limiting). Each creates specs/<name>/spec.md -->\n- \`<name>\`: <brief description of what this capability covers>\n\n### Modified Capabilities\n<!-- Existing capabilities whose REQUIREMENTS are changing (not just implementation).\n     Only list here if spec-level behavior changes. Each needs a delta spec file.\n     Use existing spec names from openspec/specs/. Leave empty if no requirement changes. -->\n- \`<existing-name>\`: <what requirement is changing>\n\n## Impact\n\n<!-- Affected code, APIs, dependencies, systems -->\n`,
+    'design.md': `## Context\n\n<!-- Background and current state -->\n\n## Goals / Non-Goals\n\n**Goals:**\n<!-- What this design aims to achieve -->\n\n**Non-Goals:**\n<!-- What is explicitly out of scope -->\n\n## Decisions\n\n<!-- Key design decisions and rationale -->\n\n## Risks / Trade-offs\n\n<!-- Known risks and trade-offs -->\n`,
+    'spec.md': `## ADDED Requirements\n\n### Requirement: <!-- requirement name -->\n<!-- requirement text -->\n\n#### Scenario: <!-- scenario name -->\n- **WHEN** <!-- condition -->\n- **THEN** <!-- expected outcome -->\n`,
+    'tasks.md': `## 1. <!-- Task Group Name -->\n\n- [ ] 1.1 <!-- Task description -->\n- [ ] 1.2 <!-- Task description -->\n\n## 2. <!-- Task Group Name -->\n\n- [ ] 2.1 <!-- Task description -->\n- [ ] 2.2 <!-- Task description -->\n`,
+  },
+  'workspace-planning': {
+    'proposal.md': `## Why\n\nDescribe the shared product goal, problem, or opportunity that makes this workspace-level change worth planning.\n\n## What Changes\n\n-\n\n## Affected Areas\n\n- Known:\n- Unresolved:\n\n## Capabilities\n\n### New Capabilities\n\n-\n\n### Modified Capabilities\n\n-\n\n## Impact\n\n- Workspace planning:\n- Linked repos or folders:\n- User-facing behavior:\n`,
+    'design.md': `## Context\n\nSummarize the workspace planning context, relevant linked areas, and constraints.\n\n## Goals / Non-Goals\n\n**Goals:**\n-\n\n**Non-Goals:**\n- Creating repo-local implementation artifacts before an affected area is selected.\n\n## Decisions\n\n### Decision: <title>\n\n<decision and rationale>\n\nAlternative considered: <alternative and why it was not chosen>\n\n## Risks / Trade-offs\n\n- <risk> -> <mitigation>\n\n## Coordination Notes\n\n- Affected areas:\n- Open handoffs:\n- Implementation entry criteria:\n\n## Open Questions\n\n-\n`,
+    'spec.md': `## ADDED Requirements\n\n### Requirement: <workspace requirement name>\nThe workspace plan SHALL describe the required behavior and affected area without creating repo-local artifacts during planning.\n\n#### Scenario: <scenario name>\n- **GIVEN** <context>\n- **WHEN** <action>\n- **THEN** <observable result>\n`,
+    'tasks.md': `## 1. Workspace Planning\n\n- [ ] 1.1 Confirm the shared product goal and unresolved scope questions.\n- [ ] 1.2 Identify affected areas using registered workspace link names where applicable.\n- [ ] 1.3 Review workspace-scoped specs and design before selecting implementation areas.\n\n## 2. Affected Area Implementation\n\n- [ ] 2.1 Select an affected area and confirm its allowed edit root before implementation.\n- [ ] 2.2 Create or update repo-local implementation artifacts only after the area is selected.\n\n## 3. Verification\n\n- [ ] 3.1 Verify workspace planning artifacts remain the source of truth.\n- [ ] 3.2 Record manual acceptance evidence and follow-up fixes.\n`,
+  },
+};
+
+function normalizeSchemaName(name: string): string {
+  return name.replace(/\.ya?ml$/, '');
+}
+
+function resolveSchemaName(name: string): string {
+  const normalized = normalizeSchemaName(name);
+  return SCHEMAS[normalized] ? normalized : 'spec-driven';
+}
+
 export function getPackageSchemasDir(): string {
   const currentFile = fileURLToPath(import.meta.url);
-  // Navigate from dist/core/artifact-graph/ to package root's schemas/
   return path.join(path.dirname(currentFile), '..', '..', '..', 'schemas');
 }
 
-/**
- * Gets the user's schema override directory path.
- */
 export function getUserSchemasDir(): string {
   return path.join(getGlobalDataDir(), 'schemas');
 }
 
-/**
- * Gets the project-local schemas directory path.
- * @param projectRoot - The project root directory
- * @returns The path to the project's schemas directory
- */
 export function getProjectSchemasDir(projectRoot: string): string {
   return path.join(projectRoot, C3SPEC_DIR_NAME, 'schemas');
 }
 
-/**
- * Resolves a schema name to its directory path.
- *
- * Resolution order (when projectRoot is provided):
- * 1. Project-local: <projectRoot>/c3spec/schemas/<name>/schema.yaml
- * 2. User override: ${XDG_DATA_HOME}/c3spec/schemas/<name>/schema.yaml
- * 3. Package built-in: <package>/schemas/<name>/schema.yaml
- *
- * When projectRoot is not provided, only user override and package built-in are checked
- * (backward compatible behavior).
- *
- * @param name - Schema name (e.g., "spec-driven")
- * @param projectRoot - Optional project root directory for project-local schema resolution
- * @returns The path to the schema directory, or null if not found
- */
-export function getSchemaDir(
-  name: string,
-  projectRoot?: string
-): string | null {
-  // 1. Check project-local directory (if projectRoot provided)
-  if (projectRoot) {
-    const projectDir = path.join(getProjectSchemasDir(projectRoot), name);
-    const projectSchemaPath = path.join(projectDir, 'schema.yaml');
-    if (fs.existsSync(projectSchemaPath)) {
-      return projectDir;
-    }
-  }
-
-  // 2. Check user override directory
-  const userDir = path.join(getUserSchemasDir(), name);
-  const userSchemaPath = path.join(userDir, 'schema.yaml');
-  if (fs.existsSync(userSchemaPath)) {
-    return userDir;
-  }
-
-  // 3. Check package built-in directory
-  const packageDir = path.join(getPackageSchemasDir(), name);
-  const packageSchemaPath = path.join(packageDir, 'schema.yaml');
-  if (fs.existsSync(packageSchemaPath)) {
-    return packageDir;
-  }
-
-  return null;
+export function getSchemaDir(name: string, _projectRoot?: string): string | null {
+  const normalized = resolveSchemaName(name);
+  return SCHEMAS[normalized] ? path.join(getPackageSchemasDir(), normalized) : null;
 }
 
-/**
- * Resolves a schema name to a SchemaYaml object.
- *
- * Resolution order (when projectRoot is provided):
- * 1. Project-local: <projectRoot>/c3spec/schemas/<name>/schema.yaml
- * 2. User override: ${XDG_DATA_HOME}/c3spec/schemas/<name>/schema.yaml
- * 3. Package built-in: <package>/schemas/<name>/schema.yaml
- *
- * When projectRoot is not provided, only user override and package built-in are checked
- * (backward compatible behavior).
- *
- * @param name - Schema name (e.g., "spec-driven")
- * @param projectRoot - Optional project root directory for project-local schema resolution
- * @returns The resolved schema object
- * @throws Error if schema is not found in any location
- */
-export function resolveSchema(name: string, projectRoot?: string): SchemaYaml {
-  // Normalize name (remove .yaml extension if provided)
-  const normalizedName = name.replace(/\.ya?ml$/, '');
-
-  const schemaDir = getSchemaDir(normalizedName, projectRoot);
-  if (!schemaDir) {
-    const availableSchemas = listSchemas(projectRoot);
-    throw new Error(
-      `Schema '${normalizedName}' not found. Available schemas: ${availableSchemas.join(', ')}`
-    );
-  }
-
-  const schemaPath = path.join(schemaDir, 'schema.yaml');
-
-  // Load and parse the schema
-  let content: string;
-  try {
-    content = fs.readFileSync(schemaPath, 'utf-8');
-  } catch (err) {
-    const ioError = err instanceof Error ? err : new Error(String(err));
-    throw new SchemaLoadError(
-      `Failed to read schema at '${schemaPath}': ${ioError.message}`,
-      schemaPath,
-      ioError
-    );
-  }
-
-  try {
-    return parseSchema(content);
-  } catch (err) {
-    if (err instanceof SchemaValidationError) {
-      throw new SchemaLoadError(
-        `Invalid schema at '${schemaPath}': ${err.message}`,
-        schemaPath,
-        err
-      );
-    }
-    const parseError = err instanceof Error ? err : new Error(String(err));
-    throw new SchemaLoadError(
-      `Failed to parse schema at '${schemaPath}': ${parseError.message}`,
-      schemaPath,
-      parseError
-    );
-  }
+export function resolveSchema(name: string, _projectRoot?: string): SchemaYaml {
+  return SCHEMAS[resolveSchemaName(name)];
 }
 
-/**
- * Lists all available schema names.
- * Combines project-local, user override, and package built-in schemas.
- *
- * @param projectRoot - Optional project root directory for project-local schema resolution
- */
-export function listSchemas(projectRoot?: string): string[] {
-  const schemas = new Set<string>();
-
-  // Add package built-in schemas
-  const packageDir = getPackageSchemasDir();
-  if (fs.existsSync(packageDir)) {
-    for (const entry of fs.readdirSync(packageDir, { withFileTypes: true })) {
-      if (entry.isDirectory()) {
-        const schemaPath = path.join(packageDir, entry.name, 'schema.yaml');
-        if (fs.existsSync(schemaPath)) {
-          schemas.add(entry.name);
-        }
-      }
-    }
-  }
-
-  // Add user override schemas (may override package schemas)
-  const userDir = getUserSchemasDir();
-  if (fs.existsSync(userDir)) {
-    for (const entry of fs.readdirSync(userDir, { withFileTypes: true })) {
-      if (entry.isDirectory()) {
-        const schemaPath = path.join(userDir, entry.name, 'schema.yaml');
-        if (fs.existsSync(schemaPath)) {
-          schemas.add(entry.name);
-        }
-      }
-    }
-  }
-
-  // Add project-local schemas (if projectRoot provided)
-  if (projectRoot) {
-    const projectDir = getProjectSchemasDir(projectRoot);
-    if (fs.existsSync(projectDir)) {
-      for (const entry of fs.readdirSync(projectDir, { withFileTypes: true })) {
-        if (entry.isDirectory()) {
-          const schemaPath = path.join(projectDir, entry.name, 'schema.yaml');
-          if (fs.existsSync(schemaPath)) {
-            schemas.add(entry.name);
-          }
-        }
-      }
-    }
-  }
-
-  return Array.from(schemas).sort();
+export function listSchemas(_projectRoot?: string): string[] {
+  return ['spec-driven', 'workspace-planning'];
 }
 
-/**
- * Schema info with metadata (name, description, artifacts).
- */
 export interface SchemaInfo {
   name: string;
   description: string;
@@ -216,88 +107,26 @@ export interface SchemaInfo {
   source: 'project' | 'user' | 'package';
 }
 
-/**
- * Lists all available schemas with their descriptions and artifact lists.
- * Useful for agent skills to present schema selection to users.
- *
- * @param projectRoot - Optional project root directory for project-local schema resolution
- */
-export function listSchemasWithInfo(projectRoot?: string): SchemaInfo[] {
-  const schemas: SchemaInfo[] = [];
-  const seenNames = new Set<string>();
+export function listSchemasWithInfo(_projectRoot?: string): SchemaInfo[] {
+  return listSchemas().map((name) => {
+    const schema = resolveSchema(name);
+    return {
+      name,
+      description: schema.description || '',
+      artifacts: schema.artifacts.map((a) => a.id),
+      source: 'package',
+    };
+  });
+}
 
-  // Add project-local schemas first (highest priority, if projectRoot provided)
-  if (projectRoot) {
-    const projectDir = getProjectSchemasDir(projectRoot);
-    if (fs.existsSync(projectDir)) {
-      for (const entry of fs.readdirSync(projectDir, { withFileTypes: true })) {
-        if (entry.isDirectory()) {
-          const schemaPath = path.join(projectDir, entry.name, 'schema.yaml');
-          if (fs.existsSync(schemaPath)) {
-            try {
-              const schema = parseSchema(fs.readFileSync(schemaPath, 'utf-8'));
-              schemas.push({
-                name: entry.name,
-                description: schema.description || '',
-                artifacts: schema.artifacts.map((a) => a.id),
-                source: 'project',
-              });
-              seenNames.add(entry.name);
-            } catch {
-              // Skip invalid schemas
-            }
-          }
-        }
-      }
-    }
+export function loadSchemaTemplate(schemaName: string, templatePath: string): string {
+  const normalized = normalizeSchemaName(schemaName);
+  if (!SCHEMAS[normalized]) {
+    throw new SchemaLoadError(`Schema '${schemaName}' not found`, `${schemaName}/templates/${templatePath}`);
   }
-
-  // Add user override schemas (if not overridden by project)
-  const userDir = getUserSchemasDir();
-  if (fs.existsSync(userDir)) {
-    for (const entry of fs.readdirSync(userDir, { withFileTypes: true })) {
-      if (entry.isDirectory() && !seenNames.has(entry.name)) {
-        const schemaPath = path.join(userDir, entry.name, 'schema.yaml');
-        if (fs.existsSync(schemaPath)) {
-          try {
-            const schema = parseSchema(fs.readFileSync(schemaPath, 'utf-8'));
-            schemas.push({
-              name: entry.name,
-              description: schema.description || '',
-              artifacts: schema.artifacts.map((a) => a.id),
-              source: 'user',
-            });
-            seenNames.add(entry.name);
-          } catch {
-            // Skip invalid schemas
-          }
-        }
-      }
-    }
+  const content = TEMPLATES[normalized]?.[templatePath];
+  if (!content) {
+    throw new SchemaLoadError(`Template not found: ${templatePath}`, `${normalized}/templates/${templatePath}`);
   }
-
-  // Add package built-in schemas (if not overridden by project or user)
-  const packageDir = getPackageSchemasDir();
-  if (fs.existsSync(packageDir)) {
-    for (const entry of fs.readdirSync(packageDir, { withFileTypes: true })) {
-      if (entry.isDirectory() && !seenNames.has(entry.name)) {
-        const schemaPath = path.join(packageDir, entry.name, 'schema.yaml');
-        if (fs.existsSync(schemaPath)) {
-          try {
-            const schema = parseSchema(fs.readFileSync(schemaPath, 'utf-8'));
-            schemas.push({
-              name: entry.name,
-              description: schema.description || '',
-              artifacts: schema.artifacts.map((a) => a.id),
-              source: 'package',
-            });
-          } catch {
-            // Skip invalid schemas
-          }
-        }
-      }
-    }
-  }
-
-  return schemas.sort((a, b) => a.name.localeCompare(b.name));
+  return content;
 }

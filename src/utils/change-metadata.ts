@@ -2,7 +2,6 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as yaml from 'yaml';
 import { ChangeMetadataSchema, type ChangeMetadata } from '../core/artifact-graph/types.js';
-import { listSchemas } from '../core/artifact-graph/resolver.js';
 import { readProjectConfig } from '../core/project-config.js';
 
 const METADATA_FILENAME = '.c3spec.yaml';
@@ -22,22 +21,15 @@ export class ChangeMetadataError extends Error {
 }
 
 /**
- * Validates that a schema name is valid (exists in available schemas).
- *
- * @param schemaName - The schema name to validate
- * @param projectRoot - Optional project root for project-local schema resolution
- * @returns The validated schema name
- * @throws Error if schema is not found
+ * Schema names are retained in metadata for backwards compatibility,
+ * but are no longer validated against an external schema registry.
  */
 export function validateSchemaName(
   schemaName: string,
-  projectRoot?: string
+  _projectRoot?: string
 ): string {
-  const availableSchemas = listSchemas(projectRoot);
-  if (!availableSchemas.includes(schemaName)) {
-    throw new Error(
-      `Unknown schema '${schemaName}'. Available: ${availableSchemas.join(', ')}`
-    );
+  if (!schemaName || schemaName.trim().length === 0) {
+    throw new Error('Schema name cannot be empty');
   }
   return schemaName;
 }
@@ -130,15 +122,6 @@ export function readChangeMetadata(
   if (!parseResult.success) {
     throw new ChangeMetadataError(
       `Invalid metadata: ${parseResult.error.message}`,
-      metaPath
-    );
-  }
-
-  // Validate that the schema exists
-  const availableSchemas = listSchemas(projectRoot);
-  if (!availableSchemas.includes(parseResult.data.schema)) {
-    throw new ChangeMetadataError(
-      `Unknown schema '${parseResult.data.schema}'. Available: ${availableSchemas.join(', ')}`,
       metaPath
     );
   }

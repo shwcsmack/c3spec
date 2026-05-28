@@ -85,12 +85,6 @@ describe('c3spec CLI e2e basics', () => {
     expectJsonOnlyOutput(result);
   });
 
-  it('keeps schemas --json free of spinner output', async () => {
-    const projectDir = await prepareFixture('tmp-init');
-    const result = await runCLI(['schemas', '--json'], { cwd: projectDir });
-    expectJsonOnlyOutput(result);
-  });
-
   it('keeps status --json free of spinner output', async () => {
     const projectDir = await prepareFixture('tmp-init');
     const result = await runCLI(['status', '--change', 'c1', '--json'], { cwd: projectDir });
@@ -110,12 +104,6 @@ describe('c3spec CLI e2e basics', () => {
     const result = await runCLI(['instructions', 'apply', '--change', 'c1', '--json'], {
       cwd: projectDir,
     });
-    expectJsonOnlyOutput(result);
-  });
-
-  it('keeps templates --json free of spinner output', async () => {
-    const projectDir = await prepareFixture('tmp-init');
-    const result = await runCLI(['templates', '--json'], { cwd: projectDir });
     expectJsonOnlyOutput(result);
   });
 

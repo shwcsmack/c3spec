@@ -1,0 +1,21 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Retrospective — remove-schema-system</title></head>
+<body>
+<h1>Retrospective — remove-schema-system</h1>
+<h2>What went well</h2>
+<ul>
+<li>Removed schema-facing CLI surface with low regression risk.</li>
+<li>Replaced runtime schema/template directory loading with fixed built-in workflow contracts.</li>
+<li>Kept behavior stable for status/instructions/new-change and maintained green tests.</li>
+</ul>
+<h2>What was tricky</h2>
+<ul>
+<li>Resolver/instruction-loader had deep schema-era assumptions.</li>
+<li>A few schema-specific tests had to be retired or rewritten to match the new architecture.</li>
+</ul>
+<h2>Follow-ups</h2>
+<ul>
+<li>Sweep remaining docs/spec wording that still implies user-custom schema workflows.</li>
+<li>Consider renaming internal fields from <code>schemaName</code> to <code>workflow</code> in a future cleanup pass.</li>
+</ul>
+</body></html>

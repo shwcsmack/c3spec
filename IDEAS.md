@@ -66,19 +66,7 @@ Claude Code, Codex, and Cursor each surface a structured "pick an answer" UI whe
 - Update tier and interview skills (`c3spec-start`, `c3spec-tier2-feature`, `c3spec-tier3-full`, brainstorm/design checkpoints) to use the new convention instead of ad-hoc bullet lists
 - Document the convention so contributors authoring new skills don't reintroduce inconsistent answer prompts
 
-## 7. Audit the standalone `schemas/` system — keep, fold in, or remove
-
-The repo has a `schemas/` directory at the root (`spec-driven`, `workspace-planning`) plus a sibling `c3spec/schemas/superpowers-bridge/`, each shipping a `schema.yaml` and a `templates/` folder. None of the current tier skills, `c3spec-start`, or host-generation pipeline appear to reach into these schemas — the artifact templates the tier skills actually emit live inline in the SKILL.md content under `.agents/skills/`. The runtime validation under `src/core/schemas/` (spec/change Zod schemas) is a separate system and is in active use, so the audit is specifically about the YAML-schema-with-templates directories, not the runtime validators. Figure out whether these schema bundles are still wired in anywhere, whether they're upstream-pre-fork residue (overlaps with completed pre-fork cleanup work), or whether there's latent value we should fold back into the tier skills.
-
-- Trace every reader of `schemas/spec-driven/`, `schemas/workspace-planning/`, and `c3spec/schemas/superpowers-bridge/` — CLI commands, skill content, host-generation, tests — and document each reference
-- Distinguish "no code reads this" from "code reads this but nothing user-facing exercises it" so we don't delete a path that's just dormant
-- Compare the templates in those bundles against the inline templates the current tier skills emit; flag anything in the schema bundles that's strictly better and worth backporting into the tier skills
-- Check `c3spec/schemas/superpowers-bridge/` specifically — it looks intentional and c3spec-era, decide whether it's part of the long-term plan or an unfinished experiment
-- Decide the disposition per bundle: keep + wire back in, fold useful pieces into the tier skill content and delete, or delete outright with a brief rationale captured in the change retro
-- If deleting, make sure `c3spec list`, validation, and host-generation still pass and that the relevant spec/capability is also updated or retired
-- Coordinate with the completed pre-fork cleanup so we don't do two passes over the same upstream residue
-
-## 8. Default commit approval mode to always approve all
+## 7. Default commit approval mode to always approve all
 
 Today Tier workflows still ask the user at the beginning whether to approve all commits upfront or confirm each commit. For users who always choose the same answer, this prompt is repeated friction. Add a persistent default so commit approval can be preconfigured and the question is skipped unless explicitly overridden.
 
@@ -90,7 +78,7 @@ Today Tier workflows still ask the user at the beginning whether to approve all 
 - Add tests covering default behavior, override behavior, and backward compatibility when no setting exists
 - Document migration behavior for existing users so current flows continue to work unless they opt in
 
-## 9. Research a Rust port for CLI tooling
+## 8. Research a Rust port for CLI tooling
 
 Investigate whether c3spec’s CLI should be ported from the current TypeScript/Node stack to Rust to improve startup speed, binary distribution, reliability, and long-term maintainability. This is research-only and should end with a concrete recommendation and migration posture.
 
@@ -100,7 +88,7 @@ Investigate whether c3spec’s CLI should be ported from the current TypeScript/
 - Assess ecosystem impacts for npm, Homebrew, and Nix install/update flows
 - Produce a go/no-go recommendation with risks, prerequisites, and a suggested pilot scope
 
-## 10. Research converting the project into a pi package and going all-in on pi agent
+## 9. Research converting the project into a pi package and going all-in on pi agent
 
 Investigate what it would take to repackage c3spec as a first-class pi package and treat pi agent as the primary runtime/host model instead of maintaining equal-first-class support patterns for multiple hosts. This is research-only and should conclude with a fit assessment and phased recommendation.
 
@@ -110,7 +98,7 @@ Investigate what it would take to repackage c3spec as a first-class pi package a
 - Define migration options: additive support, staged default switch, or full strategic pivot
 - Produce a recommendation document with explicit success criteria, blockers, and follow-up ideas
 
-## 11. Research workflow for idea-driven and explicit research requests
+## 10. Research workflow for idea-driven and explicit research requests
 
 Create a dedicated workflow path that routes to research mode when the user asks to investigate, survey, or analyze options (including idea triage follow-ups), instead of forcing feature/fix tier flows.
 

@@ -210,25 +210,13 @@ Tier workflows SHALL dispatch the canonical agent roles with bounded responsibil
 
 ### Requirement: Generated host instruction alignment
 
-Generated host instruction surfaces for Cursor, Claude Code, and Codex SHALL describe the same routing contract: a single `c3spec-start` front door, the same three tiers, and `.agents/` as the canonical source of truth for generated host artifacts.
+Generated host instructions SHALL describe c3spec as an opinionated workflow contract without schema customization entry points.
 
-#### Scenario: Front-door reference in generated instructions
+#### Scenario: No schema customization front door in generated instructions
 
-- **WHEN** c3spec generates host instruction content for Cursor, Claude Code, or Codex
-- **THEN** the generated instructions SHALL direct users to enter all development work through the `c3spec-start` skill
-- **AND** SHALL NOT instruct users to pick a tier themselves before running `c3spec-start`
-
-#### Scenario: Tier list parity across hosts
-
-- **WHEN** generated host instructions describe routing options
-- **THEN** they SHALL list exactly the three supported tiers — `T1 Spec-Aware Fix`, `T2 Lightweight Feature`, and `T3 Full Workflow`
-- **AND** the tier descriptions SHALL stay consistent across the Cursor, Claude Code, and Codex outputs
-
-#### Scenario: Canonical source disclosure
-
-- **WHEN** generated host instructions describe where canonical skills and hook sources live
-- **THEN** they SHALL identify `.agents/` as the canonical source
-- **AND** SHALL indicate that generated host artifacts are derived from `.agents/` and protected against drift by c3spec sentinels
+- **WHEN** generated host instructions describe workflow entry
+- **THEN** they SHALL direct users to canonical c3spec skills and tiers
+- **AND** they SHALL NOT require schema selection or schema-specific workflow switching for normal development flow
 
 ### Requirement: Enforcement boundaries for the routing contract
 

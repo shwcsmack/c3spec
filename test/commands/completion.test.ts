@@ -245,10 +245,10 @@ describe('CompletionCommand', () => {
   });
 
   describe('dynamic completion data', () => {
-    it('should output schema names for shell completion', async () => {
+    it('should output no schema names for shell completion', async () => {
       await command.complete({ type: 'schemas' });
 
-      expect(consoleLogSpy).toHaveBeenCalledWith('spec-driven\tschema');
+      expect(consoleLogSpy).not.toHaveBeenCalled();
       expect(process.exitCode).toBe(0);
     });
   });
