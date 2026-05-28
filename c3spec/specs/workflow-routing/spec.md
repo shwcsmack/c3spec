@@ -28,15 +28,15 @@ All c3spec development work SHALL enter through the `c3spec-start` skill, and `c
 - **THEN** it SHALL load the project memory index at `c3spec/memory/MEMORY.md` before asking interview questions
 - **AND** relevant memory entries SHALL be surfaced naturally during the interview and carried forward into the tier handoff
 
-### Requirement: Three-tier routing classifier
+### Requirement: Workflow routing classifier
 
-The `c3spec-start` routing classifier SHALL produce exactly one of three outcomes — T1 Spec-Aware Fix, T2 Lightweight Feature, or T3 Full Workflow — and SHALL require explicit user confirmation before handing off to the chosen tier.
+The `c3spec-start` routing classifier SHALL produce exactly one of four outcomes — Research Workflow, T1 Spec-Aware Fix, T2 Lightweight Feature, or T3 Full Workflow — and SHALL require explicit user confirmation before handing off to the chosen workflow.
 
 #### Scenario: Supported routing outcomes
 
 - **WHEN** the interview converges and `c3spec-start` classifies the change
-- **THEN** the classification SHALL be exactly one of `T1 Spec-Aware Fix`, `T2 Lightweight Feature`, or `T3 Full Workflow`
-- **AND** the assistant SHALL NOT introduce other tier names, hybrid tiers, or skip routing entirely
+- **THEN** the classification SHALL be exactly one of `Research Workflow`, `T1 Spec-Aware Fix`, `T2 Lightweight Feature`, or `T3 Full Workflow`
+- **AND** the assistant SHALL NOT introduce other workflow names, hybrid tiers, or skip routing entirely
 
 #### Scenario: Ambiguous cases lean lighter
 
@@ -50,6 +50,23 @@ The `c3spec-start` routing classifier SHALL produce exactly one of three outcome
 - **THEN** it SHALL wait for explicit user confirmation (a "yes" or equivalent acknowledgement) before invoking any tier skill
 - **AND** SHALL accept a user override of the proposed tier without debate
 - **AND** SHALL NOT begin tier-specific work (worktree setup, plan generation, change scaffolding, or implementation) before confirmation
+
+### Requirement: Research workflow routing and handoff
+
+`c3spec-start` SHALL route explicit research intent to a dedicated research workflow that produces lightweight durable research artifacts and a handoff back to implementation routing.
+
+#### Scenario: Research routing signals
+
+- **WHEN** the user asks to research, investigate, compare, evaluate, or survey options
+- **AND** the immediate goal is analysis/recommendation rather than implementation
+- **THEN** `c3spec-start` SHALL classify the change as `Research Workflow`
+
+#### Scenario: Research workflow handoff
+
+- **WHEN** the user confirms research routing
+- **THEN** `c3spec-start` SHALL hand off to the `c3spec-research` skill
+- **AND** research outputs SHALL include a clear recommended direction and implementation handoff summary
+- **AND** implementation follow-up SHALL return through `c3spec-start` for final T1/T2/T3 classification
 
 ### Requirement: Tier 1 Spec-Aware Fix routing and workflow shape
 
@@ -225,7 +242,7 @@ c3spec machine enforcement SHALL guarantee that the canonical skill, agent, and 
 #### Scenario: Canonical artifact presence is enforced
 
 - **WHEN** c3spec validates or generates host artifacts
-- **THEN** the required canonical skill names (`c3spec-start`, `c3spec-tier1-fix`, `c3spec-tier2-feature`, `c3spec-tier3-full`, `c3spec-tier-lifecycle`, `c3spec-subagent-dev`, `c3spec-host-adapter`, `c3spec-continue-change`, `c3spec-apply-change`, `c3spec-explore`, `c3spec-sync-specs`, `c3spec-archive-change`, `c3spec-bulk-archive-change`, `c3spec-verify-change`, `c3spec-onboard`, `c3spec-using-git-worktrees`, `c3spec-finishing-development-branch`) SHALL be required to exist under `.agents/skills/`
+- **THEN** the required canonical skill names (`c3spec-start`, `c3spec-research`, `c3spec-tier1-fix`, `c3spec-tier2-feature`, `c3spec-tier3-full`, `c3spec-tier-lifecycle`, `c3spec-subagent-dev`, `c3spec-host-adapter`, `c3spec-continue-change`, `c3spec-apply-change`, `c3spec-explore`, `c3spec-sync-specs`, `c3spec-archive-change`, `c3spec-bulk-archive-change`, `c3spec-verify-change`, `c3spec-onboard`, `c3spec-using-git-worktrees`, `c3spec-finishing-development-branch`) SHALL be required to exist under `.agents/skills/`
 - **AND** the required canonical agent role names (`implementer`, `spec-reviewer`, `quality-reviewer`) SHALL be required to exist under `.agents/agents/`
 - **AND** the required canonical hook name (`c3spec-memory-scan`) SHALL be required to exist under `.agents/hooks/`
 

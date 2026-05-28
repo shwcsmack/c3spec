@@ -4,6 +4,7 @@ export const SUPPORTED_HOST_IDS: readonly SupportedHostId[] = ['claude', 'codex'
 
 export const REQUIRED_CANONICAL_SKILL_NAMES = [
   'c3spec-start',
+  'c3spec-research',
   'c3spec-tier1-fix',
   'c3spec-tier2-feature',
   'c3spec-tier3-full',

@@ -5,7 +5,7 @@ description: Single front door for all development work. Interview the user, cla
 
 # C3Spec Start — Interview, Route, Execute
 
-The single entry point for all development work in this project. You interview the user until genuinely aligned, then classify the change into a tier and route to the correct workflow.
+The single entry point for all development work in this project. You interview the user until genuinely aligned, then classify the change and route to the correct workflow.
 
 If the user intent is backlog capture (e.g. "add this idea to IDEAS.md"), route to `c3spec-add-idea` instead of starting tier planning.
 
@@ -54,6 +54,16 @@ Keep going until you'd be comfortable routing and planning without guessing. One
 
 After the interview converges, classify the change. Present your classification explicitly with reasoning before doing anything else.
 
+### Research — Dedicated research workflow
+**Routes here when:**
+- User asks to research, investigate, compare, evaluate, or survey options
+- The immediate goal is analysis/recommendation rather than implementation
+- Idea triage follow-up needs evidence before choosing implementation direction
+
+**Signal:** Research intent is primary and implementation direction is not finalized.
+
+**What you say:** "This looks like a **Research Workflow** request. I'll run a lightweight research flow to produce scope, findings, recommendations, and a clear handoff back into T1/T2/T3 when you choose a direction. Does that sound right?"
+
 ### Tier 1 — Spec-Aware Fix
 **Routes here when:**
 - Bug fix restoring intended behavior (no new capability)
@@ -90,19 +100,20 @@ After the interview converges, classify the change. Present your classification 
 **What you say:** "This looks like a **Tier 3 Full Workflow**. I'll run the full superpowers-bridge process — brainstorm, proposal, design, specs, tasks, plan — with HTML review at each planning artifact before saving to markdown. Does that match what you expected?"
 
 ### Ambiguous cases
-When the change could go either way, lean toward the lighter tier and say so explicitly: "I'm routing this to Tier 2 rather than Tier 3 — the scope feels contained enough. If you disagree, say so and I'll move it up."
+When a request could be either research or implementation, ask one clarifying question and prefer the explicit user intent. For implementation-tier ambiguity, lean toward the lighter tier and say so explicitly: "I'm routing this to Tier 2 rather than Tier 3 — the scope feels contained enough. If you disagree, say so and I'll move it up."
 
 **Wait for explicit user confirmation before proceeding.** A nod or "yes" is enough. If the user overrides your routing, accept it without debate.
 
-## Step 4 — Route to tier skill
+## Step 4 — Route to workflow skill
 
 After confirmation:
 
+**Research:** Invoke `c3spec-research` skill
 **Tier 1:** Invoke `c3spec-tier1-fix` skill
 **Tier 2:** Invoke `c3spec-tier2-feature` skill
 **Tier 3:** Invoke `c3spec-tier3-full` skill
 
-Carry forward everything from the interview as context into the tier skill — the user should not repeat themselves.
+Carry forward everything from the interview as context into the selected workflow skill — the user should not repeat themselves.
 
 ## What NOT to do
 

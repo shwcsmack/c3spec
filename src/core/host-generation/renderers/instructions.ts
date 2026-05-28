@@ -42,10 +42,11 @@ Do not manually rank by reading \`IDEAS.md\` unless both commands are unavailabl
 
 ## Single front door
 
-All development work enters through the \`c3spec-start\` skill. Do not pick a tier yourself — interview the user and route to the correct workflow.
+All development work enters through the \`c3spec-start\` skill. Do not pick a workflow yourself — interview the user and route to the correct path.
 
-| Tier | When | Entry |
+| Workflow | When | Entry |
 | --- | --- | --- |
+| Research | Research, investigate, compare, evaluate requests | \`c3spec-research\` |
 | T1 Spec-Aware Fix | Bug fix, investigation, config tweak | Inline fix workflow |
 | T2 Lightweight Feature | New capability, clear scope | \`c3spec-tier2-feature\` |
 | T3 Full Workflow | Design uncertainty, architecture, breaking change | \`c3spec-tier3-full\` |
