@@ -6,6 +6,7 @@ One line per entry. Load this index at the start of every `/opsx:start` session 
 <!-- entries added here as bug patterns are captured from cycles -->
 
 ## Workflow
+- [Fork Bootstrap Provenance Classification](workflow/fork-bootstrap-provenance-classification.md) — cleanup, provenance, fork, changes, archive, workflow-gates
 - [Tier Lifecycle Contract Ownership](workflow/tier-lifecycle-contract-ownership.md) — tier-workflows, lifecycle, skills, resumability, archive-readiness
 - [Single Canonical Skill Pipeline](workflow/single-canonical-skill-pipeline.md) — skills, host-generation, canonical, workflow-gates
 - [Two Skill Pipelines](workflow/two-skill-pipelines.md) — skills, host-generation, codegen, tier-workflows, workflow-gates (historical)
