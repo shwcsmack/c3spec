@@ -1,4 +1,4 @@
-<!-- c3spec:ideas-digest dbf5c35a48e9bc5d0b9f429a880988b7fae26242612fd8305d7aa6d05011cf9a -->
+<!-- c3spec:ideas-digest d0729c016dc0d85587b77be9a7de765c5c5389355a334f3add77a23ac1a2f094 -->
 # Ideas
 
 Backlog of ideas to pick up later. Each entry is intentionally light - flesh out via `/c3spec:start` when ready to work on it.
@@ -99,17 +99,7 @@ Investigate what it would take to repackage c3spec as a first-class pi package a
 - Define migration options: additive support, staged default switch, or full strategic pivot
 - Produce a recommendation document with explicit success criteria, blockers, and follow-up ideas
 
-## 10. Research workflow for idea-driven and explicit research requests
-
-Create a dedicated workflow path that routes to research mode when the user asks to investigate, survey, or analyze options (including idea triage follow-ups), instead of forcing feature/fix tier flows.
-
-- Define routing signals in c3spec-start for research intent (e.g., 'research', 'investigate', 'compare', 'evaluate').
-- Design a lightweight research artifact set (question, scope, findings, recommendations, next steps).
-- Add a dedicated skill/flow for research execution with clear pause/approval points.
-- Specify handoff rules from research flow back into T1/T2/T3 implementation when a direction is chosen.
-- Add tests/spec updates so routing behavior and research flow expectations are enforced.
-
-## 11. Standardize interview prompt order to question-first
+## 10. Standardize interview prompt order to question-first
 
 Adjust c3spec interview prompt formatting so each interview turn presents the question first, then the rationale (why now), and finally the recommendation, replacing the current recommendation-first pattern for better UX and faster answerability.
 
@@ -118,7 +108,7 @@ Adjust c3spec interview prompt formatting so each interview turn presents the qu
 - Update workflow-routing spec text and tests that currently assert Recommendation/Why/Question order.
 - Add regression tests that fail if interview prompt sections are emitted in the wrong order.
 
-## 12. Require interview/grill-me phase in every tier workflow
+## 11. Require interview/grill-me phase in every tier workflow
 
 Add a mandatory interview (grill-me) phase to every workflow tier so assumptions are surfaced early and alignment is explicit before planning or implementation begins.
 
@@ -127,7 +117,7 @@ Add a mandatory interview (grill-me) phase to every workflow tier so assumptions
 - Document how interview findings are captured in change artifacts and influence routing/design decisions.
 - Add spec/tests to enforce that tier workflows include and honor the interview phase.
 
-## 13. Fix subagent-driven development flow and PI setup for subagent execution
+## 12. Fix subagent-driven development flow and PI setup for subagent execution
 
 Stabilize and simplify the c3spec subagent-driven development flow, including reliable PI environment/setup for subagent work so implementation and review agents can be dispatched consistently across hosts.
 
@@ -136,7 +126,7 @@ Stabilize and simplify the c3spec subagent-driven development flow, including re
 - Update c3spec-host-adapter and related skills to enforce/setup subagent prerequisites automatically.
 - Add tests covering subagent dispatch readiness, failure handling, and cross-host behavior.
 
-## 14. Fix finishing-development-branch flow at end of every workflow
+## 13. Fix finishing-development-branch flow at end of every workflow
 
 Harden the branch-finalization flow so every workflow consistently ends with a reliable finishing-development-branch step and clear PR-ready output.
 
@@ -145,7 +135,7 @@ Harden the branch-finalization flow so every workflow consistently ends with a r
 - Improve failure handling/retry guidance when finalization checks fail.
 - Add tests ensuring each workflow path reaches finishing-development-branch under the correct conditions.
 
-## 15. Auto-resolve ideas after implementation with idea-specific workflow
+## 14. Auto-resolve ideas after implementation with idea-specific workflow
 
 Design a reliable mechanism to remove or mark ideas complete once the corresponding fix/feature is delivered, potentially via an idea-linked workflow that tracks implementation-to-backlog closure.
 
