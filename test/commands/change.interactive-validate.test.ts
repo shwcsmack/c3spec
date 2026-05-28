@@ -37,12 +37,11 @@ describe('change validate (interactive behavior)', () => {
       expect(err).toBeDefined();
       expect(err.status).not.toBe(0);
       expect(err.stderr.toString()).toContain('Available IDs:');
-      expect(err.stderr.toString()).toContain('c3spec change list');
+      expect(err.stderr.toString()).toContain('c3spec list --changes');
     } finally {
       process.chdir(originalCwd);
       process.env = originalEnv;
     }
   });
 });
-
 
