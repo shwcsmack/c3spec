@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { runCLI } from '../helpers/run-cli.js';
@@ -54,5 +54,68 @@ describe('ideas command', () => {
     const result = await runCLI(['ideas', 'lint'], { cwd: testDir });
     expect(result.exitCode).toBe(1);
     expect(result.stderr).toContain('IDEAS.md lint failed');
+  });
+
+  it('uses model triage by default when model and key are configured', async () => {
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        choices: [
+          {
+            message: {
+              content: JSON.stringify({
+                ranked: [
+                  { id: 2, score: 91, confidence: 0.88, rationale: 'Higher impact right now.' },
+                  { id: 1, score: 72, confidence: 0.77, rationale: 'Useful but less urgent.' },
+                ],
+              }),
+            },
+          },
+        ],
+      }),
+    });
+
+    const originalFetch = globalThis.fetch;
+    (globalThis as any).fetch = mockFetch;
+
+    try {
+      const result = await runCLI(['ideas', 'triage'], {
+        cwd: testDir,
+        env: { OPENAI_API_KEY: 'test-key', C3SPEC_TRIAGE_MODEL: 'gpt-4o-mini' },
+      });
+
+      expect(result.exitCode).toBe(0);
+      expect(result.stdout).toContain('#2 [91] Second');
+      expect(result.stdout).toContain('confidence: 0.88 (model)');
+      expect(result.stdout).toContain('rationale: Higher impact right now.');
+    } finally {
+      (globalThis as any).fetch = originalFetch;
+    }
+  });
+
+  it('supports compact triage output', async () => {
+    const result = await runCLI(['ideas', 'triage', '--compact'], { cwd: testDir });
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toContain('Idea triage (highest score first):');
+    expect(result.stdout).not.toContain('confidence:');
+    expect(result.stdout).not.toContain('rationale:');
+  });
+
+  it('falls back to heuristic triage when model call fails', async () => {
+    const originalFetch = globalThis.fetch;
+    (globalThis as any).fetch = vi.fn().mockRejectedValue(new Error('network down'));
+
+    try {
+      const result = await runCLI(['ideas', 'triage'], {
+        cwd: testDir,
+        env: { OPENAI_API_KEY: 'test-key', C3SPEC_TRIAGE_MODEL: 'gpt-4o-mini' },
+      });
+
+      expect(result.exitCode).toBe(0);
+      expect(result.stderr).toContain('Model triage failed; using heuristic fallback');
+      expect(result.stdout).toContain('rationale: Heuristic fallback: keyword-based score.');
+    } finally {
+      (globalThis as any).fetch = originalFetch;
+    }
   });
 });
