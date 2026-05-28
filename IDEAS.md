@@ -202,5 +202,14 @@ Today Tier workflows still ask the user at the beginning whether to approve all 
 - Add tests covering default behavior, override behavior, and backward compatibility when no setting exists
 - Document migration behavior for existing users so current flows continue to work unless they opt in
 
-18. after archive teh agent should run finishing-a-development-branch
+## 18. Automatically run `finishing-a-development-branch` after archive
+
+After a change is archived, the workflow should immediately run `finishing-a-development-branch` so the branch gets wrapped up consistently without waiting for the user to remember a separate finalization step. Right now archive and branch-finishing can drift apart, which leads to half-finished branches, delayed pushes/PRs, and extra manual prompts.
+
+- Define archive completion as the trigger point for branch finishing (all tiers, unless explicitly opted out)
+- Wire the archive flow to invoke `finishing-a-development-branch` automatically after successful archive
+- Decide failure behavior: if finishing fails, archive should remain complete but report actionable recovery steps
+- Ensure idempotency so rerunning archive/finish doesn’t duplicate commits, PRs, or cleanup actions
+- Align with the opinionated-git direction in idea #15 so this becomes part of one consistent endgame policy
+- Update tier/lifecycle docs and any related skills so this behavior is explicit and testable
 
