@@ -7,7 +7,7 @@ description: Execute a Tier 2 Lightweight Feature. Use after c3spec-start routes
 
 For new capabilities with clear scope, limited spec footprint (1-2 capabilities), and design decisions that are real but not deeply uncertain.
 
-**Input:** Interview context and alignment from `c3spec-start`. Do not re-interview.
+**Input:** Interview context and alignment from `c3spec-start`, followed by a required Tier 2 grill-me interview pass.
 
 **Lifecycle contract:** This skill follows `c3spec-tier-lifecycle`. Consult that skill for tier folder conventions, required artifacts, pause points, apply readiness, and archive readiness. This skill writes the artifacts; the lifecycle skill defines what is required.
 
@@ -29,7 +29,18 @@ Do not continue into worktree setup while tracked changes are present. Do not of
 
 ---
 
-## Step 1 — Worktree setup
+## Step 1 — Tier 2 grill-me interview (required)
+
+Before worktree setup, run a focused Tier 2 interview to lock feature scope, non-goals, key design choices, and acceptance criteria.
+
+Interview rules:
+- Ask exactly one question per turn.
+- Use question-first order: question, then `Why this question now:`, then `Recommendation:`.
+- Record interview conclusions in `proposal.md` and (if needed) `design.md`.
+
+Then proceed.
+
+## Step 2 — Worktree setup
 
 ```bash
 # Derive a kebab-case slug from the feature description (max ~40 chars)
@@ -45,7 +56,7 @@ Keep the slug around: it names the tier change folder (`c3spec/changes/tier2-${S
 
 ---
 
-## Step 2 — Create tier change folder and `tier.md`
+## Step 3 — Create tier change folder and `tier.md`
 
 Create the T2 change folder and write the lifecycle metadata anchor before producing any planning artifacts.
 
@@ -88,7 +99,7 @@ If the feature later turns out to need a `design.md` (Step 4) or delta specs und
 
 ---
 
-## Step 3 — Proposal
+## Step 4 — Proposal
 
 Generate a proposal document. The durable required artifact is `c3spec/changes/tier2-${SLUG}/proposal.md`.
 
@@ -118,7 +129,7 @@ Show the saved `proposal.md` path (and the optional HTML companion path, if one 
 
 ---
 
-## Step 4 — Design (optional)
+## Step 5 — Design (optional)
 
 If the proposal has significant technical decisions (data model choices, API shape, architectural alternatives), generate a design document. If the feature has no significant technical decisions (implementation is obvious from the proposal), skip this step — T2 treats `design.md` as optional under `c3spec-tier-lifecycle`.
 
@@ -141,7 +152,7 @@ If you produce `design.md`, add it to the Required Artifacts checklist in `tier.
 
 ---
 
-## Step 5 — Tasks
+## Step 6 — Tasks
 
 Generate tasks from the proposal and design. Do not use `superpowers:writing-plans` for Tier 2 — derive tasks directly from the design decisions.
 
@@ -162,7 +173,7 @@ Tick `- [x] tasks.md` in `tier.md` once the file is written. Checkboxes inside `
 
 ---
 
-## Step 6 — Plan
+## Step 7 — Plan
 
 Generate a moderate plan from the tasks. Write to `c3spec/changes/tier2-${SLUG}/plan.md`.
 
@@ -192,7 +203,7 @@ Show the task list and staged plan together: "Here are the tasks and plan I've d
 
 ---
 
-## Step 7 — Execute via c3spec-subagent-dev
+## Step 8 — Execute via c3spec-subagent-dev
 
 Before invoking implementation, update `tier.md` `Status` to `implementation`. This marks the transition from planning to apply-ready execution per `c3spec-tier-lifecycle`.
 
@@ -209,7 +220,7 @@ If this feature changes spec-level behavior in one or two capabilities, write de
 
 ---
 
-## Step 8 — Verification (`verify.md`)
+## Step 9 — Verification (`verify.md`)
 
 After all tasks complete, run a lightweight verification pass and capture the outcome in a durable markdown record at `c3spec/changes/tier2-${SLUG}/verify.md`. The lifecycle contract requires `verify.md` for T2 — inline summaries alone are not sufficient.
 
@@ -247,7 +258,7 @@ If verification passes, `verify.md` is non-blocking under `c3spec-tier-lifecycle
 
 ---
 
-## Step 9 — Retrospective
+## Step 10 — Retrospective
 
 Generate a compact retro. The lifecycle contract requires the markdown durable name to be `retrospective.md`; the HTML companion is optional.
 
@@ -271,7 +282,7 @@ Update `tier.md` `Status` to `retrospective` while writing this artifact. Do not
 
 ---
 
-## Step 10 — Memory capture (if applicable)
+## Step 11 — Memory capture (if applicable)
 
 If Step 9 identified a generalizable learning, create a memory entry (same format as Tier 1 Step 7). Add to `c3spec/memory/MEMORY.md` index and record the memory entry path in `tier.md` and `retrospective.md` so the link survives in the durable record.
 
@@ -281,7 +292,7 @@ After the memory entry is created and indexed, or after `retrospective.md` expli
 
 ---
 
-## Step 11 — Archive readiness check
+## Step 12 — Archive readiness check
 
 Before invoking archive, run the archive readiness check defined in `c3spec-tier-lifecycle` (Section 6) against this change.
 
@@ -298,7 +309,7 @@ If any required artifact is missing or any checkbox is still `- [ ]`, report the
 
 ---
 
-## Step 12 — Archive and finish
+## Step 13 — Archive and finish
 
 ```bash
 c3spec archive -y

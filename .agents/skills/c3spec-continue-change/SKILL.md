@@ -147,6 +147,7 @@ After each invocation, show:
 
 - **One artifact per invocation.** Even when the next artifact also looks safe, stop and let the user re-invoke.
 - **Read `tier.md` before anything else.** Schema status output supplements lifecycle metadata; it does not replace it.
+- **Do not run a new interview/grill-me phase in this helper.** Resume decisions come from on-disk lifecycle artifacts.
 - **Never silently bypass a pause point.** HTML review gates, post-proposal approvals, and archive readiness must surface explicitly.
 - **Do not mutate `tasks.md` checkboxes.** Implementation flow owns that.
 - **Update `tier.md`** when a phase completes (status transitions, required-artifacts checklist).

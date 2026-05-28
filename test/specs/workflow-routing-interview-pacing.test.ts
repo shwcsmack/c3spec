@@ -15,6 +15,8 @@ const CANONICAL_INTERVIEW_SKILLS = [
   'c3spec-tier3-full',
 ] as const;
 
+const RESUME_APPLY_HELPERS = ['c3spec-continue-change', 'c3spec-apply-change'] as const;
+
 const ONE_QUESTION_MARKERS = [
   /exactly one interview question per message/i,
   /exactly one clarifying question per turn/i,
@@ -33,6 +35,8 @@ describe('workflow-routing interview pacing', () => {
     expect(content).toMatch(/Why this question now:/);
     expect(content).toMatch(/Recommendation:/);
     expect(content).toMatch(/question first|question-first/i);
+    expect(content).toMatch(/Tier interview gate contract/i);
+    expect(content).toMatch(/Resume\/apply helpers are exempt from re-interview/i);
   });
 
   it.each(CANONICAL_INTERVIEW_SKILLS)('encodes interview pacing in %s', async (skillName) => {
@@ -47,5 +51,15 @@ describe('workflow-routing interview pacing', () => {
       /numbered (interview )?questions?|numbered question dumps|batch(ed)?|compound question/i
     );
     expect(content).not.toMatch(/Tightly coupled clarifications may share one turn/i);
+    if (/c3spec-tier[123]-/.test(skillName)) {
+      expect(content).toMatch(/grill-me interview/i);
+    }
+  });
+
+  it.each(RESUME_APPLY_HELPERS)('%s explicitly avoids re-interview', async (skillName) => {
+    const skillPath = path.join(projectRoot, '.agents/skills', skillName, 'SKILL.md');
+    const content = await fs.readFile(skillPath, 'utf8');
+
+    expect(content).toMatch(/do not run a new interview\/grill-me phase/i);
   });
 });

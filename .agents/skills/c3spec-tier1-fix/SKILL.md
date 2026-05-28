@@ -7,7 +7,7 @@ description: Execute a Tier 1 Spec-Aware Fix. Use after c3spec-start routes here
 
 For bugs, investigations, config tweaks, and simple changes that don't introduce new capabilities or change spec-level contracts. T1 is lightweight, but it still produces a durable, resumable change record on disk.
 
-**Input:** Interview context and alignment from `c3spec-start`. Do not re-interview — carry forward everything.
+**Input:** Interview context and alignment from `c3spec-start`, followed by a required Tier 1 grill-me interview pass.
 
 **Lifecycle contract:** This skill follows `c3spec-tier-lifecycle`. Consult that skill for tier folder conventions, required artifacts, pause points, apply readiness, and archive readiness. This skill writes the artifacts; the lifecycle skill defines what is required.
 
@@ -27,7 +27,18 @@ Do not continue into worktree setup while tracked changes are present. Do not of
 
 ---
 
-## Step 1 — Worktree setup
+## Step 1 — Tier 1 grill-me interview (required)
+
+Before worktree setup, run a short Tier 1 interview to validate root hypothesis, confirm scope boundaries, and lock what "done" means for this fix.
+
+Interview rules:
+- Ask exactly one question per turn.
+- Use question-first order: question, then `Why this question now:`, then `Recommendation:`.
+- Capture decisions in `mini-plan.md` (goal, root hypothesis, scope limits, and acceptance checks).
+
+Then proceed.
+
+## Step 2 — Worktree setup
 
 ```bash
 # Derive a kebab-case slug from the fix description (max ~40 chars)
@@ -43,7 +54,7 @@ Keep the slug around: it names the tier change folder (`c3spec/changes/tier1-${S
 
 ---
 
-## Step 2 — Create tier change folder and `tier.md`
+## Step 3 — Create tier change folder and `tier.md`
 
 Create the T1 change folder and write the lifecycle metadata anchor.
 
@@ -84,7 +95,7 @@ Write `c3spec/changes/tier1-${SLUG}/tier.md` following the `tier.md` shape defin
 
 ---
 
-## Step 3 — Write `mini-plan.md`
+## Step 4 — Write `mini-plan.md`
 
 Do NOT invoke `superpowers:writing-plans`. Generate the plan inline from the interview context and write it to `c3spec/changes/tier1-${SLUG}/mini-plan.md` before execution.
 
@@ -118,7 +129,7 @@ Tick the `- [ ] mini-plan.md` checkbox in `tier.md` once the file is written.
 
 ---
 
-## Step 4 — Execute via c3spec-subagent-dev
+## Step 5 — Execute via c3spec-subagent-dev
 
 Before invoking implementation, update `tier.md` `Status` to `implementation`. This marks the transition from planning to apply-ready execution per `c3spec-tier-lifecycle`.
 
@@ -135,7 +146,7 @@ When implementation tasks are complete, update `tier.md` `Status` to `verifying`
 
 ---
 
-## Step 5 — Spec impact report (HTML + markdown)
+## Step 6 — Spec impact report (HTML + markdown)
 
 After all mini-plan tasks complete, generate a spec impact report. Both an HTML review surface and a durable markdown record are required by the lifecycle contract.
 
@@ -167,7 +178,7 @@ Tick both `- [ ] spec-impact.html` and `- [ ] spec-impact.md` in `tier.md`.
 
 ---
 
-## Step 6 — Micro-retrospective (HTML + markdown)
+## Step 7 — Micro-retrospective (HTML + markdown)
 
 Generate a micro-retro. Both an HTML review surface and a durable markdown record are required by the lifecycle contract.
 
@@ -204,7 +215,7 @@ Tick both `- [ ] micro-retro.html` and `- [ ] micro-retro.md` in `tier.md`. Upda
 
 ---
 
-## Step 7 — Memory capture
+## Step 8 — Memory capture
 
 After the user approves the micro-retro, create a memory file if the learning generalizes (i.e. the same class of bug could occur elsewhere in the codebase):
 
@@ -240,7 +251,7 @@ Commit: `docs(memory): add <slug> learning from <branch-name> fix`
 
 ---
 
-## Step 8 — Archive readiness check
+## Step 9 — Archive readiness check
 
 Before finishing the branch, run the archive readiness check defined in `c3spec-tier-lifecycle` (Section 6) against this change.
 
@@ -257,7 +268,7 @@ When all readiness conditions hold, leave `tier.md` `Status` as `ready-to-archiv
 
 ---
 
-## Step 9 — Archive and finish
+## Step 10 — Archive and finish
 
 Run archive first, then automatically finish the branch:
 

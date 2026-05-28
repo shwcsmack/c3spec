@@ -184,6 +184,7 @@ No remaining implementation work. Suggested next step:
 ## Guardrails
 
 - **Read `tier.md` first.** Schema-backed `c3spec status` / `c3spec instructions apply --json` is artifact context, not the workflow contract.
+- **Do not run a new interview/grill-me phase in this helper.** Apply decisions come from lifecycle readiness on disk.
 - **Warn loudly when lifecycle metadata is missing** rather than fabricating it; fall back to folder/artifact inference and tell the user the apply decision is best-effort.
 - **Verify apply readiness before dispatching.** Missing planning artifacts route to `c3spec-continue-change`; blocked/all-done states surface their own outputs above.
 - **Never loop through tasks from this helper.** Implementation belongs to `c3spec-subagent-dev`.

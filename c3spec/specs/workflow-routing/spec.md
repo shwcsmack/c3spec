@@ -68,6 +68,23 @@ The `c3spec-start` routing classifier SHALL produce exactly one of four outcomes
 - **AND** research outputs SHALL include a clear recommended direction and implementation handoff summary
 - **AND** implementation follow-up SHALL return through `c3spec-start` for final T1/T2/T3 classification
 
+### Requirement: Tier interview gate contract
+
+Tier workflows SHALL run an explicit interview/grill-me phase before planning or implementation so assumptions are surfaced and alignment is refreshed at the tier boundary.
+
+#### Scenario: Tier interview gate runs for fresh tier workflows
+
+- **WHEN** `c3spec-start` hands off to `c3spec-tier1-fix`, `c3spec-tier2-feature`, or `c3spec-tier3-full`
+- **THEN** the tier skill SHALL run an explicit interview/grill-me phase before creating planning artifacts or dispatching implementation
+- **AND** the interview SHALL use one-question pacing with question-first turn format (question, then `Why this question now:`, then `Recommendation:`)
+- **AND** interview findings SHALL be captured in tier artifacts and used to shape scope, plan, and design decisions
+
+#### Scenario: Resume/apply helpers are exempt from re-interview
+
+- **WHEN** work resumes through `c3spec-continue-change` or `c3spec-apply-change`
+- **THEN** those helpers SHALL use on-disk lifecycle artifacts (`tier.md`, plans, tasks) as the source of truth
+- **AND** they SHALL NOT require a new interview/grill-me phase before continuing execution
+
 ### Requirement: Tier 1 Spec-Aware Fix routing and workflow shape
 
 `c3spec-start` SHALL route changes that are low risk, localized, and free of spec-level contract changes to a Tier 1 Spec-Aware Fix workflow that avoids full proposal/design/tasks/plan ceremony while still producing a lightweight durable change record.

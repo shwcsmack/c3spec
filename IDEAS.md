@@ -1,4 +1,4 @@
-<!-- c3spec:ideas-digest 43c5563c14598b31b948b8275189137aa21bc2d63e065102b543005d398d03b1 -->
+<!-- c3spec:ideas-digest 6413fb2f4e2de50c1047b9b4c59ede1ed43419bda0dbdd3858046010c253ddc6 -->
 # Ideas
 
 Backlog of ideas to pick up later. Each entry is intentionally light - flesh out via `/c3spec:start` when ready to work on it.
@@ -99,16 +99,7 @@ Investigate what it would take to repackage c3spec as a first-class pi package a
 - Define migration options: additive support, staged default switch, or full strategic pivot
 - Produce a recommendation document with explicit success criteria, blockers, and follow-up ideas
 
-## 10. Require interview/grill-me phase in every tier workflow
-
-Add a mandatory interview (grill-me) phase to every workflow tier so assumptions are surfaced early and alignment is explicit before planning or implementation begins.
-
-- Define a standard interview contract for Tier 1, Tier 2, and Tier 3 with pacing and output expectations.
-- Require each tier skill to run the interview phase even after c3spec-start handoff, with context-aware depth by tier.
-- Document how interview findings are captured in change artifacts and influence routing/design decisions.
-- Add spec/tests to enforce that tier workflows include and honor the interview phase.
-
-## 11. Fix subagent-driven development flow and PI setup for subagent execution
+## 10. Fix subagent-driven development flow and PI setup for subagent execution
 
 Stabilize and simplify the c3spec subagent-driven development flow, including reliable PI environment/setup for subagent work so implementation and review agents can be dispatched consistently across hosts.
 
@@ -117,7 +108,7 @@ Stabilize and simplify the c3spec subagent-driven development flow, including re
 - Update c3spec-host-adapter and related skills to enforce/setup subagent prerequisites automatically.
 - Add tests covering subagent dispatch readiness, failure handling, and cross-host behavior.
 
-## 12. Fix finishing-development-branch flow at end of every workflow
+## 11. Fix finishing-development-branch flow at end of every workflow
 
 Harden the branch-finalization flow so every workflow consistently ends with a reliable finishing-development-branch step and clear PR-ready output.
 
@@ -126,7 +117,7 @@ Harden the branch-finalization flow so every workflow consistently ends with a r
 - Improve failure handling/retry guidance when finalization checks fail.
 - Add tests ensuring each workflow path reaches finishing-development-branch under the correct conditions.
 
-## 13. Auto-resolve ideas after implementation with idea-specific workflow
+## 12. Auto-resolve ideas after implementation with idea-specific workflow
 
 Design a reliable mechanism to remove or mark ideas complete once the corresponding fix/feature is delivered, potentially via an idea-linked workflow that tracks implementation-to-backlog closure.
 

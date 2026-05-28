@@ -7,7 +7,7 @@ description: Execute a Tier 3 Full Workflow after c3spec-start routes here. Cove
 
 For new capabilities or architectural changes with significant design uncertainty, breaking changes, cross-system integrations, DB/schema changes, or any change where getting the design wrong is expensive to undo.
 
-**Input:** Interview context and alignment from `c3spec-start`. Do not re-interview unless a critical ambiguity blocks planning.
+**Input:** Interview context and alignment from `c3spec-start`, followed by a required Tier 3 grill-me interview pass before artifact planning.
 
 **Lifecycle contract:** Before any artifact work, read `c3spec-tier-lifecycle`. It is the canonical contract for T3 required artifacts (Section 2), `tier.md` metadata (Section 3), pause points (Section 4), apply readiness (Section 5), and archive readiness (Section 6). This skill SHALL NOT redefine that contract; if prose here drifts from the contract, update the contract or this skill rather than forking the rules.
 
@@ -38,7 +38,18 @@ If the user requests `fast forward`, follow `c3spec-tier-lifecycle` fast-forward
 
 ---
 
-## Step 1 - Worktree setup
+## Step 1 - Tier 3 grill-me interview (required)
+
+Before worktree setup, run a Tier 3 interview to pressure-test scope, architecture assumptions, risk boundaries, and success criteria.
+
+Interview rules:
+- Ask exactly one question per turn.
+- Use question-first order: question, then `Why this question now:`, then `Recommendation:`.
+- Capture conclusions in `brainstorm.md`, then carry them into proposal/design/spec decisions.
+
+Then proceed.
+
+## Step 2 - Worktree setup
 
 ```bash
 BRANCH="feat/<short-description>"
@@ -49,7 +60,7 @@ Standard setup with dependency install and baseline verification. Run the projec
 
 ---
 
-## Step 2 - Create the change directory
+## Step 3 - Create the change directory
 
 Create the c3spec change scaffold:
 
@@ -81,7 +92,7 @@ Update `Status` and the required-artifacts checklist as the workflow progresses 
 
 ---
 
-## Step 3 - Brainstorm artifact
+## Step 4 - Brainstorm artifact
 
 Use the brainstorming skill to explore the problem, constraints, options, and trade-offs before writing proposal or design artifacts. Run discovery with exactly one clarifying question per turn — do not override the skill with batched or compound question lists. Every interview turn during brainstorm must include: exactly one question first (open-ended, multiple-choice, or yes/no when warranted), then `Why this question now:`, then `Recommendation:` (suggested answer/direction + brief why).
 
@@ -103,7 +114,7 @@ Tick `brainstorm.md` in `tier.md` once the durable markdown record is written.
 
 ---
 
-## Step 4 - HTML proposal
+## Step 5 - HTML proposal
 
 Generate a proposal document. Write the HTML version first:
 
@@ -136,7 +147,7 @@ Tick `proposal.md` in `tier.md` once the durable markdown record is written.
 
 ---
 
-## Step 5 - HTML design
+## Step 6 - HTML design
 
 Generate the technical design. Write the HTML version first:
 
@@ -169,7 +180,7 @@ Tick `design.md` in `tier.md` once the durable markdown record is written.
 
 ---
 
-## Step 6 - Delta specs
+## Step 7 - Delta specs
 
 For each affected capability, write or update delta specs under:
 
@@ -185,7 +196,7 @@ Tick each produced `specs/<capability>/spec.md` entry in `tier.md` once the delt
 
 ---
 
-## Step 7 - Tasks
+## Step 8 - Tasks
 
 Generate tasks from the brainstorm, proposal, design, and delta specs:
 
@@ -205,7 +216,7 @@ Tick `tasks.md` in `tier.md` once the file is written.
 
 ---
 
-## Step 8 - Staged implementation plan
+## Step 9 - Staged implementation plan
 
 Generate a detailed staged plan:
 
@@ -231,7 +242,7 @@ Tick `plan.md` in `tier.md` once the file is written. `plan.md` is non-pausing b
 
 ---
 
-## Step 9 - Execute via c3spec-subagent-dev
+## Step 10 - Execute via c3spec-subagent-dev
 
 Invoke `c3spec-subagent-dev` with:
 
@@ -246,7 +257,7 @@ Consult `c3spec-host-adapter` when dispatching named agents.
 
 ---
 
-## Step 10 - Full verification
+## Step 11 - Full verification
 
 After all implementation tasks complete, write:
 
@@ -272,7 +283,7 @@ When verification succeeds, `verify.md` is non-blocking under `c3spec-tier-lifec
 
 ---
 
-## Step 11 - Retrospective
+## Step 12 - Retrospective
 
 Generate a retrospective:
 
@@ -305,7 +316,7 @@ Update `tier.md` `Status` to `retrospective` while writing this artifact. Tick `
 
 ---
 
-## Step 12 - Memory capture
+## Step 13 - Memory capture
 
 If the retrospective identifies a generalizable learning, create a memory entry:
 
@@ -321,7 +332,7 @@ After memory capture is complete, or after the retrospective explicitly records 
 
 ---
 
-## Step 13 - Archive and finish
+## Step 14 - Archive and finish
 
 Before archiving, run the archive readiness check from `c3spec-tier-lifecycle` Section 6. The change is archive-ready ONLY when ALL of the following hold:
 
