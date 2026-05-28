@@ -163,22 +163,7 @@ Quality review (`quality-reviewer` subagent dispatched from `c3spec-subagent-dev
 - Output a short profiling report under `docs/research/` summarizing where the time goes and proposing the smallest fix that closes the gap, before opening a follow-up implementation idea
 - Coordinate with idea #14 (in-process `runCLI` refactor) only if the profiling shows subprocess overhead is part of the slowdown — otherwise keep these tracks separate
 
-## 15. Make the git workflow opinionated end-to-end
-
-Every tier skill (`c3spec-tier1-fix`, `c3spec-tier2-feature`, `c3spec-tier3-full`) front-loads the same battery of git questions before doing any work — "approve all commits upfront, or confirm each one individually?", a stash/commit/abort prompt when the tree isn't clean, and at the close `superpowers:finishing-a-development-branch` opens yet another decision loop (merge / PR / cleanup). The net effect is the human has to drive the git lifecycle by hand even on small fixes, and the end of a change regularly needs explicit re-prompting like "now commit this", "now push", "now open the PR" before the agent acts. c3spec should pick defaults and live with them — branch naming, commit cadence, push timing, PR opening, cleanup — so the agent commits, pushes, and opens PRs on its own under a single named policy, with one explicit opt-out for the rare case the human wants to deviate.
-
-- Inventory every git-related question across the tier skills and the `superpowers:finishing-a-development-branch` handoff; classify each as "needs an answer", "could be defaulted", or "should never have been asked in the first place"
-- Pick opinionated defaults for the high-frequency questions: per-artifact commits as each pause-point is approved (not "approve upfront vs per-commit"), branch name derived from the change slug, push after each approved artifact, PR opened once the change is archive-ready
-- Replace the upfront "approve all commits or per-commit?" prompt in all three tier skills with a fixed policy — commit every pause-point artifact as it's approved, no per-commit re-asking — and document the policy in one place rather than re-stating it per tier
-- Default the clean-tree gate behavior without a question: surface the dirty paths and abort, rather than offering stash/commit/abort each time; the human can rerun once they've handled their tree
-- Define a single opt-out lever (mirroring the existing "fast forward" phrase in the workflow) so a user can say "don't auto-push" or "don't open a PR" once at the start of a change instead of being re-prompted later in the flow
-- Make end-of-change actions opinionated: when archive is approved, the agent should commit + push + open the PR automatically with a templated description, rather than waiting for "now push" / "now open the PR" / "write the PR description" from the human
-- Pick a PR description convention up front (link to change folder, list of approved artifacts, retro summary for Tier 3) so the agent doesn't interview the user about PR contents at the end
-- Audit `superpowers:finishing-a-development-branch` — decide whether to keep it, fork it as a c3spec-native finisher with fewer prompts, or skip it entirely in favor of an opinionated archive→commit→push→PR sequence baked into the tier skills (coordinates with idea #3 vendoring superpowers)
-- Surface the policy in `CLAUDE.md` / `AGENTS.md` so it's discoverable, and pin it in `c3spec-tier-lifecycle` so the tier skills consume one source of truth instead of each re-implementing the prompts
-- Coordinate with idea #6 (HITL/HOTL methodologies) and existing tier pause-policy work — git decisions are a major HITL surface and the same "opinionated default + one named opt-out" pattern should apply consistently across both
- 
-## 16. Deepen the brainstorm interview workflow
+## 15. Deepen the brainstorm interview workflow
 
 The brainstorm step is one of the highest-leverage points in the c3spec flow, but right now interview quality can vary by host, context length, and operator habits. We should tighten this into a more opinionated interview experience: thorough discovery, one question at a time, and clear recommendations paired with each question so the user can make fast decisions without losing nuance.
 
@@ -190,7 +175,7 @@ The brainstorm step is one of the highest-leverage points in the c3spec flow, bu
 - Add focused tests (or skill-contract assertions) that catch regressions to multi-question dumps or missing recommendations
 - Decide how to reflect user-selected answers in downstream artifacts so recommendations are traceable into proposal/design
 
-## 17. Default commit approval mode to always approve all
+## 16. Default commit approval mode to always approve all
 
 Today Tier workflows still ask the user at the beginning whether to approve all commits upfront or confirm each commit. For users who always choose the same answer, this prompt is repeated friction. Add a persistent default so commit approval can be preconfigured and the question is skipped unless explicitly overridden.
 
@@ -201,15 +186,3 @@ Today Tier workflows still ask the user at the beginning whether to approve all 
 - Update tier skills and lifecycle docs to treat the prompt as conditional on mode, not mandatory
 - Add tests covering default behavior, override behavior, and backward compatibility when no setting exists
 - Document migration behavior for existing users so current flows continue to work unless they opt in
-
-## 18. Automatically run `finishing-a-development-branch` after archive
-
-After a change is archived, the workflow should immediately run `finishing-a-development-branch` so the branch gets wrapped up consistently without waiting for the user to remember a separate finalization step. Right now archive and branch-finishing can drift apart, which leads to half-finished branches, delayed pushes/PRs, and extra manual prompts.
-
-- Define archive completion as the trigger point for branch finishing (all tiers, unless explicitly opted out)
-- Wire the archive flow to invoke `finishing-a-development-branch` automatically after successful archive
-- Decide failure behavior: if finishing fails, archive should remain complete but report actionable recovery steps
-- Ensure idempotency so rerunning archive/finish doesn’t duplicate commits, PRs, or cleanup actions
-- Align with the opinionated-git direction in idea #15 so this becomes part of one consistent endgame policy
-- Update tier/lifecycle docs and any related skills so this behavior is explicit and testable
-
