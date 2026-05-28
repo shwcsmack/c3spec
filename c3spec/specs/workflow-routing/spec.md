@@ -259,9 +259,9 @@ c3spec machine enforcement SHALL guarantee that the canonical skill, agent, and 
 - **THEN** the contract SHALL NOT introduce a per-requirement backing-test enforcement mechanism
 - **AND** project-wide requirement-to-test coverage SHALL remain deferred to the entry tracked as IDEAS.md #15
 
-### Requirement: One-question interview pacing and recommendation-led turn format
+### Requirement: One-question interview pacing and question-first turn format
 
-Interview-driven workflow steps SHALL ask exactly one user-facing interview question per message and SHALL NOT batch or compound multiple questions in the same turn. Every interview question turn SHALL include `Recommendation:`, `Why this question now:`, and then exactly one question.
+Interview-driven workflow steps SHALL ask exactly one user-facing interview question per message and SHALL NOT batch or compound multiple questions in the same turn. Every interview question turn SHALL include exactly one question first, then `Why this question now:`, then `Recommendation:`.
 
 #### Scenario: c3spec-start interview pacing
 
@@ -273,7 +273,7 @@ Interview-driven workflow steps SHALL ask exactly one user-facing interview ques
 
 - **WHEN** `c3spec-start` shares codebase findings, hypotheses, or alignment summaries during the interview
 - **THEN** it MAY present those findings together in one message
-- **AND** the message SHALL include `Recommendation:` and `Why this question now:` before asking exactly one question for the user to answer next
+- **AND** the message SHALL ask exactly one question for the user to answer next, then include `Why this question now:` and `Recommendation:`
 
 #### Scenario: User provides unprompted answers
 
@@ -285,19 +285,19 @@ Interview-driven workflow steps SHALL ask exactly one user-facing interview ques
 
 - **WHEN** `c3spec-tier3-full` runs the brainstorm step using the brainstorming skill
 - **THEN** clarifying questions during discovery SHALL be asked exactly one per turn
-- **AND** each question turn SHALL include `Recommendation:` and `Why this question now:` before the question
+- **AND** each question turn SHALL include question-first order (question, then `Why this question now:`, then `Recommendation:`)
 - **AND** the workflow SHALL NOT override the skill with numbered, batched, or compound question lists
 
 #### Scenario: Tier follow-up clarifications after handoff
 
 - **WHEN** a tier workflow needs additional user input after `c3spec-start` handoff
 - **THEN** it SHALL ask exactly one clarifying question per turn
-- **AND** each question turn SHALL include `Recommendation:` and `Why this question now:` before the question
+- **AND** each question turn SHALL include question-first order (question, then `Why this question now:`, then `Recommendation:`)
 - **AND** SHALL NOT restart a full discovery interview or dump multiple numbered, batched, or compound questions at once
 
 #### Scenario: Question mode flexibility
 
 - **WHEN** an interview step selects question format
 - **THEN** it MAY use open-ended, multiple-choice, or yes/no questions when warranted
-- **AND** all modes SHALL still include the required `Recommendation:` and `Why this question now:` lines
+- **AND** all modes SHALL still include the required question-first order with `Why this question now:` and `Recommendation:`
 

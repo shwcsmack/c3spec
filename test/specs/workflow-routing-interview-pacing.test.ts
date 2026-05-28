@@ -27,11 +27,12 @@ describe('workflow-routing interview pacing', () => {
     const specPath = path.join(projectRoot, 'c3spec/specs/workflow-routing/spec.md');
     const content = await fs.readFile(specPath, 'utf8');
 
-    expect(content).toMatch(/### Requirement: One-question interview pacing and recommendation-led turn format/);
+    expect(content).toMatch(/### Requirement: One-question interview pacing and question-first turn format/);
     expect(content).toMatch(/c3spec-start interview pacing/);
     expect(content).toMatch(/Tier 3 brainstorm discovery pacing/);
-    expect(content).toMatch(/Recommendation:/);
     expect(content).toMatch(/Why this question now:/);
+    expect(content).toMatch(/Recommendation:/);
+    expect(content).toMatch(/question first|question-first/i);
   });
 
   it.each(CANONICAL_INTERVIEW_SKILLS)('encodes interview pacing in %s', async (skillName) => {

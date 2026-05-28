@@ -83,7 +83,7 @@ Update `Status` and the required-artifacts checklist as the workflow progresses 
 
 ## Step 3 - Brainstorm artifact
 
-Use the brainstorming skill to explore the problem, constraints, options, and trade-offs before writing proposal or design artifacts. Run discovery with exactly one clarifying question per turn — do not override the skill with batched or compound question lists. Every interview turn during brainstorm must include: `Recommendation:` (suggested answer/direction + brief why), `Why this question now:`, then exactly one question (open-ended, multiple-choice, or yes/no when warranted).
+Use the brainstorming skill to explore the problem, constraints, options, and trade-offs before writing proposal or design artifacts. Run discovery with exactly one clarifying question per turn — do not override the skill with batched or compound question lists. Every interview turn during brainstorm must include: exactly one question first (open-ended, multiple-choice, or yes/no when warranted), then `Why this question now:`, then `Recommendation:` (suggested answer/direction + brief why).
 
 Write the approved output to:
 
@@ -356,7 +356,7 @@ PR is last. The PR description should reference the proposal, design, verificati
 - Do not skip the brainstorm for Tier 3 work.
 - Do not skip `tier.md` after `c3spec new change` — a T3 change without `tier.md` cannot be safely resumed from a fresh context.
 - Do not run brainstorm or discovery with numbered, batched, or compound question dumps — one question per turn
-- Do not omit `Recommendation:` or `Why this question now:` on brainstorm interview turns
+- Do not omit the required question-first order (`Question`, then `Why this question now:`, then `Recommendation:`) on brainstorm interview turns
 - Do not proceed past HTML proposal, design, or retrospective artifacts without printing the `file:///` path and waiting for approval.
 - Do not implement before proposal, design, specs, tasks, and plan exist.
 - Do not write inline code in `plan.md`.
