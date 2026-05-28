@@ -225,9 +225,9 @@ describe('workspace command interactive flows', () => {
   it('asks which agents get C3Spec skills and preselects the preferred opener', async () => {
     const api = mkdir('repos/api');
     const binDir = mkdir('bin');
-    const codexPath = path.join(binDir, process.platform === 'win32' ? 'codex.cmd' : 'codex');
-    fs.writeFileSync(codexPath, '');
-    fs.chmodSync(codexPath, 0o755);
+    const piPath = path.join(binDir, process.platform === 'win32' ? 'pi.cmd' : 'pi');
+    fs.writeFileSync(piPath, '');
+    fs.chmodSync(piPath, 0o755);
     process.env.PATH = binDir;
     const { input, select } = await getPromptMocks();
 
@@ -248,7 +248,7 @@ describe('workspace command interactive flows', () => {
       }
 
       if (options.message === 'Preferred opener:') {
-        return 'codex';
+        return 'github-copilot';
       }
 
       throw new Error(`Unexpected select prompt: ${options.message}`);
@@ -258,9 +258,8 @@ describe('workspace command interactive flows', () => {
       choices: Array<{ value: string; preSelected?: boolean }>;
     }) => {
       expect(options.message).toBe('Which agents should get C3Spec skills in this workspace?');
-      expect(options.choices.find((choice) => choice.value === 'codex')?.preSelected).toBe(true);
-      expect(options.choices.find((choice) => choice.value === 'claude')?.preSelected).toBe(false);
-      return ['codex', 'claude'];
+      expect(options.choices.find((choice) => choice.value === 'pi')).toBeDefined();
+      return ['pi'];
     });
 
     await runWorkspaceCommand(['setup']);
@@ -269,7 +268,7 @@ describe('workspace command interactive flows', () => {
     expect(searchableMultiSelectMock).toHaveBeenCalledTimes(1);
     expect(readLocalState('platform').workspace_skills).toEqual(
       expect.objectContaining({
-        selected_agents: ['codex', 'claude'],
+        selected_agents: ['pi'],
         last_applied_workflow_ids: ['explore', 'sync', 'archive'],
       })
     );

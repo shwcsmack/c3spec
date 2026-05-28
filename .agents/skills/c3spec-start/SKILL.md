@@ -99,6 +99,9 @@ After the interview converges, classify the change. Present your classification 
 
 **What you say:** "This looks like a **Tier 3 Full Workflow**. I'll run the full superpowers-bridge process — brainstorm, proposal, design, specs, tasks, plan — with HTML review at each planning artifact before saving to markdown. Does that match what you expected?"
 
+### Runtime contract
+c3spec workflows are pi-only. If the user asks to run c3spec workflows in non-pi hosts, stop and ask them to continue in pi.
+
 ### Ambiguous cases
 When a request could be either research or implementation, ask one clarifying question and prefer the explicit user intent. For implementation-tier ambiguity, lean toward the lighter tier and say so explicitly: "I'm routing this to Tier 2 rather than Tier 3 — the scope feels contained enough. If you disagree, say so and I'll move it up."
 

@@ -81,9 +81,9 @@ Resume helpers SHALL follow lifecycle-defined gate semantics including non-pausi
 
 `c3spec-host-adapter` SHALL describe how each supported host dispatches the canonical agent roles without requiring non-existent generated files.
 
-#### Scenario: Cursor dispatch instructions
+#### Scenario: Pi dispatch instructions
 
-- **WHEN** an agent reads `c3spec-host-adapter` while running in Cursor
-- **THEN** it SHALL be instructed to dispatch Cursor subagents by role name when the host exposes those roles directly
+- **WHEN** an agent reads `c3spec-host-adapter` while running in pi
+- **THEN** it SHALL be instructed to dispatch pi role workflows by role name through pi-native mechanisms
 - **AND** it SHALL NOT require `.cursor/agents/<name>.md` files to exist before dispatching `implementer`, `spec-reviewer`, or `quality-reviewer`
 

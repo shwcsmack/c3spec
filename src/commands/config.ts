@@ -215,14 +215,10 @@ function maybeWarnProjectConfigDrift(
   state: ProfileState,
   colorize: (message: string) => string
 ): void {
-  const c3specDir = path.join(projectDir, C3SPEC_DIR_NAME);
-  if (!fs.existsSync(c3specDir)) {
-    return;
-  }
   if (!hasProjectConfigDrift(projectDir, state.workflows, state.delivery)) {
     return;
   }
-  console.log(colorize('Warning: Global config is not applied to this project. Run `c3spec update` to sync.'));
+  console.log(colorize('Warning: Global config is not applied to this project. Reload pi (or reinstall/update the c3spec package) to sync.'));
 }
 
 async function maybeWarnConfigDrift(
@@ -257,7 +253,7 @@ function printConfigProfileApplyGuidance(workspaceContext: WorkspaceConfigProfil
     return;
   }
 
-  console.log('Config updated. Run `c3spec update` in your projects to apply.');
+  console.log('Config updated. Reload pi in your projects to apply.');
 }
 
 /**
@@ -706,13 +702,8 @@ export function registerConfigCommand(program: Command): void {
           });
 
           if (applyNow) {
-            try {
-              execSync('npx c3spec update', { stdio: 'inherit', cwd: projectDir });
-              console.log('Run `c3spec update` in your other projects to apply.');
-            } catch {
-              console.error('`c3spec update` failed. Please run it manually to apply the profile changes.');
-              process.exitCode = 1;
-            }
+            console.log('Profile changes saved. Restart pi in this project to apply.');
+            console.log('Restart pi in your other projects to apply there as well.');
             return;
           }
         }

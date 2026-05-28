@@ -8,7 +8,8 @@
     "specs",
     "cli",
     "ai",
-    "development"
+    "development",
+    "pi-package"
   ],
   "homepage": "https://github.com/shwcsmack/c3spec",
   "repository": {
@@ -20,6 +21,11 @@
   "type": "module",
   "publishConfig": {
     "access": "public"
+  },
+  "pi": {
+    "skills": [
+      "./.agents/skills"
+    ]
   },
   "exports": {
     ".": {

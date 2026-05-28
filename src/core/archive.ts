@@ -61,7 +61,7 @@ export class ArchiveCommand {
     try {
       await fs.access(changesDir);
     } catch {
-      throw new Error("No C3Spec changes directory found. Run 'c3spec init' first.");
+      throw new Error("No C3Spec changes directory found. Ensure c3spec package scaffolding exists in this project.");
     }
 
     // Get change name interactively if not provided

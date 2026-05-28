@@ -1,10 +1,7 @@
 import { Command } from 'commander';
 import { createRequire } from 'module';
 import ora from 'ora';
-import path from 'path';
-import { promises as fs } from 'fs';
 import { AI_TOOLS } from '../core/config.js';
-import { UpdateCommand } from '../core/update.js';
 import { ListCommand } from '../core/list.js';
 import { ArchiveCommand } from '../core/archive.js';
 import { ViewCommand } from '../core/view.js';
@@ -15,13 +12,9 @@ import { ShowCommand } from '../commands/show.js';
 import { CompletionCommand } from '../commands/completion.js';
 import { FeedbackCommand } from '../commands/feedback.js';
 import { registerConfigCommand } from '../commands/config.js';
-import {
-  registerWorkspaceCommand,
-  runWorkspaceUpdateForRoot,
-} from '../commands/workspace.js';
+import { registerWorkspaceCommand } from '../commands/workspace.js';
 import { registerMemoryCommand } from '../commands/memory.js';
 import { registerIdeasCommand } from '../commands/ideas.js';
-import { findWorkspaceRoot } from '../core/workspace/index.js';
 import {
   statusCommand,
   instructionsCommand,
@@ -54,74 +47,10 @@ program.hook('preAction', (thisCommand) => {
 });
 
 const availableToolIds = AI_TOOLS.filter((tool) => tool.skillsDir).map((tool) => tool.value);
-const toolsOptionDescription = `Configure AI tools non-interactively. Use "all", "none", or a comma-separated list of: ${availableToolIds.join(', ')}`;
-
-program
-  .command('init [path]')
-  .description('Initialize c3spec in your project')
-  .option('--tools <tools>', toolsOptionDescription)
-  .option('--force', 'Auto-cleanup legacy files without prompting')
-  .option('--profile <profile>', 'Override global config profile (core or custom)')
-  .action(async (targetPath = '.', options?: { tools?: string; force?: boolean; profile?: string }) => {
-    try {
-      // Validate that the path is a valid directory
-      const resolvedPath = path.resolve(targetPath);
-
-      try {
-        const stats = await fs.stat(resolvedPath);
-        if (!stats.isDirectory()) {
-          throw new Error(`Path "${targetPath}" is not a directory`);
-        }
-      } catch (error: any) {
-        if (error.code === 'ENOENT') {
-          // Directory doesn't exist, but we can create it
-          console.log(`Directory "${targetPath}" doesn't exist, it will be created.`);
-        } else if (error.message && error.message.includes('not a directory')) {
-          throw error;
-        } else {
-          throw new Error(`Cannot access path "${targetPath}": ${error.message}`);
-        }
-      }
-
-      const { InitCommand } = await import('../core/init.js');
-      const initCommand = new InitCommand({
-        tools: options?.tools,
-        force: options?.force,
-        profile: options?.profile,
-      });
-      await initCommand.execute(targetPath);
-    } catch (error) {
-      console.log(); // Empty line for spacing
-      ora().fail(`Error: ${(error as Error).message}`);
-      process.exit(1);
-    }
-  });
-
-// Hidden alias: 'experimental' -> 'init' for backwards compatibility
-program
-  .command('experimental', { hidden: true })
-  .description('Alias for init (deprecated)')
-  .option('--tool <tool-id>', 'Target AI tool (maps to --tools)')
-  .option('--no-interactive', 'Disable interactive prompts')
-  .action(async (options?: { tool?: string; noInteractive?: boolean }) => {
-    try {
-      console.log('Note: "c3spec experimental" is deprecated. Use "c3spec init" instead.');
-      const { InitCommand } = await import('../core/init.js');
-      const initCommand = new InitCommand({
-        tools: options?.tool,
-        interactive: options?.noInteractive === true ? false : undefined,
-      });
-      await initCommand.execute('.');
-    } catch (error) {
-      console.log();
-      ora().fail(`Error: ${(error as Error).message}`);
-      process.exit(1);
-    }
-  });
 
 program
   .command('sync [path]')
-  .description('Regenerate host artifacts from canonical .agents/ content')
+  .description('Regenerate runtime artifacts from canonical .agents/ content')
   .option('--force', 'Overwrite hand-edited generated files')
   .action(async (targetPath = '.', options?: { force?: boolean }) => {
     try {
@@ -135,27 +64,6 @@ program
     }
   });
 
-program
-  .command('update [path]')
-  .description('Update canonical .agents/ artifacts and regenerate host outputs')
-  .option('--force', 'Force update even when tools are up to date')
-  .action(async (targetPath = '.', options?: { force?: boolean }) => {
-    try {
-      const resolvedPath = path.resolve(targetPath);
-      const workspaceRoot = await findWorkspaceRoot(resolvedPath);
-      if (workspaceRoot) {
-        await runWorkspaceUpdateForRoot(workspaceRoot, { force: options?.force });
-        return;
-      }
-
-      const updateCommand = new UpdateCommand({ force: options?.force });
-      await updateCommand.execute(resolvedPath);
-    } catch (error) {
-      console.log(); // Empty line for spacing
-      ora().fail(`Error: ${(error as Error).message}`);
-      process.exit(1);
-    }
-  });
 
 program
   .command('list')

@@ -1,6 +1,6 @@
 /**
  * C3spec scaffold — sets up the workflow memory structure for a project that
- * has run `c3spec init`.
+ * has c3spec package resources available in pi for the project.
  */
 
 import path from 'path';

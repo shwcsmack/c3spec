@@ -55,26 +55,13 @@ export function getToolSkillStatus(projectRoot: string, toolId: string): ToolSki
     return { configured: false, fullyConfigured: false, skillCount: 0 };
   }
 
-  const hostMarker = path.join(projectRoot, '.agents', 'skills', 'c3spec-start', 'SKILL.md');
-  if (toolId === 'cursor' || toolId === 'codex') {
-    if (fs.existsSync(hostMarker)) {
-      return {
-        configured: true,
-        fullyConfigured: true,
-        skillCount: REQUIRED_CANONICAL_SKILL_NAMES.length,
-      };
-    }
-  }
-
-  if (toolId === 'claude') {
-    const claudeMarker = path.join(projectRoot, '.claude', 'skills', 'c3spec-start', 'SKILL.md');
-    if (fs.existsSync(claudeMarker)) {
-      return {
-        configured: true,
-        fullyConfigured: true,
-        skillCount: REQUIRED_CANONICAL_SKILL_NAMES.length,
-      };
-    }
+  const marker = path.join(projectRoot, '.agents', 'skills', 'c3spec-start', 'SKILL.md');
+  if (toolId === 'pi' && fs.existsSync(marker)) {
+    return {
+      configured: true,
+      fullyConfigured: true,
+      skillCount: REQUIRED_CANONICAL_SKILL_NAMES.length,
+    };
   }
 
   const skillsDir = path.join(projectRoot, tool.skillsDir, 'skills');

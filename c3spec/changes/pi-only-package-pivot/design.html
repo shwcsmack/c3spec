@@ -1,0 +1,56 @@
+<!doctype html>
+<html><head><meta charset="utf-8"/><title>Design - pi-only-package-pivot</title></head>
+<body>
+<h1>Design: pi-only-package-pivot</h1>
+
+<h2>Decision 1: pi-only host model (hard break)</h2>
+<p><strong>Chosen:</strong> c3spec supports pi as the sole runtime/host model.</p>
+<p><strong>Reason:</strong> Maximizes pi-native UX and minimizes maintenance by removing cross-host abstractions.</p>
+<p><strong>Alternatives:</strong> staged compatibility window (rejected due to maintenance carry).</p>
+
+<h2>Decision 2: remove host-generation pipeline from core</h2>
+<p><strong>Chosen:</strong> remove/decommission Cursor/Claude/Codex host renderers, host ID enums, and generated-host artifact contracts from core runtime path.</p>
+<p><strong>Reason:</strong> Primary success metric is total non-pi support removal.</p>
+
+<h2>Decision 3: pi package as canonical distribution surface</h2>
+<p><strong>Chosen:</strong> package c3spec resources via pi package manifest/conventions, with pi-native resource loading expectations.</p>
+<p><strong>Reason:</strong> Aligns delivery model with runtime strategy.</p>
+
+<h2>Decision 4: pi-native capability uplift in same initiative</h2>
+<p><strong>Chosen:</strong> include bounded upgrades that leverage pi extensions/SDK/runtime in workflow orchestration.</p>
+<p><strong>Reason:</strong> User explicitly wants full pi-agent power, not only a subtraction migration.</p>
+
+<h2>Architecture / Flow</h2>
+<pre>
+Current: c3spec canonical -> host renderers (cursor/claude/codex) -> host artifacts
+Target:  c3spec as pi package -> pi skills/extensions/runtime -> single runtime contract
+</pre>
+
+<h2>Contracts impacted</h2>
+<ul>
+<li>Workflow routing spec becomes pi-only.</li>
+<li>Canonical skills contract removes non-pi host adapter semantics.</li>
+<li>Command/host-generation specs rewritten or retired where host-centric.</li>
+<li>Default instruction surfaces stop naming non-pi hosts.</li>
+</ul>
+
+<h2>Risks and mitigations</h2>
+<ul>
+<li><strong>Risk:</strong> broad deletion causes regressions. <strong>Mitigation:</strong> staged plan with compile/test checks per stage.</li>
+<li><strong>Risk:</strong> stale docs/spec references. <strong>Mitigation:</strong> explicit grep-based sweep + contract tests.</li>
+<li><strong>Risk:</strong> runtime behavior gaps post-removal. <strong>Mitigation:</strong> pi-focused end-to-end workflow verification.</li>
+</ul>
+
+<h2>Rollout</h2>
+<ol>
+<li>Spec/docs contract update to pi-only.</li>
+<li>Core code removal of non-pi host-generation/runtime surfaces.</li>
+<li>Pi-native uplift additions and verification.</li>
+</ol>
+
+<h2>Open questions</h2>
+<ul>
+<li>Exact boundary between CLI-owned orchestration vs extension-owned orchestration in first cut.</li>
+<li>Whether to keep any legacy host code behind non-default internal flags for one release (currently assumed no).</li>
+</ul>
+</body></html>

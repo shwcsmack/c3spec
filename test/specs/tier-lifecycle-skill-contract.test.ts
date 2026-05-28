@@ -214,39 +214,16 @@ describe('tier lifecycle skill contract', () => {
     });
   });
 
-  describe('c3spec-host-adapter Cursor section does not depend on .cursor/agents/<name>.md', () => {
-    it('explicitly states .cursor/agents/<name>.md is not required', async () => {
+  describe('c3spec-host-adapter pi section', () => {
+    it('contains a pi runtime section', async () => {
       const content = await readSkill('c3spec-host-adapter');
-      const cursorSection = extractSection(content, 'Cursor');
-      expect(cursorSection, 'host adapter must contain a "## Cursor" section').toBeDefined();
-      expect(cursorSection!).toMatch(
-        /(?:do not|don't|does not|never)\s+require[^.]*\.cursor\/agents\/<name>\.md/i,
-      );
+      const piSection = extractSection(content, 'Pi');
+      expect(piSection, 'host adapter must contain a "## Pi" section').toBeDefined();
     });
 
-    it('does not declare .cursor/agents/<name>.md as a requirement for dispatch', async () => {
+    it('states unsupported runtimes are rejected', async () => {
       const content = await readSkill('c3spec-host-adapter');
-      const cursorSection = extractSection(content, 'Cursor');
-      expect(cursorSection).toBeDefined();
-      // Inspect sentences individually so an explicit negation like
-      // "Do not require `.cursor/agents/<name>.md`" does not register as a regression.
-      const sentences = cursorSection!.split(/(?<=[.!?])\s+|\n+/);
-      const positiveRequirementMarkers = [
-        /\brequires?\b[^.]*`?\.cursor\/agents\/<name>\.md/i,
-        /\bmust\s+exist\b[^.]*`?\.cursor\/agents\/<name>\.md/i,
-        /\bmust\s+have\b[^.]*`?\.cursor\/agents\/<name>\.md/i,
-        /\bdispatch\b[^.]*via\s+`?\.cursor\/agents\/<name>\.md/i,
-        /\bdepends?\s+on\b[^.]*`?\.cursor\/agents\/<name>\.md/i,
-      ];
-      const negationGuard = /\b(?:do not|don't|does not|cannot|never|no\s+longer|without)\b/i;
-      const offending = sentences.filter((sentence) => {
-        if (negationGuard.test(sentence)) return false;
-        return positiveRequirementMarkers.some((pattern) => pattern.test(sentence));
-      });
-      expect(
-        offending,
-        'c3spec-host-adapter Cursor section must not contain a positive requirement on .cursor/agents/<name>.md',
-      ).toEqual([]);
+      expect(content).toMatch(/c3spec is pi-only/i);
     });
   });
 });

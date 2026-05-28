@@ -34,26 +34,6 @@ const COMMON_FLAGS = {
  */
 export const COMMAND_REGISTRY: CommandDefinition[] = [
   {
-    name: 'init',
-    description: 'Initialize C3Spec in your project',
-    acceptsPositional: true,
-    positionalType: 'path',
-    flags: [
-      {
-        name: 'tools',
-        description: 'Configure AI tools non-interactively (e.g., "all", "none", or comma-separated tool IDs)',
-        takesValue: true,
-      },
-    ],
-  },
-  {
-    name: 'update',
-    description: 'Update C3Spec instruction files',
-    acceptsPositional: true,
-    positionalType: 'path',
-    flags: [],
-  },
-  {
     name: 'list',
     description: 'List items (changes by default, or specs with --specs)',
     flags: [

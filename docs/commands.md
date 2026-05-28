@@ -1,6 +1,6 @@
 # Commands
 
-This is the reference for OpenSpec's slash commands. These commands are invoked in your AI coding assistant's chat interface (e.g., Claude Code, Cursor, Windsurf).
+This is the reference for c3spec slash commands in pi.
 
 For workflow patterns and when to use each command, see [Workflows](workflows.md). For CLI commands, see [CLI](cli.md).
 
@@ -27,7 +27,7 @@ For workflow patterns and when to use each command, see [Workflows](workflows.md
 | `/opsx:bulk-archive` | Archive multiple changes at once |
 | `/opsx:onboard` | Guided tutorial through the complete workflow |
 
-The default global profile is `core`. To enable expanded workflow commands, run `openspec config profile`, select workflows, then run `openspec update` in your project.
+The default global profile is `core`. Configure profile with `c3spec config profile`, then reload pi to apply package/runtime changes.
 
 ---
 
@@ -550,7 +550,7 @@ AI:  ✓ Archived add-dark-mode
 
 ### `/opsx:onboard`
 
-Guided onboarding through the complete OpenSpec workflow. An interactive tutorial using your actual codebase.
+Guided onboarding through the complete c3spec workflow. An interactive tutorial using your actual codebase.
 
 **Syntax:**
 ```
@@ -582,7 +582,7 @@ Guided onboarding through the complete OpenSpec workflow. An interactive tutoria
 ```
 You: /opsx:onboard
 
-AI:  Welcome to OpenSpec!
+AI:  Welcome to c3spec!
 
      I'll walk you through the complete workflow using your actual codebase.
      We'll find something small to improve, create a proper change for it,
@@ -608,42 +608,16 @@ AI:  Welcome to OpenSpec!
 
 ---
 
-## Command Syntax by AI Tool
+## Command Syntax
 
-Different AI tools use slightly different command syntax. Use the format that matches your tool:
+c3spec is pi-only. Use c3spec skills/commands directly in pi.
 
-| Tool | Syntax Example |
-|------|----------------|
-| Claude Code | `/opsx:propose`, `/opsx:apply` |
-| Cursor | `/opsx-propose`, `/opsx-apply` |
-| Windsurf | `/opsx-propose`, `/opsx-apply` |
-| Copilot (IDE) | `/opsx-propose`, `/opsx-apply` |
-| Kimi CLI | Skill-based invocations such as `/skill:openspec-propose`, `/skill:openspec-apply-change` (no generated `opsx-*` command files) |
-| Trae | Skill-based invocations such as `/openspec-propose`, `/openspec-apply-change` (no generated `opsx-*` command files) |
-
-The intent is the same across tools, but how commands are surfaced can differ by integration.
-
-> **Note:** GitHub Copilot commands (`.github/prompts/*.prompt.md`) are only available in IDE extensions (VS Code, JetBrains, Visual Studio). GitHub Copilot CLI does not currently support custom prompt files — see [Supported Tools](supported-tools.md) for details and workarounds.
-
----
-
-## Legacy Commands
-
-These commands use the older "all-at-once" workflow. They still work but OPSX commands are recommended.
-
-| Command | What it does |
-|---------|--------------|
-| `/openspec:proposal` | Create all artifacts at once (proposal, specs, design, tasks) |
-| `/openspec:apply` | Implement the change |
-| `/openspec:archive` | Archive the change |
-
-**When to use legacy commands:**
-- Existing projects using the old workflow
-- Simple changes where you don't need incremental artifact creation
-- Preference for the all-or-nothing approach
-
-**Migrating to OPSX:**
-Legacy changes can be continued with OPSX commands. The artifact structure is compatible.
+Examples:
+- `/c3spec:start`
+- `/c3spec:continue-change`
+- `/c3spec:apply-change`
+- `/c3spec:verify-change`
+- `/c3spec:archive-change`
 
 ---
 
@@ -678,13 +652,13 @@ The specified schema doesn't exist.
 
 ### Commands not recognized
 
-The AI tool doesn't recognize OpenSpec commands.
+Pi doesn't recognize c3spec commands/skills.
 
 **Solutions:**
-- Ensure OpenSpec is initialized: `openspec init`
-- Regenerate skills: `openspec update`
-- Check that `.claude/skills/` directory exists (for Claude Code)
-- Restart your AI tool to pick up new skills
+- Ensure c3spec package is installed in pi
+- Run `pi list` to confirm installation
+- Run `pi update` to refresh package versions
+- Restart pi to reload skills
 
 ### Artifacts not generating properly
 

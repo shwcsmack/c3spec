@@ -117,7 +117,7 @@ The system SHALL support self-contained schema directories with co-located templ
 - **THEN** artifacts can reference templates relative to the schema's templates directory
 
 #### Scenario: User schema override
-- **WHEN** a schema directory exists at `${XDG_DATA_HOME}/openspec/schemas/<name>/`
+- **WHEN** a schema directory exists at `${XDG_DATA_HOME}/c3spec/schemas/<name>/`
 - **THEN** the system uses that directory instead of the built-in
 
 #### Scenario: Built-in schema fallback
@@ -154,7 +154,7 @@ The artifact graph SHALL provide a built-in workspace planning schema for worksp
 
 #### Scenario: Workspace nested spec paths stay workspace-scoped
 - **GIVEN** a workspace change has spec files under `specs/<area-or-repo>/<capability>/spec.md`
-- **WHEN** OpenSpec reports status or artifact instructions for the workspace change
+- **WHEN** c3spec reports status or artifact instructions for the workspace change
 - **THEN** it SHALL preserve the concrete nested workspace spec paths
 - **AND** it SHALL not treat those files as repo-local specs to sync or archive without an explicit affected-area implementation context
 

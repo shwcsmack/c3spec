@@ -1,7 +1,7 @@
 # ai-tool-paths Specification
 
 ## Purpose
-Define AI tool path metadata used to generate OpenSpec skills and commands in tool-specific directories.
+Define AI tool path metadata used to generate c3spec skills and commands in tool-specific directories.
 ## Requirements
 ### Requirement: AIToolOption skillsDir field
 
@@ -22,17 +22,17 @@ The `AIToolOption` interface SHALL include an optional `skillsDir` field for ski
 
 The `AI_TOOLS` array SHALL include `skillsDir` for tools that support the Agent Skills specification.
 
-#### Scenario: Claude Code paths defined
+#### Scenario: Pi paths defined
 
 - **WHEN** looking up the `claude` tool
 - **THEN** `skillsDir` SHALL be `.claude`
 
-#### Scenario: Cursor paths defined
+#### Scenario: Pi paths defined
 
 - **WHEN** looking up the `cursor` tool
 - **THEN** `skillsDir` SHALL be `.cursor`
 
-#### Scenario: Windsurf paths defined
+#### Scenario: Pi paths defined
 
 - **WHEN** looking up the `windsurf` tool
 - **THEN** `skillsDir` SHALL be `.windsurf`

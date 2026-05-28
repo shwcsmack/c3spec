@@ -778,7 +778,7 @@ E1 updated`);
       
       await expect(
         archiveCommand.execute('any-change', { yes: true })
-      ).rejects.toThrow("No C3Spec changes directory found. Run 'c3spec init' first.");
+      ).rejects.toThrow('No C3Spec changes directory found. Ensure c3spec package scaffolding exists in this project.');
     });
   });
 

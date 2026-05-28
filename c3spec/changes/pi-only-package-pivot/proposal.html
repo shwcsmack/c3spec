@@ -1,0 +1,36 @@
+<!doctype html>
+<html><head><meta charset="utf-8"/><title>Proposal - pi-only-package-pivot</title></head>
+<body>
+<h1>Proposal: pi-only-package-pivot</h1>
+<p><strong>Date:</strong> 2026-05-28</p>
+
+<h2>Why</h2>
+<p>c3spec currently maintains multi-host runtime/generation paths that increase maintenance and constrain pi-native UX. We want a pi-only package/runtime with a hard break from non-pi hosts.</p>
+
+<h2>What Changes</h2>
+<table border="1" cellspacing="0" cellpadding="6">
+<tr><th>Area</th><th>Before</th><th>After</th></tr>
+<tr><td>Supported hosts</td><td>Cursor, Claude Code, Codex</td><td>Pi only</td></tr>
+<tr><td>Host generation</td><td>Host-specific renderers/artifacts</td><td>Removed from core</td></tr>
+<tr><td>Workflow docs</td><td>Multi-host routing language</td><td>Pi-native-only contract</td></tr>
+<tr><td>Capability strategy</td><td>Host abstraction first</td><td>Pi extensions/SDK/runtime primitives first</td></tr>
+</table>
+
+<h2>New Capabilities</h2>
+<ul>
+<li>Pi-native workflow enhancement points via extensions/events/tools/UI.</li>
+<li>Potential SDK/runtime-backed orchestration improvements scoped in this initiative.</li>
+</ul>
+
+<h2>Impact</h2>
+<ul>
+<li><strong>Specs:</strong> workflow-routing, command-generation, ai-tool-paths, canonical-skills.</li>
+<li><strong>Skills:</strong> routing and host-adapter content must be pi-only aligned.</li>
+<li><strong>CLI/Core:</strong> host-generation and host-specific pathways removed or isolated outside core.</li>
+<li><strong>Docs:</strong> default docs no longer reference non-pi host support.</li>
+<li><strong>Tests:</strong> remove/replace host-matrix tests with pi-only contract tests.</li>
+</ul>
+
+<h2>Success Metric</h2>
+<p>Eliminate 100% of non-pi host-generation/runtime support from core and remove all non-pi references from default docs.</p>
+</body></html>

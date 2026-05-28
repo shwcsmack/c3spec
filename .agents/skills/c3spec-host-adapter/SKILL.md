@@ -5,40 +5,22 @@ description: Map c3spec named agent roles to the current host's native subagent 
 
 # C3Spec Host Adapter
 
-Other c3spec skills refer to named agents (`implementer`, `spec-reviewer`, `quality-reviewer`) and to "host-appropriate structured questions" instead of host-specific tool names. Use this skill to translate those references into the native surfaces of the active host.
+c3spec is pi-only. Other c3spec skills refer to named agents (`implementer`, `spec-reviewer`, `quality-reviewer`) and to structured questions. This skill defines how to map those references to pi-native mechanisms.
 
-Canonical agent definitions live under `.agents/agents/*.yaml`. Host renderers may materialize native copies, but at runtime, dispatch using the host mechanism below. Do not require a repo-local generated file to exist before dispatching when the host exposes the role natively.
+Canonical agent definitions live under `.agents/agents/*.yaml`.
 
-## Cursor
+## Pi
 
-**Named-agent dispatch.** Cursor exposes the canonical c3spec roles (`implementer`, `spec-reviewer`, `quality-reviewer`) as native subagent types. When a skill says "dispatch the spec-reviewer agent," spawn the Cursor subagent whose role/type matches `spec-reviewer` directly through Cursor's subagent mechanism. The role names match the canonical role names exactly.
+**Named-agent dispatch.** Dispatch named roles using pi’s native subagent/agent workflow mechanisms available in the current runtime. When a skill says "dispatch the spec-reviewer agent," invoke the pi-native agent flow for role `spec-reviewer`.
 
-Do not require `.cursor/agents/<name>.md` files to exist before dispatching; the roles are available natively even when no repo-local file is present.
+**Structured questions.** When a skill says "use a structured question," use pi-native structured UI/input primitives when available; otherwise fall back to a plain numbered prompt.
 
-**Structured questions.** When a skill says "use a host-appropriate structured question," use Cursor's native structured-question primitive if one is exposed in the current session. Otherwise fall back to a plain numbered prompt as the calling skill describes.
+## Unsupported runtime
 
-## Claude Code
-
-**Named-agent dispatch.** Dispatch named agents via Claude Code's subagent mechanism using the generated definitions under `.claude/agents/<name>.md`. When a skill says "dispatch the implementer agent," invoke the Claude subagent whose name matches `implementer`.
-
-**Structured questions.** When a skill says "use a host-appropriate structured question," use the `AskUserQuestion` tool when it is available in the session. Otherwise fall back to a plain numbered prompt.
-
-## Codex
-
-**Named-agent dispatch.** Dispatch named custom agents from `.codex/agents/<name>.toml`. When a skill says "dispatch the quality-reviewer agent," invoke the Codex custom agent whose `name` field matches `quality-reviewer`.
-
-**Structured questions.** When a skill says "use a host-appropriate structured question," prefer Codex's native structured-input primitive if one is exposed in the current session. Otherwise fall back to a plain numbered prompt.
-
-## Unsupported host
-
-If the active environment is not Cursor, Claude Code, or Codex:
+If the active runtime is not pi:
 
 1. Stop before dispatching subagents.
-2. Report that the host is unsupported for first-class c3spec workflows.
-3. List the three supported hosts: Cursor, Claude Code, Codex.
+2. Report that c3spec is pi-only.
+3. Ask the user to continue in pi.
 
-Do not guess a fallback dispatch mechanism.
-
-## Detection note
-
-Exact host detection is intentionally left to runtime context. Prefer explicit user or environment signals over brittle heuristics. When uncertain, ask which host is active before dispatching agents.
+Do not guess fallback dispatch behavior for other hosts.

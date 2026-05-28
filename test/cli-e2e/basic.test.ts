@@ -3,16 +3,6 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import { tmpdir } from 'os';
 import { runCLI, cliProjectRoot } from '../helpers/run-cli.js';
-import { AI_TOOLS } from '../../src/core/config.js';
-
-async function fileExists(filePath: string): Promise<boolean> {
-  try {
-    await fs.access(filePath);
-    return true;
-  } catch {
-    return false;
-  }
-}
 
 const tempRoots: string[] = [];
 
@@ -47,17 +37,10 @@ describe('c3spec CLI e2e basics', () => {
 
   });
 
-  it('shows dynamic tool ids in init help', async () => {
-    const result = await runCLI(['init', '--help'], subprocess);
+  it('shows sync help output', async () => {
+    const result = await runCLI(['sync', '--help'], subprocess);
     expect(result.exitCode).toBe(0);
-
-    const expectedTools = AI_TOOLS.filter((tool) => tool.available)
-      .map((tool) => tool.value)
-      .join(', ');
-    const normalizedOutput = result.stdout.replace(/\s+/g, ' ').trim();
-    expect(normalizedOutput).toContain(
-      `Use "all", "none", or a comma-separated list of: ${expectedTools}`
-    );
+    expect(result.stdout).toContain('Regenerate runtime artifacts');
   });
 
   it('reports the package version', async () => {
@@ -114,88 +97,5 @@ describe('c3spec CLI e2e basics', () => {
     expect(result.stderr).toContain("Unknown item 'does-not-exist'");
   });
 
-  describe('init command non-interactive options', () => {
-    it('initializes with --tools all option', async () => {
-      const projectDir = await prepareFixture('tmp-init');
-      const emptyProjectDir = path.join(projectDir, '..', 'empty-project');
-      await fs.mkdir(emptyProjectDir, { recursive: true });
 
-      const codexHome = path.join(emptyProjectDir, '.codex');
-      const result = await runCLI(['init', '--tools', 'all'], {
-        cwd: emptyProjectDir,
-        env: { CODEX_HOME: codexHome },
-        timeoutMs: 20000,
-      });
-      expect(result.timedOut).toBe(false);
-      expect(result.exitCode).toBe(0);
-      expect(result.stdout).toContain('C3Spec Setup Complete');
-
-      // Check that canonical skills and host-native artifacts were created
-      const claudeSkillPath = path.join(emptyProjectDir, '.claude/skills/c3spec-start/SKILL.md');
-      const agentsSkillPath = path.join(emptyProjectDir, '.agents/skills/c3spec-start/SKILL.md');
-      const cursorAgentPath = path.join(emptyProjectDir, '.cursor/agents/implementer.md');
-      const codexAgentPath = path.join(emptyProjectDir, '.codex/agents/implementer.toml');
-      expect(await fileExists(claudeSkillPath)).toBe(true);
-      expect(await fileExists(agentsSkillPath)).toBe(true);
-      expect(await fileExists(cursorAgentPath)).toBe(true);
-      expect(await fileExists(codexAgentPath)).toBe(true);
-    }, 25000);
-
-    it('initializes with --tools list option', async () => {
-      const projectDir = await prepareFixture('tmp-init');
-      const emptyProjectDir = path.join(projectDir, '..', 'empty-project');
-      await fs.mkdir(emptyProjectDir, { recursive: true });
-
-      const result = await runCLI(['init', '--tools', 'claude'], { cwd: emptyProjectDir });
-      expect(result.exitCode).toBe(0);
-      expect(result.stdout).toContain('C3Spec Setup Complete');
-      expect(result.stdout).toContain('Claude Code');
-
-      // Init always creates canonical skills and selected host-native artifacts.
-      const claudeSkillPath = path.join(emptyProjectDir, '.claude/skills/c3spec-start/SKILL.md');
-      const agentsSkillPath = path.join(emptyProjectDir, '.agents/skills/c3spec-start/SKILL.md');
-      const cursorAgentPath = path.join(emptyProjectDir, '.cursor/agents/implementer.md');
-      expect(await fileExists(claudeSkillPath)).toBe(true);
-      expect(await fileExists(agentsSkillPath)).toBe(true);
-      expect(await fileExists(cursorAgentPath)).toBe(false); // Not selected
-    });
-
-    it('initializes with --tools none option', async () => {
-      const projectDir = await prepareFixture('tmp-init');
-      const emptyProjectDir = path.join(projectDir, '..', 'empty-project');
-      await fs.mkdir(emptyProjectDir, { recursive: true });
-
-      const result = await runCLI(['init', '--tools', 'none'], { cwd: emptyProjectDir });
-      expect(result.exitCode).toBe(0);
-      expect(result.stdout).toContain('C3Spec Setup Complete');
-
-      // With --tools none, no tool skills should be created
-      const claudeSkillPath = path.join(emptyProjectDir, '.claude/skills/c3spec-explore/SKILL.md');
-      const agentsSkillPath = path.join(emptyProjectDir, '.agents/skills/c3spec-explore/SKILL.md');
-
-      expect(await fileExists(claudeSkillPath)).toBe(false);
-      expect(await fileExists(agentsSkillPath)).toBe(false);
-    });
-
-    it('returns error for invalid tool names', async () => {
-      const projectDir = await prepareFixture('tmp-init');
-      const emptyProjectDir = path.join(projectDir, '..', 'empty-project');
-      await fs.mkdir(emptyProjectDir, { recursive: true });
-
-      const result = await runCLI(['init', '--tools', 'invalid-tool'], { cwd: emptyProjectDir });
-      expect(result.exitCode).toBe(1);
-      expect(result.stderr).toContain('Invalid tool(s): invalid-tool');
-      expect(result.stderr).toContain('Available values:');
-    });
-
-    it('returns error when combining reserved keywords with explicit ids', async () => {
-      const projectDir = await prepareFixture('tmp-init');
-      const emptyProjectDir = path.join(projectDir, '..', 'empty-project');
-      await fs.mkdir(emptyProjectDir, { recursive: true });
-
-      const result = await runCLI(['init', '--tools', 'all,claude'], { cwd: emptyProjectDir });
-      expect(result.exitCode).toBe(1);
-      expect(result.stderr).toContain('Cannot combine reserved values "all" or "none" with specific tool IDs');
-    });
-  });
 });

@@ -1,51 +1,22 @@
-# Installation
+# Installation (pi-only)
 
-## Prerequisites
-
-- **Node.js 20.19.0 or higher** — Check your version: `node --version`
-
-## Package Managers
-
-### npm
+Install c3spec as a pi package:
 
 ```bash
-npm install -g @fission-ai/openspec@latest
+pi install npm:@shwcsmack/c3spec
 ```
 
-### pnpm
+Project-local install:
 
 ```bash
-pnpm add -g @fission-ai/openspec@latest
+pi install -l npm:@shwcsmack/c3spec
 ```
 
-### yarn
+Update/remove:
 
 ```bash
-yarn global add @fission-ai/openspec@latest
+pi update npm:@shwcsmack/c3spec
+pi remove npm:@shwcsmack/c3spec
 ```
 
-### bun
-
-Bun can install OpenSpec globally, but OpenSpec currently runs on Node.js.
-You still need Node.js 20.19.0 or higher available on `PATH`.
-
-```bash
-bun add -g @fission-ai/openspec@latest
-```
-
-## Verify Installation
-
-```bash
-openspec --version
-```
-
-## Next Steps
-
-After installing, initialize OpenSpec in your project:
-
-```bash
-cd your-project
-openspec init
-```
-
-See [Getting Started](getting-started.md) for a full walkthrough.
+`c3spec init` and `c3spec update` are removed in pi-only mode.

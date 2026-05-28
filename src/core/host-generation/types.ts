@@ -1,6 +1,6 @@
-export type SupportedHostId = 'cursor' | 'claude' | 'codex';
+export type SupportedHostId = 'pi';
 
-export const SUPPORTED_HOST_IDS: readonly SupportedHostId[] = ['claude', 'codex', 'cursor'];
+export const SUPPORTED_HOST_IDS: readonly SupportedHostId[] = ['pi'];
 
 export const REQUIRED_CANONICAL_SKILL_NAMES = [
   'c3spec-start',
@@ -89,6 +89,6 @@ export interface GeneratedHostFile {
 }
 
 export interface HostRenderer {
-  hostId: SupportedHostId;
+  hostId: string;
   render(input: CanonicalHostArtifacts): GeneratedHostFile[];
 }

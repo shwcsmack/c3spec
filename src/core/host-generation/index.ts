@@ -35,9 +35,7 @@ export type { SentinelMetadata } from './sentinel.js';
 export {
   getHostRenderer,
   listHostRenderers,
-  cursorRenderer,
-  claudeRenderer,
-  codexRenderer,
+  piRenderer,
 } from './renderers/index.js';
 
 export type {

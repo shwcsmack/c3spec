@@ -35,7 +35,7 @@ describe('ListCommand', () => {
       const listCommand = new ListCommand();
       
       await expect(listCommand.execute(tempDir, 'changes')).rejects.toThrow(
-        "No C3Spec changes directory found. Run 'c3spec init' first."
+        'No C3Spec changes directory found. Ensure c3spec package scaffolding exists in this project.'
       );
     });
 

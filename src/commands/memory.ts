@@ -35,7 +35,7 @@ export function registerMemoryCommand(program: Command): void {
         content = await fs.readFile(memoryIndexPath, 'utf-8');
       } catch {
         console.error(
-          "No memory index found. Run 'c3spec init' to scaffold the workflow structure."
+          "No memory index found. Ensure c3spec package resources are installed in pi and scaffolded in this project."
         );
         process.exit(1);
       }
@@ -98,7 +98,7 @@ TODO — memory body. Structure:
         indexContent = await fs.readFile(memoryIndexPath, 'utf-8');
       } catch {
         console.error(
-          "No memory index found. Run 'c3spec init' to scaffold the workflow structure."
+          "No memory index found. Ensure c3spec package resources are installed in pi and scaffolded in this project."
         );
         process.exit(1);
       }

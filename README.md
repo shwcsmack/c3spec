@@ -32,13 +32,15 @@ node bin/c3spec.js --help
 
 ## Quickstart
 
-1. Initialize c3spec in a repo:
+1. Install c3spec as a pi package (global or project-local):
 
 ```bash
-c3spec init
+pi install npm:@shwcsmack/c3spec
+# or project-local
+pi install -l npm:@shwcsmack/c3spec
 ```
 
-2. Start work through your host’s c3spec command:
+2. Start work in pi through the c3spec front door:
 
 ```text
 /c3spec:start
@@ -46,7 +48,7 @@ c3spec init
 
 3. Let the workflow interview + route the work to T1/T2/T3.
 
-4. Continue, apply, verify, and archive with the generated change artifacts in `c3spec/changes/<change-id>/`.
+4. Continue, apply, verify, and archive with generated change artifacts in `c3spec/changes/<change-id>/`.
 
 ## CLI examples
 

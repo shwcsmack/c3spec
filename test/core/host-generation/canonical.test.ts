@@ -30,13 +30,13 @@ describe('host-generation canonical artifacts', () => {
 
   describe('validateHostIds', () => {
     it('accepts supported host IDs', () => {
-      expect(validateHostIds(['cursor', 'claude', 'codex'])).toEqual([]);
+      expect(validateHostIds(['pi'])).toEqual([]);
     });
 
     it('rejects unknown host IDs', () => {
       const errors = validateHostIds(['cursor', 'windsurf']);
-      expect(errors).toHaveLength(1);
-      expect(errors[0]?.message).toContain('Unknown host ID "windsurf"');
+      expect(errors).toHaveLength(2);
+      expect(errors[0]?.message).toContain('Unknown host ID');
       expect(errors[0]?.message).toContain(SUPPORTED_HOST_IDS.join(', '));
     });
   });

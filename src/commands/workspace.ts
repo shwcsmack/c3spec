@@ -610,7 +610,7 @@ async function resolveWorkspaceOpenOpener(
         'workspace_no_available_openers',
         {
           target: 'workspace.opener',
-          fix: "Install VS Code ('code'), Codex ('codex'), or Claude ('claude'), then retry.",
+          fix: "Install VS Code ('code') and your selected runtime opener, then retry.",
         }
       );
     }

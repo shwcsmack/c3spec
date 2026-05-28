@@ -343,18 +343,8 @@ export async function writeGeneratedHostFiles(
 export function getHostConfiguredTools(projectRoot: string): SupportedHostId[] {
   const hosts = new Set<SupportedHostId>();
 
-  if (
-    fsSync.existsSync(
-      path.join(projectRoot, '.claude', 'skills', 'c3spec-start', 'SKILL.md')
-    )
-  ) {
-    hosts.add('claude');
-  }
-  if (fsSync.existsSync(path.join(projectRoot, '.cursor', 'agents', 'implementer.md'))) {
-    hosts.add('cursor');
-  }
-  if (fsSync.existsSync(path.join(projectRoot, '.codex', 'agents', 'implementer.toml'))) {
-    hosts.add('codex');
+  if (fsSync.existsSync(path.join(projectRoot, '.agents', 'skills', 'c3spec-start', 'SKILL.md'))) {
+    hosts.add('pi');
   }
 
   return [...hosts].sort();
