@@ -24,6 +24,22 @@ cat c3spec/memory/MEMORY.md
 
 Scan the index for entries relevant to the current work and load relevant memory files before planning or implementing.
 
+## CLI-first ideas triage
+
+When the user asks to triage ideas/backlog priority, run the CLI triage command first and use its output as the source of truth:
+
+\`\`\`bash
+c3spec ideas triage
+\`\`\`
+
+If `c3spec` is not on PATH, run:
+
+\`\`\`bash
+node bin/c3spec.js ideas triage
+\`\`\`
+
+Do not manually rank by reading `IDEAS.md` unless both commands are unavailable.
+
 ## Single front door
 
 All development work enters through the \`c3spec-start\` skill. Do not pick a tier yourself — interview the user and route to the correct workflow.

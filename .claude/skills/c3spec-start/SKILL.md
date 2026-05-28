@@ -7,6 +7,8 @@ description: "Single front door for all development work. Interview the user, cl
 
 The single entry point for all development work in this project. You interview the user until genuinely aligned, then classify the change into a tier and route to the correct workflow.
 
+If the user intent is backlog capture (e.g. "add this idea to IDEAS.md"), route to `c3spec-add-idea` instead of starting tier planning.
+
 ## Step 0 — Clean source tree gate (before anything else)
 
 Before memory scan, interview, routing, or tier handoff, verify that the source repo where the workflow is starting has no tracked uncommitted changes:
@@ -15,13 +17,9 @@ Before memory scan, interview, routing, or tier handoff, verify that the source 
 git status --porcelain --untracked-files=no
 ```
 
-Untracked files do not block the workflow. If the command returns any output, stop and show the user the changed tracked files. Offer exactly these choices:
+Untracked files do not block the workflow. If the command returns any output, stop and show the user the changed tracked files, then abort and ask the user to commit those changes before rerunning.
 
-1. Stash changes and continue
-2. Commit changes first
-3. Abort so the user can handle it
-
-Do not continue into workflow routing while tracked changes are present unless the user has first stashed or committed them. Do not offer a "continue anyway" option in the interactive flow.
+Do not continue into workflow routing while tracked changes are present. Do not offer stash/continue or "continue anyway" options in the interactive flow.
 
 ## Step 1 — Memory scan (before asking anything)
 
@@ -39,7 +37,7 @@ Do not follow a script. Ask what you need to ask, in whatever order makes sense,
 
 **Then interview.** Offer hypotheses and suggested answers — don't just ask open questions. The user should be able to say "yes exactly" or correct you. Surface any relevant memory entries naturally: "we ran into a coordinate system issue in the selection toolbar before — is this related?"
 
-**Interview pacing.** Ask one interview question per message, then wait for the answer before asking the next. You may include grouped findings, hypotheses, or codebase research in the same message, but the user-facing question at the end must be singular — not a numbered list of questions. Tightly coupled clarifications may share one turn when splitting would feel artificial (for example: "soft-block or hard-block — and if soft, what default?"). If the user volunteers answers to questions you have not asked yet, accept that context and advance; do not re-ask. Keep the interview as short as alignment allows; prefer routing once you can classify confidently over maximizing question count.
+**Interview pacing and turn format.** Ask exactly one interview question per message, then wait for the answer before asking the next. No compound or tightly-coupled multi-question turns. You may include grouped findings, hypotheses, or codebase research in the same message, but the user-facing question at the end must be singular — not a numbered list of questions. Every interview question turn must include, in order: `Recommendation:` (explicit suggested answer/direction + brief why), `Why this question now:` (why this is the next decision), then exactly one question (open-ended, multiple-choice, or yes/no when warranted). If the user volunteers answers to questions you have not asked yet, accept that context and advance; do not re-ask. Keep the interview as short as alignment allows; prefer routing once you can classify confidently over maximizing question count.
 
 Things you might need to understand (not a checklist — just a guide for what "aligned" means):
 - What the user wants to change and why it matters now
@@ -112,5 +110,5 @@ Carry forward everything from the interview as context into the tier skill — t
 - Do not select a tier or begin tier work before explicit user confirmation
 
 <!-- c3spec-generated: true
-c3spec-source: /Users/shayne/code/c3spec/.worktrees/feat-tier-workflow-resumability/.agents/skills/c3spec-start/SKILL.md
-c3spec-hash: 2ee8bf37268e7377f6daca4d79b783e52b16a99bf1f2736addfe1ca1549a21e2 -->
+c3spec-source: /Users/shayne/code/c3spec/.agents/skills/c3spec-start/SKILL.md
+c3spec-hash: ac3ecdabd06cc6031d8db795e5fd325258b70b4726a49a2894c294d79f6f368f -->

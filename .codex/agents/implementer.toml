@@ -1,5 +1,5 @@
 # c3spec-generated: true
-# c3spec-source: /Users/shayne/code/c3spec/.worktrees/feat-tier-workflow-resumability/.agents/agents/implementer.yaml
+# c3spec-source: /Users/shayne/code/c3spec/.agents/agents/implementer.yaml
 # c3spec-hash: d45e7bd533a2381391abf84a8dc769f7e633c0b3d410169053246e4a41f64a9d
 
 name = "implementer"

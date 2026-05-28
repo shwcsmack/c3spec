@@ -17,29 +17,15 @@ The T2 required artifact set is `tier.md`, `proposal.md`, `tasks.md`, `plan.md`,
 
 ## Pre-flight: clean source tree
 
-Before commit approval or worktree setup, verify that the source repo where this tier skill is starting has no tracked uncommitted changes:
+Before worktree setup, verify that the source repo where this tier skill is starting has no tracked uncommitted changes:
 
 ```bash
 git status --porcelain --untracked-files=no
 ```
 
-Untracked files do not block the workflow. If the command returns any output, stop and show the user the changed tracked files. Offer exactly these choices:
+Untracked files do not block the workflow. If the command returns any output, stop and show the user the changed tracked files, then abort and ask the user to commit those changes before rerunning.
 
-1. Stash changes and continue
-2. Commit changes first
-3. Abort so the user can handle it
-
-Do not continue into worktree setup while tracked changes are present unless the user has first stashed or committed them. Do not offer a "continue anyway" option in the interactive flow.
-
----
-
-## Pre-flight: commit approval
-
-Before doing anything else, ask:
-
-> "This feature will produce commits for: implementation, archive, and a learning entry. Do you want to approve all commits upfront, or confirm each one individually?"
-
-Wait for answer.
+Do not continue into worktree setup while tracked changes are present. Do not offer stash/continue or "continue anyway" options in the interactive flow.
 
 ---
 
@@ -172,6 +158,7 @@ Write `c3spec/changes/tier2-${SLUG}/tasks.md`:
 Keep tasks at "what" level — specific enough to act on, not so detailed they include inline code. Aim for 5-15 tasks. Use `- [ ]` / `- [x]` checkboxes so the same progress signal works for apply readiness, archive readiness, and fresh-context resume per the lifecycle contract.
 
 Tick `- [x] tasks.md` in `tier.md` once the file is written. Checkboxes inside `tasks.md` are owned by the controller / `c3spec-subagent-dev` after two-stage review — do not flip them yourself outside that flow.
+`tasks.md` is non-pausing by default under `c3spec-tier-lifecycle`.
 
 ---
 
@@ -199,8 +186,9 @@ The plan for Tier 2 is structured with stage declarations for independent tasks:
 Depth: enough for a subagent to act without guessing. No inline code snippets.
 
 Tick `- [x] plan.md` in `tier.md` once the file is written.
+`plan.md` is non-pausing by default under `c3spec-tier-lifecycle`.
 
-Show the task list and staged plan together: "Here are the tasks and plan I've derived — anything missing or wrong?" Wait for quick confirmation before invoking `c3spec-subagent-dev`.
+Show the task list and staged plan together: "Here are the tasks and plan I've derived — anything missing or wrong?" Continue unless the user explicitly asks to pause.
 
 ---
 
@@ -255,7 +243,7 @@ Report the same outcomes inline as a brief summary. If any check fails, fix befo
 
 Tick `- [x] verify.md` in `tier.md` once the file is written.
 
-After reporting `verify.md` outcomes, pause for acknowledgement and any requested fixes before writing the retrospective.
+If verification passes, `verify.md` is non-blocking under `c3spec-tier-lifecycle` and the workflow can proceed directly to retrospective. Pause only when verification failed or the user requests fixes.
 
 ---
 
@@ -337,9 +325,10 @@ PR is last. PR description should reference the proposal and any memory entries 
 - Do not invoke `c3spec archive` before the archive readiness check in Step 11 passes
 - Do not flip `tasks.md` checkboxes yourself — checkbox ownership belongs to the controller / `c3spec-subagent-dev` after two-stage review
 - Do not re-interview the user — carry forward context from c3spec-start
-- Do not batch multiple clarifying questions in one message — ask one at a time if follow-up is needed
+- Do not batch or compound multiple clarifying questions in one message — ask exactly one at a time if follow-up is needed
+- Do not omit `Recommendation:` and `Why this question now:` when asking clarifying interview questions
 - Do not dump numbered question lists during planning approvals
 
 <!-- c3spec-generated: true
-c3spec-source: /Users/shayne/code/c3spec/.worktrees/feat-tier-workflow-resumability/.agents/skills/c3spec-tier2-feature/SKILL.md
-c3spec-hash: 052065b837a5830ef283e0c4e3b7a3b5ef0cb51bc3a1964655f528f54d671d0b -->
+c3spec-source: /Users/shayne/code/c3spec/.agents/skills/c3spec-tier2-feature/SKILL.md
+c3spec-hash: a5e0d65fc14c09c99bdd15b8c9cc093eb8e6cd916a0880a0655ad2be75313c52 -->

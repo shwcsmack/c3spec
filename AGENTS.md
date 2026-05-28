@@ -33,15 +33,6 @@ All development work enters through the `c3spec-start` skill. Do not pick a tier
 | T2 Lightweight Feature | New capability, clear scope | `c3spec-tier2-feature` |
 | T3 Full Workflow | Design uncertainty, architecture, breaking change | `c3spec-tier3-full` |
 
-## Pause and fast-forward defaults
-
-- Treat `c3spec-tier-lifecycle` as the source of truth for pause gates and HTML-to-markdown ordering.
-- `tasks.md` and `plan.md` are non-pausing by default.
-- `verify.md` is non-blocking unless verification fails.
-- Tier 3 requires HTML review for proposal, design, and retrospective; Tier 1/Tier 2 HTML is optional.
-- When HTML is used, ordering is: generate HTML, review/approve, then save durable markdown.
-- `fast forward` skips approval pauses and HTML generation, defaults through retrospective, and stops after retrospective for review before archive.
-
 ## Subagent roles
 
 Dispatch named agents for implementation and review:

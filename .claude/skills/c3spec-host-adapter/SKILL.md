@@ -44,5 +44,5 @@ Do not guess a fallback dispatch mechanism.
 Exact host detection is intentionally left to runtime context. Prefer explicit user or environment signals over brittle heuristics. When uncertain, ask which host is active before dispatching agents.
 
 <!-- c3spec-generated: true
-c3spec-source: /Users/shayne/code/c3spec/.worktrees/feat-tier-workflow-resumability/.agents/skills/c3spec-host-adapter/SKILL.md
+c3spec-source: /Users/shayne/code/c3spec/.agents/skills/c3spec-host-adapter/SKILL.md
 c3spec-hash: 60aa4055af467e3bf89d84083a41107f840f088c150070d85332a0aab8dcfa78 -->

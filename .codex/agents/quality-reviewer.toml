@@ -1,5 +1,5 @@
 # c3spec-generated: true
-# c3spec-source: /Users/shayne/code/c3spec/.worktrees/feat-tier-workflow-resumability/.agents/agents/quality-reviewer.yaml
+# c3spec-source: /Users/shayne/code/c3spec/.agents/agents/quality-reviewer.yaml
 # c3spec-hash: 1fd921cad1459370593af1bfafafad4f37bd9716c865b5136971fa173c6fd117
 
 name = "quality-reviewer"
