@@ -118,13 +118,24 @@ Archive a completed change in the experimental workflow.
    mv "<changeRoot>" "<planningHome.changesDir>/archive/YYYY-MM-DD-<name>"
    ```
 
-7. **Display summary**
+7. **Automatically finish the development branch**
 
-   Show archive completion summary including:
+   Immediately after a successful archive, run:
+
+   ```bash
+   superpowers:finishing-a-development-branch
+   ```
+
+   This is the default endgame behavior. If finishing fails, keep archive marked complete and report actionable recovery steps.
+
+8. **Display summary**
+
+   Show archive + finish summary including:
    - Change name
    - Schema that was used
    - Archive location
    - Whether specs were synced (if applicable)
+   - Finish-branch status (success/failure + recovery guidance if failed)
    - Note about any warnings (incomplete artifacts/tasks)
 
 **Output On Success**
@@ -136,6 +147,7 @@ Archive a completed change in the experimental workflow.
 **Schema:** <schema-name>
 **Archived to:** the archive path derived from `planningHome.changesDir`/YYYY-MM-DD-<name>/
 **Specs:** ✓ Synced to main specs (or "No delta specs" or "Sync skipped")
+**Finish branch:** ✓ `superpowers:finishing-a-development-branch` ran (or "failed — see recovery guidance")
 
 All artifacts complete. All tasks complete.
 ```
@@ -148,6 +160,6 @@ All artifacts complete. All tasks complete.
 - Use artifact graph (c3spec status --json) for completion checking on top of (not in place of) the tier readiness check
 - Don't block archive on non-tier warnings for legacy/pre-fork changes (incomplete legacy artifacts, incomplete legacy tasks file) - just inform and confirm
 - Preserve .c3spec.yaml when moving to archive (it moves with the directory)
-- Show clear summary of what happened
+- Show clear summary of what happened, including branch-finishing outcome
 - If sync is requested, use c3spec-sync-specs approach (agent-driven)
 - If delta specs exist, always run the sync assessment and show the combined summary before prompting

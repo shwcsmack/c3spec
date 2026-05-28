@@ -15,13 +15,9 @@ Before memory scan, interview, routing, or tier handoff, verify that the source 
 git status --porcelain --untracked-files=no
 ```
 
-Untracked files do not block the workflow. If the command returns any output, stop and show the user the changed tracked files. Offer exactly these choices:
+Untracked files do not block the workflow. If the command returns any output, stop and show the user the changed tracked files, then abort and ask the user to commit those changes before rerunning.
 
-1. Stash changes and continue
-2. Commit changes first
-3. Abort so the user can handle it
-
-Do not continue into workflow routing while tracked changes are present unless the user has first stashed or committed them. Do not offer a "continue anyway" option in the interactive flow.
+Do not continue into workflow routing while tracked changes are present. Do not offer stash/continue or "continue anyway" options in the interactive flow.
 
 ## Step 1 — Memory scan (before asking anything)
 

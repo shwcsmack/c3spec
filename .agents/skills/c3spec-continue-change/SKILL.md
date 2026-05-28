@@ -108,7 +108,7 @@ When multiple rows look plausible, pick the topmost one — the lifecycle contra
 
 ### 5. Honor pause points
 
-`c3spec-tier-lifecycle` Section 4 lists pause points per tier. This skill SHALL NOT silently advance past them. When the next action is "wait for user review" or "wait for user approval" (HTML review surface, post-proposal approval, archive readiness, per-commit approval, etc.), report the gate and STOP without creating the next downstream artifact.
+`c3spec-tier-lifecycle` Section 4 lists pause points per tier. This skill SHALL NOT silently advance past them. When the next action is "wait for user review" or "wait for user approval" (HTML review surface, post-proposal approval, archive readiness, etc.), report the gate and STOP without creating the next downstream artifact.
 
 ### 6. Create at most one artifact per invocation
 

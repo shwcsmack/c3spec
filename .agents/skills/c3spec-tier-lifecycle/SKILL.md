@@ -160,7 +160,7 @@ Tier workflows pause for human approval at well-known points. Resume helpers MUS
 
 - After `spec-impact.html` is generated — wait for user review and any spec edits
 - After `micro-retro.html` is generated — wait for user review
-- Before memory capture commit when commit approval is per-commit
+- Before memory capture, if the user explicitly requests a pause
 
 ### Tier 2 pauses
 
@@ -177,7 +177,7 @@ Tier workflows pause for human approval at well-known points. Resume helpers MUS
 - `verify.md` is non-blocking when verification passes; pause only when verification fails or changes are requested
 - Before archive — wait for the archive readiness check (Section 6)
 
-Across all tiers: if commit approval is per-commit, also pause at each commit point named in the plan.
+Across all tiers: commit flow is opinionated by default. Do not add per-commit approval pauses unless the user explicitly requests them for this run.
 
 ### Fast-forward behavior
 

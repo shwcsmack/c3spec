@@ -15,29 +15,17 @@ For new capabilities or architectural changes with significant design uncertaint
 
 ## Pre-flight: clean source tree
 
-Before commit approval or worktree setup, verify that the source repo where this tier skill is starting has no tracked uncommitted changes:
+Before worktree setup, verify that the source repo where this tier skill is starting has no tracked uncommitted changes:
 
 ```bash
 git status --porcelain --untracked-files=no
 ```
 
-Untracked files do not block the workflow. If the command returns any output, stop and show the user the changed tracked files. Offer exactly these choices:
+Untracked files do not block the workflow. If the command returns any output, stop and show the user the changed tracked files, then abort and ask the user to commit those changes before rerunning.
 
-1. Stash changes and continue
-2. Commit changes first
-3. Abort so the user can handle it
-
-Do not continue into worktree setup while tracked changes are present unless the user has first stashed or committed them. Do not offer a "continue anyway" option in the interactive flow.
+Do not continue into worktree setup while tracked changes are present. Do not offer stash/continue or "continue anyway" options in the interactive flow.
 
 ---
-
-## Pre-flight: commit approval
-
-Before doing anything else, ask:
-
-> "This Tier 3 change will produce commits for: planning artifacts, implementation, verification/spec updates, archive, and any memory entries. Do you want to approve all commits upfront, or confirm each one individually?"
-
-Wait for answer. Remember the preference for this change.
 
 ## Fast-forward mode
 
