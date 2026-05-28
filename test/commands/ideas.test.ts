@@ -56,6 +56,23 @@ describe('ideas command', () => {
     expect(result.stderr).toContain('IDEAS.md lint failed');
   });
 
+  it('lists ideas with IDs and titles', async () => {
+    const result = await runCLI(['ideas', 'list'], { cwd: testDir });
+
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toContain('#1 First');
+    expect(result.stdout).toContain('#2 Second');
+  });
+
+  it('shows one idea by ID', async () => {
+    const result = await runCLI(['ideas', 'show', '2'], { cwd: testDir });
+
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toContain('## 2. Second');
+    expect(result.stdout).toContain('Second summary.');
+    expect(result.stdout).toContain('- b');
+  });
+
   it('uses model triage by default when model and key are configured', async () => {
     const mockFetch = vi.fn().mockResolvedValue({
       ok: true,

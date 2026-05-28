@@ -16,7 +16,9 @@ Capture-only skill for backlog intake. Use this whenever the user says things li
 
 ## Steps
 
-1. Read `IDEAS.md` to match current entry style.
+1. Use CLI to inspect ideas first (avoid direct file reads):
+   - `c3spec ideas list` to index IDs/titles
+   - `c3spec ideas show <id>` to inspect a specific existing idea body when needed
 2. Extract from user input:
    - title
    - one-paragraph summary

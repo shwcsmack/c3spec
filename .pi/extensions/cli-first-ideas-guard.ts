@@ -6,11 +6,13 @@ function normalizeCommand(command: string): string {
   return command.replace(/\s+/g, ' ').trim();
 }
 
-function isIdeasTriageCommand(command: string): boolean {
+function isIdeasReadCommand(command: string): boolean {
   const normalized = normalizeCommand(command);
   return (
-    /(^|\s)c3spec ideas triage(\s|$)/.test(normalized) ||
-    /(^|\s)node\s+bin\/c3spec\.js\s+ideas\s+triage(\s|$)/.test(normalized)
+    /(^|\s)c3spec ideas (triage|list)(\s|$)/.test(normalized) ||
+    /(^|\s)c3spec ideas show\s+\d+(\s|$)/.test(normalized) ||
+    /(^|\s)node\s+bin\/c3spec\.js\s+ideas\s+(triage|list)(\s|$)/.test(normalized) ||
+    /(^|\s)node\s+bin\/c3spec\.js\s+ideas\s+show\s+\d+(\s|$)/.test(normalized)
   );
 }
 
@@ -24,22 +26,22 @@ function isIdeasFilePath(targetPath: string): boolean {
 }
 
 export default function registerCliFirstIdeasGuard(pi: ExtensionAPI) {
-  let triageRanInSession = false;
+  let ideasReadViaCliInSession = false;
 
   pi.on('tool_call', async (event) => {
     if (isToolCallEventType('bash', event)) {
-      if (isIdeasTriageCommand(event.input.command)) {
-        triageRanInSession = true;
+      if (isIdeasReadCommand(event.input.command)) {
+        ideasReadViaCliInSession = true;
       }
       return;
     }
 
     if (isToolCallEventType('read', event)) {
-      if (!triageRanInSession && isIdeasFilePath(event.input.path)) {
+      if (!ideasReadViaCliInSession && isIdeasFilePath(event.input.path)) {
         return {
           block: true,
           reason:
-            'CLI-first rule: run `c3spec ideas triage` (or `node bin/c3spec.js ideas triage`) before reading IDEAS.md.',
+            'CLI-first rule: run `c3spec ideas list|show <id>|triage` (or `node bin/c3spec.js ideas ...`) before reading IDEAS.md.',
         };
       }
       return;

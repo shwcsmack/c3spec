@@ -23,6 +23,10 @@ type RankedIdea = {
   source: 'model' | 'heuristic';
 };
 
+type ShowIdeaOptions = {
+  json?: boolean;
+};
+
 const IDEA_HEADING_RE = /^##\s+(\d+)\.\s+(.+)$/;
 const IDEAS_DIGEST_RE = /^<!--\s*c3spec:ideas-digest\s+([a-f0-9]{64})\s*-->$/;
 
@@ -266,6 +270,12 @@ async function saveIdeasFile(doc: IdeasDocument, targetPath = ideasPath()): Prom
   await fs.writeFile(targetPath, renderIdeas(doc), 'utf-8');
 }
 
+function printIdea(id: number, entry: IdeaEntry): void {
+  console.log(`## ${id}. ${entry.title}`);
+  const body = entry.body.join('\n').replace(/^\n+/, '').replace(/\n+$/g, '');
+  if (body) console.log(`\n${body}`);
+}
+
 export function registerIdeasCommand(program: Command): void {
   const ideasCmd = program
     .command('ideas')
@@ -406,6 +416,42 @@ export function registerIdeasCommand(program: Command): void {
       }
 
       console.log('IDEAS.md lint passed.');
+    });
+
+  ideasCmd
+    .command('list')
+    .description('List ideas with numeric IDs and titles')
+    .action(async () => {
+      const doc = await loadIdeasFile();
+      for (const [index, entry] of doc.entries.entries()) {
+        console.log(`#${index + 1} ${entry.title}`);
+      }
+    });
+
+  ideasCmd
+    .command('show <id>')
+    .description('Show a full idea by number')
+    .option('--json', 'Output as JSON')
+    .action(async (idRaw: string, options: ShowIdeaOptions) => {
+      const id = Number(idRaw);
+      if (!Number.isInteger(id) || id < 1) {
+        console.error('Error: id must be a positive integer.');
+        process.exit(1);
+      }
+
+      const doc = await loadIdeasFile();
+      if (id > doc.entries.length) {
+        console.error(`Error: idea #${id} does not exist.`);
+        process.exit(1);
+      }
+
+      const entry = doc.entries[id - 1];
+      if (options?.json) {
+        console.log(JSON.stringify({ id, title: entry.title, body: entry.body }, null, 2));
+        return;
+      }
+
+      printIdea(id, entry);
     });
 
   ideasCmd
