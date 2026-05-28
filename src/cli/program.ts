@@ -21,6 +21,7 @@ import {
   runWorkspaceUpdateForRoot,
 } from '../commands/workspace.js';
 import { registerMemoryCommand } from '../commands/memory.js';
+import { registerIdeasCommand } from '../commands/ideas.js';
 import { findWorkspaceRoot } from '../core/workspace/index.js';
 import {
   statusCommand,
@@ -280,6 +281,7 @@ registerConfigCommand(program);
 registerSchemaCommand(program);
 registerWorkspaceCommand(program);
 registerMemoryCommand(program);
+registerIdeasCommand(program);
 
 // Top-level validate command
 program

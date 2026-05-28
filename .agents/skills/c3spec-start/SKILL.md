@@ -7,6 +7,8 @@ description: Single front door for all development work. Interview the user, cla
 
 The single entry point for all development work in this project. You interview the user until genuinely aligned, then classify the change into a tier and route to the correct workflow.
 
+If the user intent is backlog capture (e.g. "add this idea to IDEAS.md"), route to `c3spec-add-idea` instead of starting tier planning.
+
 ## Step 0 — Clean source tree gate (before anything else)
 
 Before memory scan, interview, routing, or tier handoff, verify that the source repo where the workflow is starting has no tracked uncommitted changes:

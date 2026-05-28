@@ -22,6 +22,7 @@ const REQUIRED = [
   'c3spec-bulk-archive-change',
   'c3spec-verify-change',
   'c3spec-onboard',
+  'c3spec-add-idea',
 ];
 
 const missing = [];
