@@ -325,5 +325,6 @@ PR is last. PR description should reference the proposal and any memory entries 
 - Do not invoke `c3spec archive` before the archive readiness check in Step 11 passes
 - Do not flip `tasks.md` checkboxes yourself — checkbox ownership belongs to the controller / `c3spec-subagent-dev` after two-stage review
 - Do not re-interview the user — carry forward context from c3spec-start
-- Do not batch multiple clarifying questions in one message — ask one at a time if follow-up is needed
+- Do not batch or compound multiple clarifying questions in one message — ask exactly one at a time if follow-up is needed
+- Do not omit `Recommendation:` and `Why this question now:` when asking clarifying interview questions
 - Do not dump numbered question lists during planning approvals

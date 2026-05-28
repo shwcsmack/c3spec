@@ -264,9 +264,9 @@ c3spec machine enforcement SHALL guarantee that the canonical skill, agent, and 
 - **THEN** the contract SHALL NOT introduce a per-requirement backing-test enforcement mechanism
 - **AND** project-wide requirement-to-test coverage SHALL remain deferred to the entry tracked as IDEAS.md #15
 
-### Requirement: One-question interview pacing
+### Requirement: One-question interview pacing and recommendation-led turn format
 
-Interview-driven workflow steps SHALL ask one user-facing interview question per message and SHALL NOT batch multiple questions awaiting answers in the same turn.
+Interview-driven workflow steps SHALL ask exactly one user-facing interview question per message and SHALL NOT batch or compound multiple questions in the same turn. Every interview question turn SHALL include `Recommendation:`, `Why this question now:`, and then exactly one question.
 
 #### Scenario: c3spec-start interview pacing
 
@@ -274,11 +274,11 @@ Interview-driven workflow steps SHALL ask one user-facing interview question per
 - **THEN** it SHALL ask at most one interview question per message before waiting for the user's answer
 - **AND** it SHALL NOT send numbered multi-question dumps in a single message
 
-#### Scenario: Grouped findings with a single question
+#### Scenario: Grouped findings with a single formatted question
 
 - **WHEN** `c3spec-start` shares codebase findings, hypotheses, or alignment summaries during the interview
 - **THEN** it MAY present those findings together in one message
-- **AND** the message SHALL end with exactly one question for the user to answer next
+- **AND** the message SHALL include `Recommendation:` and `Why this question now:` before asking exactly one question for the user to answer next
 
 #### Scenario: User provides unprompted answers
 
@@ -289,18 +289,20 @@ Interview-driven workflow steps SHALL ask one user-facing interview question per
 #### Scenario: Tier 3 brainstorm discovery pacing
 
 - **WHEN** `c3spec-tier3-full` runs the brainstorm step using the brainstorming skill
-- **THEN** clarifying questions during discovery SHALL be asked one per turn
-- **AND** the workflow SHALL NOT override the skill with batched numbered question lists
-
-#### Scenario: Tightly coupled clarifications in one turn
-
-- **WHEN** two clarifications are so coupled that splitting them would feel artificial (for example, "soft-block or hard-block — and if soft, what default?")
-- **THEN** the workflow MAY ask them in the same turn as a single compound question
-- **AND** SHALL still avoid unrelated numbered question batches
+- **THEN** clarifying questions during discovery SHALL be asked exactly one per turn
+- **AND** each question turn SHALL include `Recommendation:` and `Why this question now:` before the question
+- **AND** the workflow SHALL NOT override the skill with numbered, batched, or compound question lists
 
 #### Scenario: Tier follow-up clarifications after handoff
 
 - **WHEN** a tier workflow needs additional user input after `c3spec-start` handoff
-- **THEN** it SHALL ask one clarifying question per turn
-- **AND** SHALL NOT restart a full discovery interview or dump multiple numbered questions at once
+- **THEN** it SHALL ask exactly one clarifying question per turn
+- **AND** each question turn SHALL include `Recommendation:` and `Why this question now:` before the question
+- **AND** SHALL NOT restart a full discovery interview or dump multiple numbered, batched, or compound questions at once
+
+#### Scenario: Question mode flexibility
+
+- **WHEN** an interview step selects question format
+- **THEN** it MAY use open-ended, multiple-choice, or yes/no questions when warranted
+- **AND** all modes SHALL still include the required `Recommendation:` and `Why this question now:` lines
 
