@@ -1,4 +1,4 @@
-<!-- c3spec:ideas-digest d0729c016dc0d85587b77be9a7de765c5c5389355a334f3add77a23ac1a2f094 -->
+<!-- c3spec:ideas-digest 43c5563c14598b31b948b8275189137aa21bc2d63e065102b543005d398d03b1 -->
 # Ideas
 
 Backlog of ideas to pick up later. Each entry is intentionally light - flesh out via `/c3spec:start` when ready to work on it.
@@ -99,16 +99,7 @@ Investigate what it would take to repackage c3spec as a first-class pi package a
 - Define migration options: additive support, staged default switch, or full strategic pivot
 - Produce a recommendation document with explicit success criteria, blockers, and follow-up ideas
 
-## 10. Standardize interview prompt order to question-first
-
-Adjust c3spec interview prompt formatting so each interview turn presents the question first, then the rationale (why now), and finally the recommendation, replacing the current recommendation-first pattern for better UX and faster answerability.
-
-- Update c3spec-start interview pacing contract to require order: Question -> Why this question now -> Recommendation.
-- Propagate the same ordering rule to tier workflows and any other skills that emit structured interview prompts.
-- Update workflow-routing spec text and tests that currently assert Recommendation/Why/Question order.
-- Add regression tests that fail if interview prompt sections are emitted in the wrong order.
-
-## 11. Require interview/grill-me phase in every tier workflow
+## 10. Require interview/grill-me phase in every tier workflow
 
 Add a mandatory interview (grill-me) phase to every workflow tier so assumptions are surfaced early and alignment is explicit before planning or implementation begins.
 
@@ -117,7 +108,7 @@ Add a mandatory interview (grill-me) phase to every workflow tier so assumptions
 - Document how interview findings are captured in change artifacts and influence routing/design decisions.
 - Add spec/tests to enforce that tier workflows include and honor the interview phase.
 
-## 12. Fix subagent-driven development flow and PI setup for subagent execution
+## 11. Fix subagent-driven development flow and PI setup for subagent execution
 
 Stabilize and simplify the c3spec subagent-driven development flow, including reliable PI environment/setup for subagent work so implementation and review agents can be dispatched consistently across hosts.
 
@@ -126,7 +117,7 @@ Stabilize and simplify the c3spec subagent-driven development flow, including re
 - Update c3spec-host-adapter and related skills to enforce/setup subagent prerequisites automatically.
 - Add tests covering subagent dispatch readiness, failure handling, and cross-host behavior.
 
-## 13. Fix finishing-development-branch flow at end of every workflow
+## 12. Fix finishing-development-branch flow at end of every workflow
 
 Harden the branch-finalization flow so every workflow consistently ends with a reliable finishing-development-branch step and clear PR-ready output.
 
@@ -135,7 +126,7 @@ Harden the branch-finalization flow so every workflow consistently ends with a r
 - Improve failure handling/retry guidance when finalization checks fail.
 - Add tests ensuring each workflow path reaches finishing-development-branch under the correct conditions.
 
-## 14. Auto-resolve ideas after implementation with idea-specific workflow
+## 13. Auto-resolve ideas after implementation with idea-specific workflow
 
 Design a reliable mechanism to remove or mark ideas complete once the corresponding fix/feature is delivered, potentially via an idea-linked workflow that tracks implementation-to-backlog closure.
 
