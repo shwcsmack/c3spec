@@ -149,21 +149,7 @@ Investigate "pi agent" as a potential runtime or collaborator for c3spec — fir
 - Cross-reference with idea #4 (bundled agent tooling survey) and idea #11 (native answer-picker UIs) — overlap is likely and worth coordinating instead of duplicating
 - Output: a single research doc under `docs/research/pi-agent-fit.md` (or similar), plus 0–N follow-up ideas appended to `IDEAS.md` if the research surfaces concrete work
 
-## 14. Refactor `runCLI` test helper to in-process invocation
-
-`test/helpers/run-cli.ts` spawns a real `dist/cli/index.js` Node subprocess for every CLI invocation in a test. With 4 test files (`workspace.test.ts`, `validate.test.ts`, `artifact-workflow.test.ts`, `cli-e2e/basic.test.ts`) issuing 5–10 `runCLI` calls per test, the per-subprocess cold-start cost (~0.5–1.5s on a warm cache) reliably exceeds vitest's default 10s `testTimeout` — the bandaid for that lives in `vitest.config.ts` today (`testTimeout: 30000`, see comment + IDEAS #14 backref). The bandaid hides real latency: a single workspace test that issues 8 CLI calls is paying ~8–12s of pure subprocess overhead to assert on output text. Refactor `runCLI` to invoke the CLI in-process — import the program builder, call `parseAsync` against a fresh `Command` instance, capture stdout/stderr through a writable buffer — so tests cost milliseconds instead of seconds and we can drop the timeout bump.
-
-- Audit `runCLI` call sites across the 4 affected test files; document how each one depends on subprocess semantics (process exit code, signal handling, env isolation, stdio framing)
-- Design an in-process replacement that preserves the public `RunCLIResult` shape (`exitCode`, `signal`, `stdout`, `stderr`, `timedOut`, `command`) so tests don't need rewrites
-- Handle Commander's `process.exit` calls — either configure the program with `exitOverride()` and translate thrown `CommanderError` into the result, or run inside a stubbed `process.exit` interceptor
-- Capture stdout/stderr by patching `process.stdout.write` / `process.stderr.write` for the duration of the call (with strict cleanup in `finally`) instead of relying on real pipes
-- Reset module state between invocations if the CLI carries top-level mutable state (env caches, config singletons, registries) — surface what state actually leaks
-- Preserve a subprocess fallback for the small number of cases that genuinely need it (e.g., `cli-e2e/basic.test.ts` smoke checks asserting the bin actually launches) so we don't over-collapse
-- After landing, revert `vitest.config.ts` timeouts to defaults (or document why a smaller bump is still needed) and remove the IDEAS #14 backref from the config comment
-- Measure before/after: report wall-clock time for the full suite and for `workspace.test.ts` alone so the win is visible
-- Coordinate with idea #10 (spec → backing-test enforcement) — that work will add tests; if the new tests use `runCLI`, they benefit immediately from the in-process refactor
-
-## 15. Investigate why quality-review subagents run so slowly
+## 14. Investigate why quality-review subagents run so slowly
 
 Quality review (`quality-reviewer` subagent dispatched from `c3spec-subagent-dev`) consistently takes much longer than other subagent roles in the same workflow — minutes per task even on small skill-content changes — and it's noticeable enough that it has become the long pole of every tier change. Today there's no measurement, no profiling, and no breakdown of where the time goes (model latency, tool-call count, repeated file reads, oversized context, prompt verbosity, parallelism limits, host-specific overhead). Treat this as a measurement problem first, not a tuning problem: find out where the time actually goes, then decide what to fix.
 
@@ -177,7 +163,7 @@ Quality review (`quality-reviewer` subagent dispatched from `c3spec-subagent-dev
 - Output a short profiling report under `docs/research/` summarizing where the time goes and proposing the smallest fix that closes the gap, before opening a follow-up implementation idea
 - Coordinate with idea #14 (in-process `runCLI` refactor) only if the profiling shows subprocess overhead is part of the slowdown — otherwise keep these tracks separate
 
-## 16. Make the git workflow opinionated end-to-end
+## 15. Make the git workflow opinionated end-to-end
 
 Every tier skill (`c3spec-tier1-fix`, `c3spec-tier2-feature`, `c3spec-tier3-full`) front-loads the same battery of git questions before doing any work — "approve all commits upfront, or confirm each one individually?", a stash/commit/abort prompt when the tree isn't clean, and at the close `superpowers:finishing-a-development-branch` opens yet another decision loop (merge / PR / cleanup). The net effect is the human has to drive the git lifecycle by hand even on small fixes, and the end of a change regularly needs explicit re-prompting like "now commit this", "now push", "now open the PR" before the agent acts. c3spec should pick defaults and live with them — branch naming, commit cadence, push timing, PR opening, cleanup — so the agent commits, pushes, and opens PRs on its own under a single named policy, with one explicit opt-out for the rare case the human wants to deviate.
 
@@ -192,7 +178,7 @@ Every tier skill (`c3spec-tier1-fix`, `c3spec-tier2-feature`, `c3spec-tier3-full
 - Surface the policy in `CLAUDE.md` / `AGENTS.md` so it's discoverable, and pin it in `c3spec-tier-lifecycle` so the tier skills consume one source of truth instead of each re-implementing the prompts
 - Coordinate with idea #6 (HITL/HOTL methodologies) and existing tier pause-policy work — git decisions are a major HITL surface and the same "opinionated default + one named opt-out" pattern should apply consistently across both
  
-## 17. Deepen the brainstorm interview workflow
+## 16. Deepen the brainstorm interview workflow
 
 The brainstorm step is one of the highest-leverage points in the c3spec flow, but right now interview quality can vary by host, context length, and operator habits. We should tighten this into a more opinionated interview experience: thorough discovery, one question at a time, and clear recommendations paired with each question so the user can make fast decisions without losing nuance.
 
@@ -204,7 +190,7 @@ The brainstorm step is one of the highest-leverage points in the c3spec flow, bu
 - Add focused tests (or skill-contract assertions) that catch regressions to multi-question dumps or missing recommendations
 - Decide how to reflect user-selected answers in downstream artifacts so recommendations are traceable into proposal/design
 
-## 18. Default commit approval mode to always approve all
+## 17. Default commit approval mode to always approve all
 
 Today Tier workflows still ask the user at the beginning whether to approve all commits upfront or confirm each commit. For users who always choose the same answer, this prompt is repeated friction. Add a persistent default so commit approval can be preconfigured and the question is skipped unless explicitly overridden.
 
@@ -215,3 +201,6 @@ Today Tier workflows still ask the user at the beginning whether to approve all 
 - Update tier skills and lifecycle docs to treat the prompt as conditional on mode, not mandatory
 - Add tests covering default behavior, override behavior, and backward compatibility when no setting exists
 - Document migration behavior for existing users so current flows continue to work unless they opt in
+
+18. after archive teh agent should run finishing-a-development-branch
+

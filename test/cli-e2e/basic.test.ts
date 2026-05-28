@@ -37,8 +37,10 @@ afterAll(async () => {
 });
 
 describe('c3spec CLI e2e basics', () => {
+  const subprocess = { mode: 'subprocess' as const };
+
   it('shows help output', async () => {
-    const result = await runCLI(['--help']);
+    const result = await runCLI(['--help'], subprocess);
     expect(result.exitCode).toBe(0);
     expect(result.stdout).toContain('Usage: c3spec');
     expect(result.stderr).toBe('');
@@ -46,7 +48,7 @@ describe('c3spec CLI e2e basics', () => {
   });
 
   it('shows dynamic tool ids in init help', async () => {
-    const result = await runCLI(['init', '--help']);
+    const result = await runCLI(['init', '--help'], subprocess);
     expect(result.exitCode).toBe(0);
 
     const expectedTools = AI_TOOLS.filter((tool) => tool.available)
@@ -61,7 +63,7 @@ describe('c3spec CLI e2e basics', () => {
   it('reports the package version', async () => {
     const pkgRaw = await fs.readFile(path.join(cliProjectRoot, 'package.json'), 'utf-8');
     const pkg = JSON.parse(pkgRaw);
-    const result = await runCLI(['--version']);
+    const result = await runCLI(['--version'], subprocess);
     expect(result.exitCode).toBe(0);
     expect(result.stdout.trim()).toBe(pkg.version);
   });
