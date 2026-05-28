@@ -147,11 +147,11 @@ describe('createChange', () => {
     });
   });
 
-  describe('schema validation', () => {
-    it('should throw error for unknown schema', async () => {
-      await expect(createChange(testDir, 'add-auth', { schema: 'unknown-schema' })).rejects.toThrow(
-        /Unknown schema/
-      );
+  describe('schema label handling', () => {
+    it('should allow unknown schema labels for backward compatibility', async () => {
+      await expect(createChange(testDir, 'add-auth', { schema: 'unknown-schema' })).resolves.toMatchObject({
+        schema: 'unknown-schema',
+      });
     });
   });
 

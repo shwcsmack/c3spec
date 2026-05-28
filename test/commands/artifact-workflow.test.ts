@@ -171,26 +171,6 @@ describe('artifact-workflow CLI commands', () => {
       expect(output).toContain('existing-change');
     });
 
-    it('supports --schema option', async () => {
-      await createTestChange('schema-change');
-
-      const result = await runCLI(['status', '--change', 'schema-change', '--schema', 'spec-driven'], {
-        cwd: tempDir,
-      });
-      expect(result.exitCode).toBe(0);
-      expect(result.stdout).toContain('spec-driven');
-    });
-
-    it('errors for unknown schema', async () => {
-      await createTestChange('test-change');
-
-      const result = await runCLI(['status', '--change', 'test-change', '--schema', 'unknown'], {
-        cwd: tempDir,
-      });
-      expect(result.exitCode).toBe(1);
-      const output = getOutput(result);
-      expect(output).toContain("Schema 'unknown' not found");
-    });
 
     it('rejects path traversal in change name', async () => {
       const result = await runCLI(['status', '--change', '../foo'], { cwd: tempDir });
@@ -292,43 +272,6 @@ describe('artifact-workflow CLI commands', () => {
     });
   });
 
-  describe('templates command', () => {
-    it('shows template paths for default schema', async () => {
-      const result = await runCLI(['templates'], { cwd: tempDir });
-      expect(result.exitCode).toBe(0);
-      expect(result.stdout).toContain('Schema: spec-driven');
-      expect(result.stdout).toContain('proposal:');
-      expect(result.stdout).toContain('design:');
-      expect(result.stdout).toContain('specs:');
-      expect(result.stdout).toContain('tasks:');
-    });
-
-    it('shows template paths for specified schema', async () => {
-      const result = await runCLI(['templates', '--schema', 'spec-driven'], { cwd: tempDir });
-      expect(result.exitCode).toBe(0);
-      expect(result.stdout).toContain('Schema: spec-driven');
-      expect(result.stdout).toContain('proposal:');
-      expect(result.stdout).toContain('design:');
-    });
-
-    it('outputs JSON mapping of templates', async () => {
-      const result = await runCLI(['templates', '--json'], { cwd: tempDir });
-      expect(result.exitCode).toBe(0);
-      expect(result.stderr).toBe('');
-
-      const json = JSON.parse(result.stdout);
-      expect(json.proposal).toBeDefined();
-      expect(json.proposal.path).toContain('proposal.md');
-      expect(json.proposal.source).toBe('package');
-    });
-
-    it('errors for unknown schema', async () => {
-      const result = await runCLI(['templates', '--schema', 'nonexistent'], { cwd: tempDir });
-      expect(result.exitCode).toBe(1);
-      const output = getOutput(result);
-      expect(output).toContain("Schema 'nonexistent' not found");
-    });
-  });
 
   describe('new change command', () => {
     it('creates a new change directory', async () => {
@@ -549,62 +492,6 @@ describe('artifact-workflow CLI commands', () => {
       expect(json.contextFiles.specs).toEqual([expectedSpecPath]);
     });
 
-    it('resolves single-star glob artifacts consistently between status and apply', async () => {
-      const schemaDir = path.join(tempDir, 'c3spec', 'schemas', 'glob-test');
-      const templatesDir = path.join(schemaDir, 'templates');
-      await fs.mkdir(templatesDir, { recursive: true });
-
-      await fs.writeFile(
-        path.join(schemaDir, 'schema.yaml'),
-        `name: glob-test
-version: 1
-description: Test schema for single-star globs
-artifacts:
-  - id: specs
-    generates: specs/*/spec.md
-    description: Nested specs
-    template: spec.md
-    requires: []
-apply:
-  requires: [specs]
-  instruction: Ready when specs exist.
-`
-      );
-      await fs.writeFile(path.join(templatesDir, 'spec.md'), '# Spec\n');
-
-      const changeDir = path.join(changesDir, 'single-star-glob');
-      const specPath = path.join(changeDir, 'specs', 'single-star-glob', 'spec.md');
-      await fs.mkdir(path.dirname(specPath), { recursive: true });
-      await fs.writeFile(path.join(changeDir, '.c3spec.yaml'), 'schema: glob-test\n');
-      await fs.writeFile(specPath, '# Nested spec\n');
-
-      const statusResult = await runCLI(['status', '--change', 'single-star-glob', '--json'], {
-        cwd: tempDir,
-      });
-      expect(statusResult.exitCode).toBe(0);
-      const statusJson = JSON.parse(statusResult.stdout);
-      expect(statusJson.artifacts).toEqual([
-        {
-          id: 'specs',
-          outputPath: 'specs/*/spec.md',
-          status: 'done',
-        },
-      ]);
-
-      const applyResult = await runCLI(
-        ['instructions', 'apply', '--change', 'single-star-glob', '--json'],
-        { cwd: tempDir }
-      );
-      expect(applyResult.exitCode).toBe(0);
-      const applyJson = JSON.parse(applyResult.stdout);
-      const resolvedSpecPath = canonical(specPath);
-      expect(applyJson.state).toBe('ready');
-      expect(applyJson.missingArtifacts).toBeUndefined();
-      expect(applyJson.contextFiles).toEqual({
-        specs: [resolvedSpecPath],
-      });
-    });
-
     it('shows schema instruction from apply block', async () => {
       await createTestChange('instr-apply', ['proposal', 'design', 'specs', 'tasks']);
 
@@ -637,17 +524,6 @@ apply:
       expect(result.stdout).toContain('ready to be archived');
     });
 
-    it('uses spec-driven schema apply configuration', async () => {
-      // Create a spec-driven style change with all artifacts
-      await createTestChange('apply-schema-test', ['proposal', 'design', 'specs', 'tasks']);
-
-      const result = await runCLI(
-        ['instructions', 'apply', '--change', 'apply-schema-test', '--schema', 'spec-driven'],
-        { cwd: tempDir }
-      );
-      expect(result.exitCode).toBe(0);
-      expect(result.stdout).toContain('Schema: spec-driven');
-    });
 
     it('spec-driven schema uses apply block configuration', async () => {
       // Verify that spec-driven schema uses its apply block (requires: [tasks])
@@ -665,97 +541,6 @@ apply:
       expect(json.state).toBe('ready');
     });
 
-    it('fallback: requires all artifacts when schema has no apply block', async () => {
-      // Create a minimal schema without an apply block in user schemas dir
-      const userDataDir = path.join(tempDir, 'user-data');
-      const noApplySchemaDir = path.join(userDataDir, 'c3spec', 'schemas', 'no-apply');
-      const templatesDir = path.join(noApplySchemaDir, 'templates');
-      await fs.mkdir(templatesDir, { recursive: true });
-
-      // Minimal schema with 2 artifacts, no apply block
-      const schemaContent = `
-name: no-apply
-version: 1
-description: Test schema without apply block
-artifacts:
-  - id: first
-    generates: first.md
-    description: First artifact
-    template: first.md
-    requires: []
-  - id: second
-    generates: second.md
-    description: Second artifact
-    template: second.md
-    requires: [first]
-`;
-      await fs.writeFile(path.join(noApplySchemaDir, 'schema.yaml'), schemaContent);
-      await fs.writeFile(path.join(templatesDir, 'first.md'), '# First\n');
-      await fs.writeFile(path.join(templatesDir, 'second.md'), '# Second\n');
-
-      // Create a change with only the first artifact (missing second)
-      const changeDir = path.join(changesDir, 'no-apply-test');
-      await fs.mkdir(changeDir, { recursive: true });
-      await fs.writeFile(path.join(changeDir, 'first.md'), '# First artifact content');
-
-      // Run with XDG_DATA_HOME pointing to our temp user data dir
-      const result = await runCLI(
-        ['instructions', 'apply', '--change', 'no-apply-test', '--schema', 'no-apply', '--json'],
-        {
-          cwd: tempDir,
-          env: { XDG_DATA_HOME: userDataDir },
-        }
-      );
-      expect(result.exitCode).toBe(0);
-
-      const json = JSON.parse(result.stdout);
-      // Without apply block, fallback requires ALL artifacts - second is missing
-      expect(json.schemaName).toBe('no-apply');
-      expect(json.state).toBe('blocked');
-      expect(json.missingArtifacts).toContain('second');
-    });
-
-    it('fallback: ready when all artifacts exist for schema without apply block', async () => {
-      // Create a minimal schema without an apply block
-      const userDataDir = path.join(tempDir, 'user-data-2');
-      const noApplySchemaDir = path.join(userDataDir, 'c3spec', 'schemas', 'no-apply-full');
-      const templatesDir = path.join(noApplySchemaDir, 'templates');
-      await fs.mkdir(templatesDir, { recursive: true });
-
-      const schemaContent = `
-name: no-apply-full
-version: 1
-description: Test schema without apply block
-artifacts:
-  - id: only
-    generates: only.md
-    description: Only artifact
-    template: only.md
-    requires: []
-`;
-      await fs.writeFile(path.join(noApplySchemaDir, 'schema.yaml'), schemaContent);
-      await fs.writeFile(path.join(templatesDir, 'only.md'), '# Only\n');
-
-      // Create a change with the artifact present
-      const changeDir = path.join(changesDir, 'no-apply-full-test');
-      await fs.mkdir(changeDir, { recursive: true });
-      await fs.writeFile(path.join(changeDir, 'only.md'), '# Content');
-
-      const result = await runCLI(
-        ['instructions', 'apply', '--change', 'no-apply-full-test', '--schema', 'no-apply-full', '--json'],
-        {
-          cwd: tempDir,
-          env: { XDG_DATA_HOME: userDataDir },
-        }
-      );
-      expect(result.exitCode).toBe(0);
-
-      const json = JSON.parse(result.stdout);
-      // All artifacts exist, should be ready with default instruction
-      expect(json.schemaName).toBe('no-apply-full');
-      expect(json.state).toBe('ready');
-      expect(json.instruction).toContain('All required artifacts complete');
-    });
   });
 
   describe('help text', () => {
@@ -771,11 +556,6 @@ artifacts:
       expect(result.stdout).toContain('Output enriched instructions');
     });
 
-    it('templates command help shows description', async () => {
-      const result = await runCLI(['templates', '--help']);
-      expect(result.exitCode).toBe(0);
-      expect(result.stdout).toContain('Show resolved template paths');
-    });
 
     it('new command help shows description', async () => {
       const result = await runCLI(['new', '--help']);
@@ -882,26 +662,6 @@ artifacts:
         expect(metadata).toContain('schema: spec-driven');
       }, 60000);
 
-      it('CLI schema overrides config schema', async () => {
-        // Create project config with spec-driven schema
-        // Note: c3spec directory already exists (from changesDir creation in beforeEach)
-        await fs.writeFile(
-          path.join(tempDir, 'c3spec', 'config.yaml'),
-          'schema: spec-driven\n'
-        );
-
-        // Create change with explicit schema
-        const result = await runCLI(
-          ['new', 'change', 'override-test', '--schema', 'spec-driven'],
-          { cwd: tempDir, timeoutMs: 30000 }
-        );
-        expect(result.exitCode).toBe(0);
-
-        // Verify the change uses the CLI-specified schema
-        const metadataPath = path.join(changesDir, 'override-test', '.c3spec.yaml');
-        const metadata = await fs.readFile(metadataPath, 'utf-8');
-        expect(metadata).toContain('schema: spec-driven');
-      }, 60000);
     });
 
     describe('instructions command with config', () => {

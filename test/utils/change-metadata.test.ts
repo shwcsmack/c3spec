@@ -98,13 +98,13 @@ describe('writeChangeMetadata', () => {
     expect(content).toContain('created: 2025-01-05');
   });
 
-  it('should throw error for unknown schema', () => {
+  it('should allow unknown schema labels for backward compatibility', () => {
     expect(() =>
       writeChangeMetadata(changeDir, {
         schema: 'unknown-schema',
         created: '2025-01-05',
       })
-    ).toThrow(/Unknown schema 'unknown-schema'/);
+    ).not.toThrow();
   });
 });
 
@@ -156,11 +156,11 @@ describe('readChangeMetadata', () => {
     expect(() => readChangeMetadata(changeDir)).toThrow(ChangeMetadataError);
   });
 
-  it('should throw ChangeMetadataError for unknown schema', async () => {
+  it('should read metadata even when schema label is unknown', async () => {
     const metaPath = path.join(changeDir, '.c3spec.yaml');
     await fs.writeFile(metaPath, 'schema: unknown-schema\n', 'utf-8');
 
-    expect(() => readChangeMetadata(changeDir)).toThrow(/Unknown schema/);
+    expect(() => readChangeMetadata(changeDir)).not.toThrow();
   });
 });
 
@@ -293,9 +293,7 @@ describe('validateSchemaName', () => {
     expect(() => validateSchemaName('spec-driven')).not.toThrow();
   });
 
-  it('should throw for unknown schema', () => {
-    expect(() => validateSchemaName('unknown-schema')).toThrow(
-      /Unknown schema 'unknown-schema'/
-    );
+  it('should allow unknown schema labels', () => {
+    expect(() => validateSchemaName('unknown-schema')).not.toThrow();
   });
 });

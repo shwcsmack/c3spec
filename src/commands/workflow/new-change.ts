@@ -1,7 +1,7 @@
 /**
  * New Change Command
  *
- * Creates a new change directory with optional description and schema.
+ * Creates a new change directory with optional description.
  */
 
 import ora from 'ora';
@@ -12,7 +12,6 @@ import {
   resolveCurrentPlanningHomeSync,
   type PlanningHome,
 } from '../../core/planning-home.js';
-import { validateSchemaExists } from './shared.js';
 
 // -----------------------------------------------------------------------------
 // Types
@@ -22,7 +21,6 @@ export interface NewChangeOptions {
   description?: string;
   goal?: string;
   areas?: string;
-  schema?: string;
 }
 
 // -----------------------------------------------------------------------------
@@ -73,21 +71,13 @@ export async function newChangeCommand(name: string | undefined, options: NewCha
   const affectedAreas = parseAffectedAreas(options.areas);
   validateWorkspaceAffectedAreas(planningHome, affectedAreas);
 
-  // Validate schema if provided
-  if (options.schema) {
-    validateSchemaExists(options.schema, projectRoot);
-  }
-
-  const resolvedSchema = options.schema ?? planningHome.defaultSchema;
-  const schemaDisplay = ` with schema '${resolvedSchema}'`;
-  const spinner = ora(`Creating change '${name}'${schemaDisplay}...`).start();
+  const spinner = ora(`Creating change '${name}'...`).start();
 
   try {
     const workspaceGoal = planningHome.kind === 'workspace'
       ? options.goal ?? options.description
       : options.goal;
     const result = await createChange(projectRoot, name, {
-      schema: options.schema,
       defaultSchema: planningHome.defaultSchema,
       changesDir: planningHome.changesDir,
       metadata: {

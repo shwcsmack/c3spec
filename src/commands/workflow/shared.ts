@@ -8,7 +8,6 @@
 import chalk from 'chalk';
 import path from 'path';
 import * as fs from 'fs';
-import { getSchemaDir, listSchemas } from '../../core/artifact-graph/index.js';
 import { validateChangeName } from '../../utils/change-utils.js';
 
 // -----------------------------------------------------------------------------
@@ -36,12 +35,6 @@ export interface ApplyInstructions {
   missingArtifacts?: string[];
   instruction: string;
 }
-
-// -----------------------------------------------------------------------------
-// Constants
-// -----------------------------------------------------------------------------
-
-export const DEFAULT_SCHEMA = 'spec-driven';
 
 // -----------------------------------------------------------------------------
 // Utility Functions
@@ -150,19 +143,3 @@ export async function validateChangeExists(
   return changeName;
 }
 
-/**
- * Validates that a schema exists and returns available schemas if not.
- *
- * @param schemaName - The schema name to validate
- * @param projectRoot - Optional project root for project-local schema resolution
- */
-export function validateSchemaExists(schemaName: string, projectRoot?: string): string {
-  const schemaDir = getSchemaDir(schemaName, projectRoot);
-  if (!schemaDir) {
-    const availableSchemas = listSchemas(projectRoot);
-    throw new Error(
-      `Schema '${schemaName}' not found. Available schemas:\n  ${availableSchemas.join('\n  ')}`
-    );
-  }
-  return schemaName;
-}

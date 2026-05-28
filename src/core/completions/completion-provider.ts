@@ -1,5 +1,4 @@
 import { getActiveChangeIds, getSpecIds } from '../../utils/item-discovery.js';
-import { listSchemas } from '../artifact-graph/index.js';
 
 /**
  * Cache entry for completion data
@@ -96,15 +95,12 @@ export class CompletionProvider {
       return this.schemaCache.data;
     }
 
-    // Fetch fresh data
-    const schemaNames = listSchemas(this.projectRoot);
-
-    // Update cache
+    // Schema catalog removed in de-schemafication mode.
+    const schemaNames: string[] = [];
     this.schemaCache = {
       data: schemaNames,
       timestamp: now,
     };
-
     return schemaNames;
   }
 

@@ -14,7 +14,6 @@ import {
 } from '../../core/artifact-graph/index.js';
 import {
   validateChangeExists,
-  validateSchemaExists,
   getAvailableChanges,
   getStatusIndicator,
   getStatusColor,
@@ -26,7 +25,6 @@ import {
 
 export interface StatusOptions {
   change?: string;
-  schema?: string;
   json?: boolean;
 }
 
@@ -67,13 +65,7 @@ export async function statusCommand(options: StatusOptions): Promise<void> {
       planningHome.changesDir
     );
 
-    // Validate schema if explicitly provided
-    if (options.schema) {
-      validateSchemaExists(options.schema, projectRoot);
-    }
-
-    // loadChangeContext will auto-detect schema from metadata if not provided
-    const context = loadChangeContext(projectRoot, changeName, options.schema, {
+    const context = loadChangeContext(projectRoot, changeName, undefined, {
       changeDir: getChangeDir(planningHome, changeName),
       planningHome,
     });

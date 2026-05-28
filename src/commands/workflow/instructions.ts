@@ -18,7 +18,6 @@ import {
 import { getChangeDir, resolveCurrentPlanningHomeSync } from '../../core/planning-home.js';
 import {
   validateChangeExists,
-  validateSchemaExists,
   type TaskItem,
   type ApplyInstructions,
 } from './shared.js';
@@ -29,13 +28,11 @@ import {
 
 export interface InstructionsOptions {
   change?: string;
-  schema?: string;
   json?: boolean;
 }
 
 export interface ApplyInstructionsOptions {
   change?: string;
-  schema?: string;
   json?: boolean;
 }
 
@@ -58,13 +55,7 @@ export async function instructionsCommand(
       planningHome.changesDir
     );
 
-    // Validate schema if explicitly provided
-    if (options.schema) {
-      validateSchemaExists(options.schema, projectRoot);
-    }
-
-    // loadChangeContext will auto-detect schema from metadata if not provided
-    const context = loadChangeContext(projectRoot, changeName, options.schema, {
+    const context = loadChangeContext(projectRoot, changeName, undefined, {
       changeDir: getChangeDir(planningHome, changeName),
       planningHome,
     });
@@ -255,11 +246,9 @@ function parseTasksFile(content: string): TaskItem[] {
 export async function generateApplyInstructions(
   projectRoot: string,
   changeName: string,
-  schemaName?: string,
   planningHome = resolveCurrentPlanningHomeSync({ startPath: projectRoot })
 ): Promise<ApplyInstructions> {
-  // loadChangeContext will auto-detect schema from metadata if not provided
-  const context = loadChangeContext(projectRoot, changeName, schemaName, {
+  const context = loadChangeContext(projectRoot, changeName, undefined, {
     changeDir: getChangeDir(planningHome, changeName),
     planningHome,
   });
@@ -364,16 +353,9 @@ export async function applyInstructionsCommand(options: ApplyInstructionsOptions
       planningHome.changesDir
     );
 
-    // Validate schema if explicitly provided
-    if (options.schema) {
-      validateSchemaExists(options.schema, projectRoot);
-    }
-
-    // generateApplyInstructions uses loadChangeContext which auto-detects schema
     const instructions = await generateApplyInstructions(
       projectRoot,
       changeName,
-      options.schema,
       planningHome
     );
 

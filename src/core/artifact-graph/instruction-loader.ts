@@ -1,6 +1,6 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import { getSchemaDir, resolveSchema } from './resolver.js';
+import { loadSchemaTemplate, resolveSchema } from './resolver.js';
 import { ArtifactGraph } from './graph.js';
 import { detectCompleted } from './state.js';
 import { resolveArtifactOutputs } from './outputs.js';
@@ -186,35 +186,13 @@ export interface ActionContext {
 export function loadTemplate(
   schemaName: string,
   templatePath: string,
-  projectRoot?: string
+  _projectRoot?: string
 ): string {
-  const schemaDir = getSchemaDir(schemaName, projectRoot);
-  if (!schemaDir) {
-    throw new TemplateLoadError(
-      `Schema '${schemaName}' not found`,
-      templatePath
-    );
-  }
-
-  const templatePathOnDisk = path.join(schemaDir, 'templates', templatePath);
-
-  if (!fs.existsSync(templatePathOnDisk)) {
-    throw new TemplateLoadError(
-      `Template not found: ${templatePathOnDisk}`,
-      templatePathOnDisk
-    );
-  }
-
-  const fullPath = FileSystemUtils.canonicalizeExistingPath(templatePathOnDisk);
-
   try {
-    return fs.readFileSync(fullPath, 'utf-8');
+    return loadSchemaTemplate(schemaName, templatePath);
   } catch (err) {
-    const ioError = err instanceof Error ? err : new Error(String(err));
-    throw new TemplateLoadError(
-      `Failed to read template: ${ioError.message}`,
-      fullPath
-    );
+    const message = err instanceof Error ? err.message : String(err);
+    throw new TemplateLoadError(message, templatePath);
   }
 }
 
