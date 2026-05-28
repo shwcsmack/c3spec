@@ -85,22 +85,7 @@ Every tier should pause between planning and implementation, either by handing t
 - Encode the pause as an explicit skill step with a checkpoint, not a convention
 - Make sure the context-reset boundary preserves the artifacts the apply step needs (paths to plan.md, specs, change folder) — usually via filesystem, not chat history
 
-## 9. Formalize `IDEAS.md` as the backlog with an "add idea" skill
-
-`IDEAS.md` is already where new work lands, but it's an informal convention — there's no skill to add to it, no schema for entries, and no way to capture an idea mid-flow without derailing whatever the agent is currently doing. Mid-chat ideas get lost or shoehorned into the current conversation. The backlog also goes stale — completed ideas linger because nothing prunes them when a change starts or archives. Formalize the file as the project backlog, give it a dedicated capture skill that works from anywhere in the workflow (T1 fix, T2 plan, T3 brainstorm, idle chat) without breaking the active task, and wire it into the change lifecycle so the backlog stays current automatically.
-
-- Define the entry schema (heading style, summary paragraph, bullet list — match the current shape of #1–#8)
-- Author a `c3spec-add-idea` skill that takes a short user prompt and appends a properly-formatted entry, auto-numbered, without leaving the current workflow
-- Make the skill non-disruptive: it must not switch worktrees, touch the active change folder, or pollute the in-flight plan
-- Decide on auto-numbering vs. date-based slugs and how to handle concurrent edits / merge conflicts
-- Add a triage command (or extend the skill) that produces a ranking like the one done by hand today
-- Update `CLAUDE.md` / routing so "I have an idea, add it to the backlog" goes through this skill instead of inline edits
-- Consider whether captured ideas should optionally seed a future `/c3spec:start` interview when picked up later
-- Keep the backlog in sync with the change lifecycle: when a change is started (proposal lands in `c3spec/changes/`), prompt to remove or link the originating backlog entry; when a change is archived, automatically remove the entry it traces back to
-- Decide how to associate a backlog entry with its change (explicit `change:` slug field on the entry, or fuzzy match on title) so the lifecycle hooks know what to prune
-- Add an "audit backlog" step (or skill) that flags entries pointing at already-archived changes so completed work doesn't linger
-
-## 10. Enforce requirements of ALL specs with backing tests
+## 9. Enforce requirements of ALL specs with backing tests
 
 Today the only cross-spec enforcement in this repo is `test/specs/source-specs-normalization.test.ts`, which checks the *shape* of every `c3spec/specs/*/spec.md` (Purpose + Requirements sections, no delta headers, no placeholder text, parseable requirements). Behavioral alignment between each `### Requirement: …` and the code that implements it is trusted entirely to human discipline and `opsx-verify-skill` runs at change time — there is no CI signal when a requirement loses its backing test, or when an implementation drifts away from the requirement it was supposed to satisfy. We dogfood spec-driven development, so the bar should be higher: every requirement in every spec should be traceable to at least one test that exercises it, and CI should fail when that link breaks. Explore what this looks like end-to-end before committing to an implementation.
 
@@ -114,7 +99,7 @@ Today the only cross-spec enforcement in this repo is `test/specs/source-specs-n
 - Surface coverage in a way agents and humans both consume: a `c3spec coverage` subcommand or a generated report under `c3spec/` that shows per-spec status
 - Spawned from the completed workflow-routing spec change — that change deliberately stayed docs-only because no precedent exists for new-test-per-requirement work; this idea is where that precedent gets set
 
-## 11. Trigger native agent answer-picker UIs from c3spec skills
+## 10. Trigger native agent answer-picker UIs from c3spec skills
 
 Claude Code, Codex, and Cursor each surface a structured "pick an answer" UI when an agent emits the right shape — Cursor has its `AskQuestion` tool, Codex/Claude Code render multi-choice prompts when the assistant message follows specific patterns. c3spec interview steps (`c3spec-start`, brainstorm, design checkpoints) currently fall back to plain markdown bullet lists, which is fine but inconsistent and easy for the human to miss. Research whether each runtime exposes a public API (tool, MCP surface, output convention) for these widgets, or whether deterministic prompt phrasing can get them to pop up reliably — then standardize how c3spec skills request a structured answer so the experience matches the host's native flow.
 
@@ -125,7 +110,7 @@ Claude Code, Codex, and Cursor each surface a structured "pick an answer" UI whe
 - Update tier and interview skills (`c3spec-start`, `c3spec-tier2-feature`, `c3spec-tier3-full`, brainstorm/design checkpoints) to use the new convention instead of ad-hoc bullet lists
 - Document the convention so contributors authoring new skills don't reintroduce inconsistent answer prompts
 
-## 12. Audit the standalone `schemas/` system — keep, fold in, or remove
+## 11. Audit the standalone `schemas/` system — keep, fold in, or remove
 
 The repo has a `schemas/` directory at the root (`spec-driven`, `workspace-planning`) plus a sibling `c3spec/schemas/superpowers-bridge/`, each shipping a `schema.yaml` and a `templates/` folder. None of the current tier skills, `c3spec-start`, or host-generation pipeline appear to reach into these schemas — the artifact templates the tier skills actually emit live inline in the SKILL.md content under `.agents/skills/`. The runtime validation under `src/core/schemas/` (spec/change Zod schemas) is a separate system and is in active use, so the audit is specifically about the YAML-schema-with-templates directories, not the runtime validators. Figure out whether these schema bundles are still wired in anywhere, whether they're upstream-pre-fork residue (overlaps with completed pre-fork cleanup work), or whether there's latent value we should fold back into the tier skills.
 
@@ -137,7 +122,7 @@ The repo has a `schemas/` directory at the root (`spec-driven`, `workspace-plann
 - If deleting, make sure `c3spec list`, validation, and host-generation still pass and that the relevant spec/capability is also updated or retired
 - Coordinate with the completed pre-fork cleanup so we don't do two passes over the same upstream residue
 
-## 13. Research pi agent and explore c3spec integration
+## 12. Research pi agent and explore c3spec integration
 
 Investigate "pi agent" as a potential runtime or collaborator for c3spec — first as standalone research (what it is, how it works, its primitives, strengths, and limits) and then specifically how it could interoperate with c3spec's tiered workflow. Today c3spec treats Cursor, Claude Code, and Codex as first-class hosts via `c3spec-host-adapter` and bundled skill delivery; pi agent, if it fits, would be a new host, a sub-runtime for subagent dispatch, a tool surface, or something orthogonal — the goal of this idea is to figure out which (or "none"). Output is a research doc, not an implementation — but the doc should be concrete enough to either close as "no fit" or spawn a follow-up proposal.
 
@@ -149,7 +134,7 @@ Investigate "pi agent" as a potential runtime or collaborator for c3spec — fir
 - Cross-reference with idea #4 (bundled agent tooling survey) and idea #11 (native answer-picker UIs) — overlap is likely and worth coordinating instead of duplicating
 - Output: a single research doc under `docs/research/pi-agent-fit.md` (or similar), plus 0–N follow-up ideas appended to `IDEAS.md` if the research surfaces concrete work
 
-## 14. Investigate why quality-review subagents run so slowly
+## 13. Investigate why quality-review subagents run so slowly
 
 Quality review (`quality-reviewer` subagent dispatched from `c3spec-subagent-dev`) consistently takes much longer than other subagent roles in the same workflow — minutes per task even on small skill-content changes — and it's noticeable enough that it has become the long pole of every tier change. Today there's no measurement, no profiling, and no breakdown of where the time goes (model latency, tool-call count, repeated file reads, oversized context, prompt verbosity, parallelism limits, host-specific overhead). Treat this as a measurement problem first, not a tuning problem: find out where the time actually goes, then decide what to fix.
 
@@ -163,7 +148,7 @@ Quality review (`quality-reviewer` subagent dispatched from `c3spec-subagent-dev
 - Output a short profiling report under `docs/research/` summarizing where the time goes and proposing the smallest fix that closes the gap, before opening a follow-up implementation idea
 - Coordinate with idea #14 (in-process `runCLI` refactor) only if the profiling shows subprocess overhead is part of the slowdown — otherwise keep these tracks separate
 
-## 15. Deepen the brainstorm interview workflow
+## 14. Deepen the brainstorm interview workflow
 
 The brainstorm step is one of the highest-leverage points in the c3spec flow, but right now interview quality can vary by host, context length, and operator habits. We should tighten this into a more opinionated interview experience: thorough discovery, one question at a time, and clear recommendations paired with each question so the user can make fast decisions without losing nuance.
 
@@ -175,7 +160,7 @@ The brainstorm step is one of the highest-leverage points in the c3spec flow, bu
 - Add focused tests (or skill-contract assertions) that catch regressions to multi-question dumps or missing recommendations
 - Decide how to reflect user-selected answers in downstream artifacts so recommendations are traceable into proposal/design
 
-## 16. Default commit approval mode to always approve all
+## 15. Default commit approval mode to always approve all
 
 Today Tier workflows still ask the user at the beginning whether to approve all commits upfront or confirm each commit. For users who always choose the same answer, this prompt is repeated friction. Add a persistent default so commit approval can be preconfigured and the question is skipped unless explicitly overridden.
 
