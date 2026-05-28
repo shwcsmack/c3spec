@@ -112,19 +112,7 @@ The repo has a `schemas/` directory at the root (`spec-driven`, `workspace-plann
 - If deleting, make sure `c3spec list`, validation, and host-generation still pass and that the relevant spec/capability is also updated or retired
 - Coordinate with the completed pre-fork cleanup so we don't do two passes over the same upstream residue
 
-## 11. Deepen the brainstorm interview workflow
-
-The brainstorm step is one of the highest-leverage points in the c3spec flow, but right now interview quality can vary by host, context length, and operator habits. We should tighten this into a more opinionated interview experience: thorough discovery, one question at a time, and clear recommendations paired with each question so the user can make fast decisions without losing nuance.
-
-- Define a brainstorm interview contract that requires one question per turn and forbids bundled numbered question dumps
-- Require each question to be either open-ended or multiple-choice, and document when each mode is preferred
-- Require the agent to include a recommendation with every question (for multiple-choice: recommended option first; for open-ended: suggested direction and why)
-- Clarify what “thorough” means for brainstorming depth: problem framing, constraints, alternatives, risks, and acceptance signals before moving to proposal
-- Update `c3spec-explore`, `c3spec-start`, and any brainstorm step in tier skills so they all use the same interview posture
-- Add focused tests (or skill-contract assertions) that catch regressions to multi-question dumps or missing recommendations
-- Decide how to reflect user-selected answers in downstream artifacts so recommendations are traceable into proposal/design
-
-## 12. Default commit approval mode to always approve all
+## 11. Default commit approval mode to always approve all
 
 Today Tier workflows still ask the user at the beginning whether to approve all commits upfront or confirm each commit. For users who always choose the same answer, this prompt is repeated friction. Add a persistent default so commit approval can be preconfigured and the question is skipped unless explicitly overridden.
 
@@ -136,7 +124,7 @@ Today Tier workflows still ask the user at the beginning whether to approve all 
 - Add tests covering default behavior, override behavior, and backward compatibility when no setting exists
 - Document migration behavior for existing users so current flows continue to work unless they opt in
 
-## 13. Research a Rust port for CLI tooling
+## 12. Research a Rust port for CLI tooling
 
 Investigate whether c3spec’s CLI should be ported from the current TypeScript/Node stack to Rust to improve startup speed, binary distribution, reliability, and long-term maintainability. This is research-only and should end with a concrete recommendation and migration posture.
 
@@ -146,7 +134,7 @@ Investigate whether c3spec’s CLI should be ported from the current TypeScript/
 - Assess ecosystem impacts for npm, Homebrew, and Nix install/update flows
 - Produce a go/no-go recommendation with risks, prerequisites, and a suggested pilot scope
 
-## 14. Research converting the project into a pi package and going all-in on pi agent
+## 13. Research converting the project into a pi package and going all-in on pi agent
 
 Investigate what it would take to repackage c3spec as a first-class pi package and treat pi agent as the primary runtime/host model instead of maintaining equal-first-class support patterns for multiple hosts. This is research-only and should conclude with a fit assessment and phased recommendation.
 
