@@ -2,17 +2,7 @@
 
 Backlog of ideas to pick up later. Each entry is intentionally light - flesh out via `/c3spec:start` when ready to work on it.
 
-## 1. Rewrite the README for c3spec branding
-
-Replace the upstream `@fission-ai/openspec` README content with c3spec-specific branding, positioning, and installation instructions. Make it clear this is a Code 3 Dev fork tailored for our workflow, not a drop-in for upstream OpenSpec.
-
-- New project name, taglines, and intro
-- Installation instructions for the `c3spec` CLI (pnpm-based)
-- Quickstart that reflects our tiered workflow (`/c3spec:start` as the front door)
-- Link to upstream OpenSpec with attribution
-- Screenshots/examples using c3spec commands, not openspec
-
-## 2. Codebase audit - find and remove what we don't need (partially complete)
+## 1. Codebase audit - find and remove what we don't need (partially complete)
 
 Do a thorough pass through the codebase to identify code, features, commands, dependencies, and assets that exist because of upstream but aren't valuable for our use case. Goal: shrink the surface area so the project is easier to reason about and modify.
 
@@ -26,7 +16,7 @@ Status (2026-05-27):
 - Look at templates, fixtures, examples for stale content
 - Produce a removal plan before deleting anything
 
-## 3. Bring superpowers into the project (vendor the tooling)
+## 2. Bring superpowers into the project (vendor the tooling)
 
 Currently we depend on the `superpowers` plugin via the Cursor/Claude plugin system. Bring those skills into this repo so we have full control over them, can modify them for c3spec's workflow, and don't depend on an external plugin staying available.
 
@@ -36,7 +26,7 @@ Currently we depend on the `superpowers` plugin via the Cursor/Claude plugin sys
 - Update CLAUDE.md / AGENTS.md routing to point at vendored copies
 - Document the divergence from upstream superpowers
 
-## 4. Research agent tooling we could bundle
+## 3. Research agent tooling we could bundle
 
 Survey the agent-tooling landscape (MCP servers, CLI utilities, helper scripts, etc.) and identify tools worth bundling with c3spec so users get a richer agent environment out of the box. Output is a research doc, not an implementation.
 
@@ -45,7 +35,7 @@ Survey the agent-tooling landscape (MCP servers, CLI utilities, helper scripts, 
 - Note licensing / distribution constraints for bundling
 - Recommend a starter set + a way for users to extend it
 
-## 5. Lightweight webserver tool for agent to human HTML handoff
+## 4. Lightweight webserver tool for agent to human HTML handoff
 
 The CLAUDE.md "HTML artifact rule" currently has agents print a `file://` path for the human to paste into a browser. Explore giving the agent the ability to spin up a tiny local webserver so HTML design docs render with assets, navigation, and live-reload-friendly URLs instead of raw file paths.
 
@@ -55,7 +45,7 @@ The CLAUDE.md "HTML artifact rule" currently has agents print a `file://` path f
 - Make sure it's cross-platform (macOS / Linux / Windows)
 - Define the UX: what does the agent print to the human now?
 
-## 6. Research HITL / HOTL methodologies for this workflow
+## 5. Research HITL / HOTL methodologies for this workflow
 
 We already have human-in-the-loop checkpoints (HTML artifact approvals, commit approval). Do a deeper research pass on human-in-the-loop (HITL) and human-on-the-loop (HOTL) methodologies and figure out where else they belong in the c3spec workflow.
 
@@ -65,7 +55,7 @@ We already have human-in-the-loop checkpoints (HTML artifact approvals, commit a
 - Identify spots where we over-interrupt and could move to HOTL
 - Propose concrete changes to skills / routing / CLAUDE.md
 
-## 7. Make `tasks.md` more extensive and structured
+## 6. Make `tasks.md` more extensive and structured
 
 The current Tier 2 `tasks.md` template is a flat bulleted checklist (`- [ ] Task 1: ...`). For anything beyond a trivial feature this collapses too much detail and loses the staging that the plan already implies. Tasks should mirror the staged structure of the plan (`Task 1`, `Task 1.1`, `Task 1.2`, ...) so the task list itself communicates dependencies, stages, and grouping — not just an ordered checklist.
 
@@ -75,7 +65,7 @@ The current Tier 2 `tasks.md` template is a flat bulleted checklist (`- [ ] Task
 - Decide whether checkboxes apply per-subtask, per-task, or both, and update the subagent-dev checkbox discipline accordingly
 - Make sure spec-impact, verify, retro, and archive remain visible as their own structured tasks rather than buried in a flat list
 
-## 8. Mandatory context reset before the implementation step
+## 7. Mandatory context reset before the implementation step
 
 Every tier should pause between planning and implementation, either by handing the apply step to a fresh agent or by clearing the orchestrator's context before code is written. Today the same session that did the brainstorm/proposal/design/plan also drives apply, so it carries hundreds of turns of planning chatter into the code-writing phase — which dilutes attention, leaks half-formed ideas into the implementation, and makes review harder. Subagents already get fresh context, but the orchestrator itself does not, and there's no enforced pause point.
 
@@ -85,7 +75,7 @@ Every tier should pause between planning and implementation, either by handing t
 - Encode the pause as an explicit skill step with a checkpoint, not a convention
 - Make sure the context-reset boundary preserves the artifacts the apply step needs (paths to plan.md, specs, change folder) — usually via filesystem, not chat history
 
-## 9. Enforce requirements of ALL specs with backing tests
+## 8. Enforce requirements of ALL specs with backing tests
 
 Today the only cross-spec enforcement in this repo is `test/specs/source-specs-normalization.test.ts`, which checks the *shape* of every `c3spec/specs/*/spec.md` (Purpose + Requirements sections, no delta headers, no placeholder text, parseable requirements). Behavioral alignment between each `### Requirement: …` and the code that implements it is trusted entirely to human discipline and `opsx-verify-skill` runs at change time — there is no CI signal when a requirement loses its backing test, or when an implementation drifts away from the requirement it was supposed to satisfy. We dogfood spec-driven development, so the bar should be higher: every requirement in every spec should be traceable to at least one test that exercises it, and CI should fail when that link breaks. Explore what this looks like end-to-end before committing to an implementation.
 
@@ -99,7 +89,7 @@ Today the only cross-spec enforcement in this repo is `test/specs/source-specs-n
 - Surface coverage in a way agents and humans both consume: a `c3spec coverage` subcommand or a generated report under `c3spec/` that shows per-spec status
 - Spawned from the completed workflow-routing spec change — that change deliberately stayed docs-only because no precedent exists for new-test-per-requirement work; this idea is where that precedent gets set
 
-## 10. Trigger native agent answer-picker UIs from c3spec skills
+## 9. Trigger native agent answer-picker UIs from c3spec skills
 
 Claude Code, Codex, and Cursor each surface a structured "pick an answer" UI when an agent emits the right shape — Cursor has its `AskQuestion` tool, Codex/Claude Code render multi-choice prompts when the assistant message follows specific patterns. c3spec interview steps (`c3spec-start`, brainstorm, design checkpoints) currently fall back to plain markdown bullet lists, which is fine but inconsistent and easy for the human to miss. Research whether each runtime exposes a public API (tool, MCP surface, output convention) for these widgets, or whether deterministic prompt phrasing can get them to pop up reliably — then standardize how c3spec skills request a structured answer so the experience matches the host's native flow.
 
@@ -110,7 +100,7 @@ Claude Code, Codex, and Cursor each surface a structured "pick an answer" UI whe
 - Update tier and interview skills (`c3spec-start`, `c3spec-tier2-feature`, `c3spec-tier3-full`, brainstorm/design checkpoints) to use the new convention instead of ad-hoc bullet lists
 - Document the convention so contributors authoring new skills don't reintroduce inconsistent answer prompts
 
-## 11. Audit the standalone `schemas/` system — keep, fold in, or remove
+## 10. Audit the standalone `schemas/` system — keep, fold in, or remove
 
 The repo has a `schemas/` directory at the root (`spec-driven`, `workspace-planning`) plus a sibling `c3spec/schemas/superpowers-bridge/`, each shipping a `schema.yaml` and a `templates/` folder. None of the current tier skills, `c3spec-start`, or host-generation pipeline appear to reach into these schemas — the artifact templates the tier skills actually emit live inline in the SKILL.md content under `.agents/skills/`. The runtime validation under `src/core/schemas/` (spec/change Zod schemas) is a separate system and is in active use, so the audit is specifically about the YAML-schema-with-templates directories, not the runtime validators. Figure out whether these schema bundles are still wired in anywhere, whether they're upstream-pre-fork residue (overlaps with completed pre-fork cleanup work), or whether there's latent value we should fold back into the tier skills.
 
@@ -122,7 +112,7 @@ The repo has a `schemas/` directory at the root (`spec-driven`, `workspace-plann
 - If deleting, make sure `c3spec list`, validation, and host-generation still pass and that the relevant spec/capability is also updated or retired
 - Coordinate with the completed pre-fork cleanup so we don't do two passes over the same upstream residue
 
-## 12. Research pi agent and explore c3spec integration
+## 11. Research pi agent and explore c3spec integration
 
 Investigate "pi agent" as a potential runtime or collaborator for c3spec — first as standalone research (what it is, how it works, its primitives, strengths, and limits) and then specifically how it could interoperate with c3spec's tiered workflow. Today c3spec treats Cursor, Claude Code, and Codex as first-class hosts via `c3spec-host-adapter` and bundled skill delivery; pi agent, if it fits, would be a new host, a sub-runtime for subagent dispatch, a tool surface, or something orthogonal — the goal of this idea is to figure out which (or "none"). Output is a research doc, not an implementation — but the doc should be concrete enough to either close as "no fit" or spawn a follow-up proposal.
 
@@ -134,7 +124,7 @@ Investigate "pi agent" as a potential runtime or collaborator for c3spec — fir
 - Cross-reference with idea #4 (bundled agent tooling survey) and idea #11 (native answer-picker UIs) — overlap is likely and worth coordinating instead of duplicating
 - Output: a single research doc under `docs/research/pi-agent-fit.md` (or similar), plus 0–N follow-up ideas appended to `IDEAS.md` if the research surfaces concrete work
 
-## 13. Investigate why quality-review subagents run so slowly
+## 12. Investigate why quality-review subagents run so slowly
 
 Quality review (`quality-reviewer` subagent dispatched from `c3spec-subagent-dev`) consistently takes much longer than other subagent roles in the same workflow — minutes per task even on small skill-content changes — and it's noticeable enough that it has become the long pole of every tier change. Today there's no measurement, no profiling, and no breakdown of where the time goes (model latency, tool-call count, repeated file reads, oversized context, prompt verbosity, parallelism limits, host-specific overhead). Treat this as a measurement problem first, not a tuning problem: find out where the time actually goes, then decide what to fix.
 
@@ -148,7 +138,7 @@ Quality review (`quality-reviewer` subagent dispatched from `c3spec-subagent-dev
 - Output a short profiling report under `docs/research/` summarizing where the time goes and proposing the smallest fix that closes the gap, before opening a follow-up implementation idea
 - Coordinate with idea #14 (in-process `runCLI` refactor) only if the profiling shows subprocess overhead is part of the slowdown — otherwise keep these tracks separate
 
-## 14. Deepen the brainstorm interview workflow
+## 13. Deepen the brainstorm interview workflow
 
 The brainstorm step is one of the highest-leverage points in the c3spec flow, but right now interview quality can vary by host, context length, and operator habits. We should tighten this into a more opinionated interview experience: thorough discovery, one question at a time, and clear recommendations paired with each question so the user can make fast decisions without losing nuance.
 
@@ -160,7 +150,7 @@ The brainstorm step is one of the highest-leverage points in the c3spec flow, bu
 - Add focused tests (or skill-contract assertions) that catch regressions to multi-question dumps or missing recommendations
 - Decide how to reflect user-selected answers in downstream artifacts so recommendations are traceable into proposal/design
 
-## 15. Default commit approval mode to always approve all
+## 14. Default commit approval mode to always approve all
 
 Today Tier workflows still ask the user at the beginning whether to approve all commits upfront or confirm each commit. For users who always choose the same answer, this prompt is repeated friction. Add a persistent default so commit approval can be preconfigured and the question is skipped unless explicitly overridden.
 

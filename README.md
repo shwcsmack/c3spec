@@ -1,43 +1,71 @@
 # c3spec
 
-Code 3 Dev spec-driven development CLI
+Code 3 Dev’s spec-driven development CLI.
 
-c3spec is a spec-driven development workflow CLI forked from OpenSpec and tailored for Code 3 Dev projects. It provides tiered change routing (T1 fix, T2 feature, T3 full workflow), a project memory system, and opinionated scaffolding so AI assistants and developers stay aligned on requirements before writing code.
+`c3spec` is a fork of OpenSpec, adapted for Code 3 Dev workflows. It adds tiered routing, workflow memory, and opinionated agent skills so changes are scoped and reviewed before implementation.
+
+## Why c3spec
+
+- **Tiered front door** via `/c3spec:start`
+  - **T1** Spec-Aware Fix
+  - **T2** Lightweight Feature
+  - **T3** Full Workflow
+- **Workflow memory** in `c3spec/memory/`
+- **Canonical skill system** under `.agents/skills/`
+- **Spec-first change artifacts** under `c3spec/changes/`
 
 ## Install
+
+### Global install from GitHub
 
 ```bash
 npm install -g git+https://github.com/shwcsmack/c3spec.git
 ```
 
-## Usage
+### Local development
 
-Initialize a project:
+```bash
+pnpm install
+pnpm build
+node bin/c3spec.js --help
+```
+
+## Quickstart
+
+1. Initialize c3spec in a repo:
 
 ```bash
 c3spec init
 ```
 
-Manage project memory:
+2. Start work through your host’s c3spec command:
 
-```bash
-c3spec memory
+```text
+/c3spec:start
 ```
 
-The primary workflow runs through `/opsx:start` in supported AI tools (e.g. Claude Code). That command interviews you, routes to the correct tier, and drives planning and implementation.
+3. Let the workflow interview + route the work to T1/T2/T3.
 
-## Commands
+4. Continue, apply, verify, and archive with the generated change artifacts in `c3spec/changes/<change-id>/`.
 
-| Command | Description |
-|---|---|
-| `init` | Initialize c3spec in the current project directory |
-| `memory list` | List all memory entries in the project memory index |
-| `memory add` | Add a new memory entry |
-| `memory promote` | Promote a local memory entry to global |
-| `archive` | Archive a completed change to the archive directory |
-| `validate` | Validate change artifacts against the schema |
-| `status` | Show the status of the current active change |
+## CLI examples
 
-## Attribution
+```bash
+c3spec list
+c3spec validate
+c3spec archive <change-id>
+c3spec ideas triage
+```
 
-Forked from [OpenSpec](https://github.com/Fission-AI/OpenSpec) by Fission AI. MIT License.
+## Project status
+
+This is an actively maintained Code 3 Dev fork and is **not** a drop-in replacement for upstream OpenSpec defaults.
+
+## Upstream attribution
+
+Forked from [OpenSpec](https://github.com/Fission-AI/OpenSpec) by Fission AI.
+
+- Original project: OpenSpec
+- License: MIT
+
+See [LICENSE](./LICENSE).
