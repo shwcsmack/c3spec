@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Design — codebase-audit-cleanup</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif; margin: 2rem auto; max-width: 1000px; line-height: 1.5; color: #111; }
+    h1, h2, h3 { line-height: 1.2; }
+    code { background: #f4f4f4; padding: 0.1rem 0.3rem; border-radius: 4px; }
+    table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+    th, td { border: 1px solid #ddd; padding: 0.6rem; text-align: left; vertical-align: top; }
+    th { background: #f7f7f7; }
+  </style>
+</head>
+<body>
+  <h1>Design: codebase-audit-cleanup</h1>
+
+  <h2>Decision 1: Evidence-first audit pipeline (chosen)</h2>
+  <p><strong>Approach:</strong> Build a deterministic inventory from repo scanning + reference tracing before deletion.</p>
+  <p><strong>Why:</strong> Prevents accidental removal of active surfaces, especially schema/template and runtime command paths.</p>
+  <p><strong>Alternatives:</strong> Direct deletion sweep (rejected: too risky), metadata-only cleanup (rejected: insufficient scope).</p>
+
+  <h2>Decision 2: 3-band risk classification (chosen)</h2>
+  <ul>
+    <li><strong>Band A:</strong> no runtime/test references; safe deletions.</li>
+    <li><strong>Band B:</strong> likely removable with proof + targeted validations.</li>
+    <li><strong>Band C:</strong> runtime-facing/high-coupling removals requiring explicit user approval per item.</li>
+  </ul>
+
+  <h2>Decision 3: Two-phase execution (chosen)</h2>
+  <p><strong>Phase 1:</strong> Produce audit artifacts and candidate matrix.</p>
+  <p><strong>Phase 2:</strong> Execute cleanup in staged bands with verification gates.</p>
+
+  <h2>Architecture / Flow</h2>
+  <ol>
+    <li>Enumerate surfaces: runtime, commands, scripts, schemas, docs, metadata, packaging.</li>
+    <li>Trace references via ripgrep/tests/config/package entrypoints.</li>
+    <li>Classify each candidate into Keep / Band A / Band B / Band C.</li>
+    <li>Generate tasks and staged implementation plan from approved classification.</li>
+    <li>Apply Band A first, Band B second, Band C only with explicit approvals.</li>
+  </ol>
+
+  <h2>Data/Contract impacts</h2>
+  <ul>
+    <li><code>package.json</code>: possible changes to <code>files</code>, scripts, dependencies, metadata.</li>
+    <li>Schema/template contracts: possible consolidation decisions across <code>schemas/</code> and <code>c3spec/schemas/</code>.</li>
+    <li>Skill/host artifact contracts: preserve canonical-source rules under <code>.agents/</code>.</li>
+  </ul>
+
+  <h2>Risks and mitigations</h2>
+  <table>
+    <thead><tr><th>Risk</th><th>Mitigation</th></tr></thead>
+    <tbody>
+      <tr><td>Removing active schema/template surface</td><td>Reference tracing + schema/CLI/test validations before merge.</td></tr>
+      <tr><td>Breaking host artifact generation</td><td>Run canonical/host generation checks and full tests post-change.</td></tr>
+      <tr><td>Deleting docs still referenced by user flows</td><td>Doc-link scan and README navigation review before deletion.</td></tr>
+      <tr><td>Dependency pruning causing hidden runtime/test failures</td><td>Band-specific validation matrix + full test suite at end.</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Rollout</h2>
+  <ul>
+    <li>Checkpoint after audit matrix completion for user approval.</li>
+    <li>Checkpoint before any Band C deletion.</li>
+    <li>Finalize with verify + retrospective + memory capture.</li>
+  </ul>
+
+  <h2>Open questions</h2>
+  <ul>
+    <li>Whether to merge/remove root <code>schemas/</code> after confirming consumers.</li>
+    <li>Whether to retain long-form historical docs as archive references or remove entirely.</li>
+  </ul>
+</body>
+</html>

@@ -1,37 +1,23 @@
-# OpenSpec Scripts
+# C3Spec Scripts
 
-Utility scripts for OpenSpec maintenance and development.
+Utility scripts for C3Spec maintenance and development.
 
-## update-flake.sh
+## check-canonical-skills.js
 
-Updates `flake.nix` pnpm dependency hash automatically.
+Verifies canonical skill sources remain in sync with expected host-generated surfaces.
 
-**When to use**: After updating dependencies (`pnpm install`, `pnpm update`).
+## compute-hashes.ts
 
-**Usage**:
-```bash
-./scripts/update-flake.sh
-```
+Computes hashes used by generated artifact sentinel/drift workflows.
 
-**What it does**:
-1. Reads version from `package.json` (dynamically used by `flake.nix`)
-2. Automatically determines the correct pnpm dependency hash
-3. Updates the hash in `flake.nix`
-4. Verifies the build succeeds
+## extract-command-templates.mjs
 
-**Example workflow**:
-```bash
-# After dependency updates
-pnpm install
-./scripts/update-flake.sh
-git add flake.nix
-git commit -m "chore: update flake.nix dependency hash"
-```
+Extracts command template content for generation/update workflows.
 
 ## postinstall.js
 
-Post-installation script that runs after package installation.
+Post-installation script run after package installation.
 
-## pack-version-check.mjs
+## test-postinstall.sh
 
-Validates package version consistency before publishing.
+Shell harness for local postinstall behavior checks.
