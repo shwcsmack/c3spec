@@ -21,11 +21,17 @@ Capture-only skill for backlog intake. Use this whenever the user says things li
    - title
    - one-paragraph summary
    - actionable bullets
-3. Prefer CLI-backed append:
+3. Prefer CLI-backed append. Resolve the executable in this order:
 
 ```bash
+# 1) If globally available
 c3spec ideas add "<title>" --summary "<summary>" --bullet "<item1>" --bullet "<item2>"
+
+# 2) Otherwise from the local project package
+npm exec -- c3spec ideas add "<title>" --summary "<summary>" --bullet "<item1>" --bullet "<item2>"
 ```
+
+If both fail, fall back to editing `IDEAS.md` directly.
 
 4. If summary or bullets are missing, ask one focused question, then continue.
 5. Confirm result by reporting the new idea number and title.
