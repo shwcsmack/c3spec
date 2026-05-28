@@ -112,33 +112,7 @@ The repo has a `schemas/` directory at the root (`spec-driven`, `workspace-plann
 - If deleting, make sure `c3spec list`, validation, and host-generation still pass and that the relevant spec/capability is also updated or retired
 - Coordinate with the completed pre-fork cleanup so we don't do two passes over the same upstream residue
 
-## 11. Research pi agent and explore c3spec integration
-
-Investigate "pi agent" as a potential runtime or collaborator for c3spec — first as standalone research (what it is, how it works, its primitives, strengths, and limits) and then specifically how it could interoperate with c3spec's tiered workflow. Today c3spec treats Cursor, Claude Code, and Codex as first-class hosts via `c3spec-host-adapter` and bundled skill delivery; pi agent, if it fits, would be a new host, a sub-runtime for subagent dispatch, a tool surface, or something orthogonal — the goal of this idea is to figure out which (or "none"). Output is a research doc, not an implementation — but the doc should be concrete enough to either close as "no fit" or spawn a follow-up proposal.
-
-- **Phase 1 — pi agent itself:** what it is, who maintains it, license / distribution model, runtime shape (CLI, service, embedded library), skill / tool / hook surfaces, prompt-handling model, current adopters and maturity signals
-- **Phase 2 — c3spec fit assessment:** classify it against c3spec's existing seams — host runtime (like Cursor / Claude Code / Codex), subagent target (like the `implementer` / `spec-reviewer` / `quality-reviewer` roles), tool surface (MCP-like), or something we don't have a slot for yet
-- Identify the smallest viable integration story per classification, e.g. "c3spec dispatches subagents into pi agent" vs. "pi agent gets the same `.agents/skills/` bundle as Cursor" vs. "pi agent calls c3spec CLI as an external tool"
-- Map what would have to change in `c3spec-host-adapter`, host-generation, `.agents/skills/` delivery, slash-command templates, and the CLI surfaces to accommodate the chosen story
-- Surface blockers and open questions up front — licensing, prompt-format compatibility, missing primitives (subagent dispatch? hooks? structured answer-picker?) — so the research is honest about what we don't know
-- Cross-reference with idea #4 (bundled agent tooling survey) and idea #11 (native answer-picker UIs) — overlap is likely and worth coordinating instead of duplicating
-- Output: a single research doc under `docs/research/pi-agent-fit.md` (or similar), plus 0–N follow-up ideas appended to `IDEAS.md` if the research surfaces concrete work
-
-## 12. Investigate why quality-review subagents run so slowly
-
-Quality review (`quality-reviewer` subagent dispatched from `c3spec-subagent-dev`) consistently takes much longer than other subagent roles in the same workflow — minutes per task even on small skill-content changes — and it's noticeable enough that it has become the long pole of every tier change. Today there's no measurement, no profiling, and no breakdown of where the time goes (model latency, tool-call count, repeated file reads, oversized context, prompt verbosity, parallelism limits, host-specific overhead). Treat this as a measurement problem first, not a tuning problem: find out where the time actually goes, then decide what to fix.
-
-- Instrument quality-review runs end-to-end: capture wall-clock per subagent invocation, count of tool calls made, total tokens in / out, and a rough breakdown of phases (context load → analysis → write findings)
-- Compare against `spec-reviewer` and `implementer` runs on the same task to confirm quality review is actually the slow one (or whether it just feels slower) and quantify the gap
-- Audit the quality-review prompt and skill content for prompt bloat — long preambles, repeated rules, redundant context — and see how much of the input is fixed overhead vs. task-specific signal
-- Audit what the subagent re-reads on each invocation (tier skills, lifecycle skill, sibling artifacts, generated host copies); look for redundant fetches and oversized file reads that could be narrowed
-- Check parallelism: are quality-review runs serialized across tasks even when independent? `c3spec-subagent-dev` orchestrates this, so confirm whether the bottleneck is sequencing rather than per-invocation cost
-- Check host differences: time the same review under Cursor vs. Claude Code vs. Codex to see if the slowdown is review-specific or host-specific (i.e., is it the role, the runtime, or the model)
-- Consider scoped quality reviews — e.g. "review only the diff touching X" instead of "review the whole change" — and measure the speedup vs. the loss of catch rate before adopting
-- Output a short profiling report under `docs/research/` summarizing where the time goes and proposing the smallest fix that closes the gap, before opening a follow-up implementation idea
-- Coordinate with idea #14 (in-process `runCLI` refactor) only if the profiling shows subprocess overhead is part of the slowdown — otherwise keep these tracks separate
-
-## 13. Deepen the brainstorm interview workflow
+## 11. Deepen the brainstorm interview workflow
 
 The brainstorm step is one of the highest-leverage points in the c3spec flow, but right now interview quality can vary by host, context length, and operator habits. We should tighten this into a more opinionated interview experience: thorough discovery, one question at a time, and clear recommendations paired with each question so the user can make fast decisions without losing nuance.
 
@@ -150,7 +124,7 @@ The brainstorm step is one of the highest-leverage points in the c3spec flow, bu
 - Add focused tests (or skill-contract assertions) that catch regressions to multi-question dumps or missing recommendations
 - Decide how to reflect user-selected answers in downstream artifacts so recommendations are traceable into proposal/design
 
-## 14. Default commit approval mode to always approve all
+## 12. Default commit approval mode to always approve all
 
 Today Tier workflows still ask the user at the beginning whether to approve all commits upfront or confirm each commit. For users who always choose the same answer, this prompt is repeated friction. Add a persistent default so commit approval can be preconfigured and the question is skipped unless explicitly overridden.
 
@@ -162,7 +136,7 @@ Today Tier workflows still ask the user at the beginning whether to approve all 
 - Add tests covering default behavior, override behavior, and backward compatibility when no setting exists
 - Document migration behavior for existing users so current flows continue to work unless they opt in
 
-## 15. Research a Rust port for CLI tooling
+## 13. Research a Rust port for CLI tooling
 
 Investigate whether c3spec’s CLI should be ported from the current TypeScript/Node stack to Rust to improve startup speed, binary distribution, reliability, and long-term maintainability. This is research-only and should end with a concrete recommendation and migration posture.
 
@@ -172,7 +146,7 @@ Investigate whether c3spec’s CLI should be ported from the current TypeScript/
 - Assess ecosystem impacts for npm, Homebrew, and Nix install/update flows
 - Produce a go/no-go recommendation with risks, prerequisites, and a suggested pilot scope
 
-## 16. Research converting the project into a pi package and going all-in on pi agent
+## 14. Research converting the project into a pi package and going all-in on pi agent
 
 Investigate what it would take to repackage c3spec as a first-class pi package and treat pi agent as the primary runtime/host model instead of maintaining equal-first-class support patterns for multiple hosts. This is research-only and should conclude with a fit assessment and phased recommendation.
 

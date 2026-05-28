@@ -2,6 +2,7 @@ import { Command } from 'commander';
 import { promises as fs } from 'node:fs';
 import * as path from 'node:path';
 import { execFileSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 
 type IdeaEntry = {
   title: string;
@@ -23,13 +24,22 @@ type RankedIdea = {
 };
 
 const IDEA_HEADING_RE = /^##\s+(\d+)\.\s+(.+)$/;
+const IDEAS_DIGEST_RE = /^<!--\s*c3spec:ideas-digest\s+([a-f0-9]{64})\s*-->$/;
 
 function ideasPath(cwd = process.cwd()): string {
   return path.join(cwd, 'IDEAS.md');
 }
 
+function stripDigestLines(lines: string[]): string[] {
+  return lines.filter((line) => !IDEAS_DIGEST_RE.test(line.trim()));
+}
+
+function computeIdeasDigest(contentWithoutDigest: string): string {
+  return createHash('sha256').update(contentWithoutDigest, 'utf-8').digest('hex');
+}
+
 export function parseIdeas(content: string): IdeasDocument {
-  const lines = content.split('\n');
+  const lines = stripDigestLines(content.split('\n'));
   const preamble: string[] = [];
   const entries: IdeaEntry[] = [];
 
@@ -56,7 +66,8 @@ export function parseIdeas(content: string): IdeasDocument {
 
 export function renderIdeas(doc: IdeasDocument): string {
   const parts: string[] = [];
-  parts.push(doc.preamble.join('\n').replace(/\n+$/g, ''));
+  const cleanPreamble = stripDigestLines(doc.preamble).join('\n').replace(/\n+$/g, '');
+  parts.push(cleanPreamble);
 
   doc.entries.forEach((entry, index) => {
     parts.push(`## ${index + 1}. ${entry.title}`);
@@ -64,7 +75,9 @@ export function renderIdeas(doc: IdeasDocument): string {
     parts.push(body);
   });
 
-  return `${parts.join('\n\n').replace(/\n{3,}/g, '\n\n')}\n`;
+  const contentWithoutDigest = `${parts.join('\n\n').replace(/\n{3,}/g, '\n\n')}\n`;
+  const digest = computeIdeasDigest(contentWithoutDigest);
+  return `${`<!-- c3spec:ideas-digest ${digest} -->\n`}${contentWithoutDigest}`;
 }
 
 export function renumberIdeas(doc: IdeasDocument): IdeasDocument {
@@ -354,11 +367,11 @@ export function registerIdeasCommand(program: Command): void {
 
   ideasCmd
     .command('lint')
-    .description('Validate idea numbering and heading shape')
+    .description('Validate idea numbering, heading shape, and CLI-managed digest')
     .action(async () => {
       const target = ideasPath();
       const content = await fs.readFile(target, 'utf-8');
-      const lines = content.split('\n');
+      const lines = stripDigestLines(content.split('\n'));
 
       let expected = 1;
       const errors: string[] = [];
@@ -372,6 +385,16 @@ export function registerIdeasCommand(program: Command): void {
           expected = id;
         }
         expected += 1;
+      }
+
+      const digestMatch = content.match(IDEAS_DIGEST_RE);
+      if (!digestMatch) {
+        errors.push('Missing c3spec ideas digest header. Run `c3spec ideas renumber` to normalize via CLI.');
+      } else {
+        const expectedDigest = computeIdeasDigest(lines.join('\n'));
+        if (digestMatch[1] !== expectedDigest) {
+          errors.push('Digest mismatch: IDEAS.md was edited outside CLI flow. Re-run your change with `c3spec ideas` commands.');
+        }
       }
 
       if (errors.length > 0) {

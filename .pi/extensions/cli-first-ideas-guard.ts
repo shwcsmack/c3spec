@@ -2,8 +2,12 @@ import path from 'node:path';
 import type { ExtensionAPI } from '@earendil-works/pi-coding-agent';
 import { isToolCallEventType } from '@earendil-works/pi-coding-agent';
 
+function normalizeCommand(command: string): string {
+  return command.replace(/\s+/g, ' ').trim();
+}
+
 function isIdeasTriageCommand(command: string): boolean {
-  const normalized = command.replace(/\s+/g, ' ').trim();
+  const normalized = normalizeCommand(command);
   return (
     /(^|\s)c3spec ideas triage(\s|$)/.test(normalized) ||
     /(^|\s)node\s+bin\/c3spec\.js\s+ideas\s+triage(\s|$)/.test(normalized)
@@ -38,6 +42,23 @@ export default function registerCliFirstIdeasGuard(pi: ExtensionAPI) {
             'CLI-first rule: run `c3spec ideas triage` (or `node bin/c3spec.js ideas triage`) before reading IDEAS.md.',
         };
       }
+      return;
+    }
+
+    if (isToolCallEventType('edit', event) && isIdeasFilePath(event.input.path)) {
+      return {
+        block: true,
+        reason:
+          'Use CLI for IDEAS.md CRUD: `c3spec ideas add|remove|complete|renumber` (or `node bin/c3spec.js ...`). Direct file edits are blocked.',
+      };
+    }
+
+    if (isToolCallEventType('write', event) && isIdeasFilePath(event.input.path)) {
+      return {
+        block: true,
+        reason:
+          'Use CLI for IDEAS.md CRUD: `c3spec ideas add|remove|complete|renumber` (or `node bin/c3spec.js ...`). Direct file writes are blocked.',
+      };
     }
   });
 }
