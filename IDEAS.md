@@ -1,4 +1,4 @@
-<!-- c3spec:ideas-digest 6413fb2f4e2de50c1047b9b4c59ede1ed43419bda0dbdd3858046010c253ddc6 -->
+<!-- c3spec:ideas-digest d862700ebb84ae3cf7f0ffadc75580883cf67247c704497fdd12a982c0d7695d -->
 # Ideas
 
 Backlog of ideas to pick up later. Each entry is intentionally light - flesh out via `/c3spec:start` when ready to work on it.
@@ -99,16 +99,7 @@ Investigate what it would take to repackage c3spec as a first-class pi package a
 - Define migration options: additive support, staged default switch, or full strategic pivot
 - Produce a recommendation document with explicit success criteria, blockers, and follow-up ideas
 
-## 10. Fix subagent-driven development flow and PI setup for subagent execution
-
-Stabilize and simplify the c3spec subagent-driven development flow, including reliable PI environment/setup for subagent work so implementation and review agents can be dispatched consistently across hosts.
-
-- Audit current c3spec-subagent-dev orchestration steps for failure points, drift, and host-specific assumptions.
-- Define and implement a deterministic PI setup/bootstrap step required before subagent dispatch.
-- Update c3spec-host-adapter and related skills to enforce/setup subagent prerequisites automatically.
-- Add tests covering subagent dispatch readiness, failure handling, and cross-host behavior.
-
-## 11. Fix finishing-development-branch flow at end of every workflow
+## 10. Fix finishing-development-branch flow at end of every workflow
 
 Harden the branch-finalization flow so every workflow consistently ends with a reliable finishing-development-branch step and clear PR-ready output.
 
@@ -117,7 +108,7 @@ Harden the branch-finalization flow so every workflow consistently ends with a r
 - Improve failure handling/retry guidance when finalization checks fail.
 - Add tests ensuring each workflow path reaches finishing-development-branch under the correct conditions.
 
-## 12. Auto-resolve ideas after implementation with idea-specific workflow
+## 11. Auto-resolve ideas after implementation with idea-specific workflow
 
 Design a reliable mechanism to remove or mark ideas complete once the corresponding fix/feature is delivered, potentially via an idea-linked workflow that tracks implementation-to-backlog closure.
 
