@@ -7,7 +7,9 @@ type SpecCoverage = { spec: string; requirements: RequirementRef[] };
 type Baseline = Record<string, { exemptRequirementIds?: string[]; allowMissingIds?: boolean }>;
 
 const REQUIREMENT_HEADER_RE = /^###\s+Requirement:\s*(?:\[([A-Z0-9-]+)\]\s*)?(.+)$/;
-const REQUIREMENT_TOKEN_RE = /requirement:\s*([A-Z0-9-]+)/gi;
+// Canonical token format: requirement: <PREFIX-NNN>
+// Examples: requirement: WORKFLOW-ROUTING-013, requirement: CLI-VALIDATE-007
+const REQUIREMENT_TOKEN_RE = /requirement:\s*([A-Z][A-Z0-9-]*-\d{3,})\b/g;
 
 async function fileExists(p: string): Promise<boolean> {
   try { await fs.access(p); return true; } catch { return false; }

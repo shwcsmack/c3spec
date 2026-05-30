@@ -57,9 +57,10 @@ describe('coverage command', () => {
       '# demo\n\n## Purpose\n\nP\n\n## Requirements\n### Requirement: [DEM-001] First\nText SHALL be true\n\n#### Scenario: S\n- x\n',
       'utf8',
     );
+    const reqId = 'DEM' + '-001';
     await fs.writeFile(
       path.join(tmp, 'test', 'demo.test.ts'),
-      "import { it } from 'vitest'; it('requirement: DEM-001', () => {});\n",
+      `import { it } from 'vitest'; it('requirement: ${reqId}', () => {});\n`,
       'utf8',
     );
 
