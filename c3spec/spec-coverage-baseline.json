@@ -146,11 +146,7 @@
   },
   "cli-show": {
     "allowMissingIds": false,
-    "exemptRequirementIds": [
-      "CLI-SHOW-001",
-      "CLI-SHOW-002",
-      "CLI-SHOW-003"
-    ]
+    "exemptRequirementIds": []
   },
   "cli-spec": {
     "allowMissingIds": false,

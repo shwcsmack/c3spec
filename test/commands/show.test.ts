@@ -28,7 +28,7 @@ describe('top-level show command', () => {
     await fs.rm(testDir, { recursive: true, force: true });
   });
 
-  it('prints hint and non-zero exit when no args and non-interactive', () => {
+  it('requirement: CLI-SHOW-001 prints hint and non-zero exit when no args and non-interactive', () => {
     const originalCwd = process.cwd();
     const originalEnv = { ...process.env };
     try {
@@ -51,7 +51,7 @@ describe('top-level show command', () => {
     }
   });
 
-  it('auto-detects change id and supports --json', () => {
+  it('requirement: CLI-SHOW-002 auto-detects change id and supports --json', () => {
     const originalCwd = process.cwd();
     try {
       process.chdir(testDir);
@@ -64,7 +64,7 @@ describe('top-level show command', () => {
     }
   });
 
-  it('auto-detects spec id and supports spec-only flags', () => {
+  it('requirement: CLI-SHOW-003 auto-detects spec id and supports spec-only flags', () => {
     const originalCwd = process.cwd();
     try {
       process.chdir(testDir);
@@ -77,7 +77,7 @@ describe('top-level show command', () => {
     }
   });
 
-  it('handles ambiguity and suggests --type', async () => {
+  it('requirement: CLI-SHOW-001 handles ambiguity and suggests --type', async () => {
     // create matching spec and change named 'foo'
     await fs.mkdir(path.join(changesDir, 'foo'), { recursive: true });
     await fs.writeFile(path.join(changesDir, 'foo', 'proposal.md'), '# Change: Foo\n\n## Why\n\n## What Changes\n', 'utf-8');
@@ -101,7 +101,7 @@ describe('top-level show command', () => {
     }
   });
 
-  it('prints nearest matches when not found', () => {
+  it('requirement: CLI-SHOW-001 prints nearest matches when not found', () => {
     const originalCwd = process.cwd();
     try {
       process.chdir(testDir);
