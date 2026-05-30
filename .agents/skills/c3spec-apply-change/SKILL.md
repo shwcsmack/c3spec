@@ -104,6 +104,8 @@ Before handing off, display:
 
 ### 7. Hand off implementation to `c3spec-subagent-dev`
 
+Before handoff, run `c3spec subagent bootstrap --change <name>`. If bootstrap exits non-zero, stop and surface remediation; do not dispatch subagents.
+
 This helper does **not** loop through tasks itself and does **not** mark `tasks.md` / mini-plan checkboxes. Implementation, stage dispatch, two-stage review (spec compliance → code quality), and checkbox updates are owned by the controller and `c3spec-subagent-dev` after both reviews pass.
 
 Invoke `c3spec-subagent-dev` with everything it needs to start without re-deriving context:

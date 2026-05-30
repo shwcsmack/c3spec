@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Retrospective - subagent-bootstrap-cli</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; margin: 2rem auto; max-width: 900px; line-height: 1.45; }
+    h1, h2 { margin-bottom: 0.4rem; }
+    code { background: #f6f8fa; padding: 0.1rem 0.3rem; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>Retrospective: subagent-bootstrap-cli</h1>
+
+  <h2>1. Evidence</h2>
+  <ul>
+    <li>Implemented new command: <code>c3spec subagent bootstrap --change &lt;id&gt; [--json]</code></li>
+    <li>Added bootstrap engine: required checks (<code>runtime</code>, <code>artifacts</code>, <code>roles</code>) + informational <code>memory</code></li>
+    <li>Added distinct exit-code behavior and JSON output contract</li>
+    <li>Added tests: command behavior + skill-gating contract</li>
+    <li>Verification: full test suite passed (78 files, 1232 tests)</li>
+  </ul>
+
+  <h2>2. What worked</h2>
+  <ul>
+    <li>Design decisions from interview translated cleanly into command contract.</li>
+    <li>Stable check IDs and categorized output made testing straightforward.</li>
+    <li>Fast feedback loop via targeted tests before full suite run.</li>
+  </ul>
+
+  <h2>3. What did not work</h2>
+  <ul>
+    <li>Runtime validation is still contract-surface based, not host-process introspection.</li>
+    <li>Dispatch integration currently relies on updated skill contracts rather than deeper runtime hooks.</li>
+  </ul>
+
+  <h2>4. Workflow/process improvements</h2>
+  <ul>
+    <li>Keep a reusable exit-code/failure taxonomy module for future gate commands.</li>
+    <li>Add a shared helper for tier/artifact derivation to avoid duplicated lifecycle logic.</li>
+  </ul>
+
+  <h2>5. Generalizable learning</h2>
+  <p>
+    For workflow-gating commands, separating required vs informational checks with stable IDs and distinct exit codes significantly improves reliability and automation ergonomics.
+  </p>
+</body>
+</html>
