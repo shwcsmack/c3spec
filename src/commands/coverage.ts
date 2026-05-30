@@ -102,6 +102,22 @@ export async function runCoverageAudit(projectRoot: string, strict: boolean, jso
   const unknownRefs = [...refs.keys()].filter((id) => !seen.has(id));
   const hasErrors = duplicateIds.size > 0 || (strict && (missingId.length > 0 || uncovered.length > 0));
 
+  const uncoveredSet = new Set(uncovered);
+  const perSpec = specs.map((spec) => {
+    const specBaseline = baseline[spec.spec] ?? {};
+    const exempt = new Set(specBaseline.exemptRequirementIds ?? []);
+    const requirementIds = spec.requirements.map((r) => r.id).filter((id): id is string => !!id);
+    const uncoveredIds = requirementIds.filter((id) => uncoveredSet.has(id));
+    return {
+      spec: spec.spec,
+      requirements: spec.requirements.length,
+      missingIds: spec.requirements.filter((r) => !r.id).length,
+      exemptIds: exempt.size,
+      uncovered: uncoveredIds.length,
+      covered: Math.max(0, requirementIds.length - uncoveredIds.length - exempt.size),
+    };
+  });
+
   const payload = {
     strict,
     totals: {
@@ -112,6 +128,7 @@ export async function runCoverageAudit(projectRoot: string, strict: boolean, jso
       unknownRefs: unknownRefs.length,
       duplicateIds: duplicateIds.size,
     },
+    perSpec,
     missingId,
     uncovered,
     duplicateIds: [...duplicateIds],
@@ -126,6 +143,9 @@ export async function runCoverageAudit(projectRoot: string, strict: boolean, jso
     if (uncovered.length) console.log(`- uncovered requirements: ${uncovered.length}`);
     if (unknownRefs.length) console.log(`- unknown test references: ${unknownRefs.length}`);
     if (duplicateIds.size) console.log(`- duplicate requirement IDs: ${duplicateIds.size}`);
+    for (const row of perSpec) {
+      console.log(`  ${row.spec}: covered=${row.covered} uncovered=${row.uncovered} exempt=${row.exemptIds} missingIds=${row.missingIds}`);
+    }
     if (!missingId.length && !uncovered.length && !unknownRefs.length && !duplicateIds.size) console.log('All requirements are covered.');
   }
 

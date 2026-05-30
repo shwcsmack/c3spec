@@ -29,8 +29,15 @@ describe('coverage command', () => {
       'utf8',
     );
 
+    const logs: string[] = [];
+    const orig = console.log;
+    console.log = (...args: unknown[]) => logs.push(args.join(' '));
     await runCoverageAudit(tmp, false, true);
+    console.log = orig;
     expect(process.exitCode).toBe(0);
+    const json = JSON.parse(logs.join('\n'));
+    expect(Array.isArray(json.perSpec)).toBe(true);
+    expect(json.perSpec[0].spec).toBe('demo');
   });
 
   it('strict mode fails on uncovered requirements', async () => {
