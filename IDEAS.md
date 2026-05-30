@@ -1,4 +1,4 @@
-<!-- c3spec:ideas-digest b33578fe9766f06765e31469d3a683de121e38f97aafa01abcdd784812d1d1ed -->
+<!-- c3spec:ideas-digest d48da9cb72523a0cd396549924d1f4d0cb4c6719b36fd63d1beb5ce447266f27 -->
 # Ideas
 
 Backlog of ideas to pick up later. Each entry is intentionally light - flesh out via `/c3spec:start` when ready to work on it.
@@ -42,21 +42,7 @@ Every tier should pause between planning and implementation, either by handing t
 - Encode the pause as an explicit skill step with a checkpoint, not a convention
 - Make sure the context-reset boundary preserves the artifacts the apply step needs (paths to plan.md, specs, change folder) — usually via filesystem, not chat history
 
-## 5. Enforce requirements of ALL specs with backing tests
-
-Today the only cross-spec enforcement in this repo is `test/specs/source-specs-normalization.test.ts`, which checks the *shape* of every `c3spec/specs/*/spec.md` (Purpose + Requirements sections, no delta headers, no placeholder text, parseable requirements). Behavioral alignment between each `### Requirement: …` and the code that implements it is trusted entirely to human discipline and `opsx-verify-skill` runs at change time — there is no CI signal when a requirement loses its backing test, or when an implementation drifts away from the requirement it was supposed to satisfy. We dogfood spec-driven development, so the bar should be higher: every requirement in every spec should be traceable to at least one test that exercises it, and CI should fail when that link breaks. Explore what this looks like end-to-end before committing to an implementation.
-
-- Decide what "backing test" means: a test that asserts the requirement's behavior, a test that exists in a file the spec maps to, or a stronger explicit link (e.g., requirement IDs referenced in test names or describe blocks)
-- Inventory current state: for each spec under `c3spec/specs/`, count how many requirements are plausibly covered by existing tests vs trusted-by-convention; produce a baseline so the gap is visible
-- Pick a linking mechanism — options include: stable requirement IDs in spec headers (e.g., `### Requirement: [WR-001] Tier set definition`), a sidecar `spec.coverage.yaml` per capability, a `requirement:` annotation convention in test names, or a build-time index that scans both sides
-- Decide enforcement strength: warn-only at first, then fail CI when a requirement has no backing test or a test references a requirement ID that no longer exists
-- Handle the bootstrap problem honestly — most existing specs will fail on day one; design a migration path (allow-list, per-spec opt-in, or a "must not regress" baseline that hardens over time)
-- Avoid over-coupling: tests must still be readable on their own; a `requirement:` annotation should add information, not become the only way to understand what the test does
-- Cover the inverse drift case: when a requirement is deleted or renamed via the archive flow, the matching tests/annotations should be flagged for cleanup rather than silently orphaned
-- Surface coverage in a way agents and humans both consume: a `c3spec coverage` subcommand or a generated report under `c3spec/` that shows per-spec status
-- Spawned from the completed workflow-routing spec change — that change deliberately stayed docs-only because no precedent exists for new-test-per-requirement work; this idea is where that precedent gets set
-
-## 6. Trigger native agent answer-picker UIs from c3spec skills
+## 5. Trigger native agent answer-picker UIs from c3spec skills
 
 Claude Code, Codex, and Cursor each surface a structured "pick an answer" UI when an agent emits the right shape — Cursor has its `AskQuestion` tool, Codex/Claude Code render multi-choice prompts when the assistant message follows specific patterns. c3spec interview steps (`c3spec-start`, brainstorm, design checkpoints) currently fall back to plain markdown bullet lists, which is fine but inconsistent and easy for the human to miss. Research whether each runtime exposes a public API (tool, MCP surface, output convention) for these widgets, or whether deterministic prompt phrasing can get them to pop up reliably — then standardize how c3spec skills request a structured answer so the experience matches the host's native flow.
 
@@ -67,7 +53,7 @@ Claude Code, Codex, and Cursor each surface a structured "pick an answer" UI whe
 - Update tier and interview skills (`c3spec-start`, `c3spec-tier2-feature`, `c3spec-tier3-full`, brainstorm/design checkpoints) to use the new convention instead of ad-hoc bullet lists
 - Document the convention so contributors authoring new skills don't reintroduce inconsistent answer prompts
 
-## 7. Default commit approval mode to always approve all
+## 6. Default commit approval mode to always approve all
 
 Today Tier workflows still ask the user at the beginning whether to approve all commits upfront or confirm each commit. For users who always choose the same answer, this prompt is repeated friction. Add a persistent default so commit approval can be preconfigured and the question is skipped unless explicitly overridden.
 
@@ -79,7 +65,7 @@ Today Tier workflows still ask the user at the beginning whether to approve all 
 - Add tests covering default behavior, override behavior, and backward compatibility when no setting exists
 - Document migration behavior for existing users so current flows continue to work unless they opt in
 
-## 8. Research a Rust port for CLI tooling
+## 7. Research a Rust port for CLI tooling
 
 Investigate whether c3spec’s CLI should be ported from the current TypeScript/Node stack to Rust to improve startup speed, binary distribution, reliability, and long-term maintainability. This is research-only and should end with a concrete recommendation and migration posture.
 
@@ -89,7 +75,7 @@ Investigate whether c3spec’s CLI should be ported from the current TypeScript/
 - Assess ecosystem impacts for npm, Homebrew, and Nix install/update flows
 - Produce a go/no-go recommendation with risks, prerequisites, and a suggested pilot scope
 
-## 9. Research converting the project into a pi package and going all-in on pi agent
+## 8. Research converting the project into a pi package and going all-in on pi agent
 
 Investigate what it would take to repackage c3spec as a first-class pi package and treat pi agent as the primary runtime/host model instead of maintaining equal-first-class support patterns for multiple hosts. This is research-only and should conclude with a fit assessment and phased recommendation.
 
@@ -99,7 +85,7 @@ Investigate what it would take to repackage c3spec as a first-class pi package a
 - Define migration options: additive support, staged default switch, or full strategic pivot
 - Produce a recommendation document with explicit success criteria, blockers, and follow-up ideas
 
-## 10. Auto-resolve ideas after implementation with idea-specific workflow
+## 9. Auto-resolve ideas after implementation with idea-specific workflow
 
 Design a reliable mechanism to remove or mark ideas complete once the corresponding fix/feature is delivered, potentially via an idea-linked workflow that tracks implementation-to-backlog closure.
 
