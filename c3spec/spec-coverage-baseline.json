@@ -181,13 +181,7 @@
       "CLI-VALIDATE-001",
       "CLI-VALIDATE-002",
       "CLI-VALIDATE-003",
-      "CLI-VALIDATE-004",
-      "CLI-VALIDATE-005",
-      "CLI-VALIDATE-006",
-      "CLI-VALIDATE-007",
-      "CLI-VALIDATE-008",
-      "CLI-VALIDATE-009",
-      "CLI-VALIDATE-010"
+      "CLI-VALIDATE-004"
     ]
   },
   "cli-view": {

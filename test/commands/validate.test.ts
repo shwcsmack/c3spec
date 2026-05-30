@@ -63,13 +63,13 @@ describe('top-level validate command', () => {
     await fs.rm(testDir, { recursive: true, force: true });
   });
 
-  it('prints a helpful hint when no args in non-interactive mode', async () => {
+  it('requirement: CLI-VALIDATE-005 prints a helpful hint when no args in non-interactive mode', async () => {
     const result = await runCLI(['validate'], { cwd: testDir });
     expect(result.exitCode).toBe(1);
     expect(result.stderr).toContain('Nothing to validate. Try one of:');
   });
 
-  it('validates all with --all and outputs JSON summary', async () => {
+  it('requirement: CLI-VALIDATE-007 validates all with --all and outputs JSON summary', async () => {
     const result = await runCLI(['validate', '--all', '--json'], { cwd: testDir });
     expect(result.exitCode).toBe(0);
     const output = result.stdout.trim();
@@ -80,7 +80,7 @@ describe('top-level validate command', () => {
     expect(json.version).toBe('1.0');
   });
 
-  it('validates only specs with --specs and respects --concurrency', async () => {
+  it('requirement: CLI-VALIDATE-006 validates only specs with --specs and respects --concurrency', async () => {
     const result = await runCLI(['validate', '--specs', '--json', '--concurrency', '1'], { cwd: testDir });
     expect(result.exitCode).toBe(0);
     const output = result.stdout.trim();
@@ -89,13 +89,13 @@ describe('top-level validate command', () => {
     expect(json.items.every((i: any) => i.type === 'spec')).toBe(true);
   });
 
-  it('errors on ambiguous item names and suggests type override', async () => {
+  it('requirement: CLI-VALIDATE-008 errors on ambiguous item names and suggests type override', async () => {
     const result = await runCLI(['validate', 'dup'], { cwd: testDir });
     expect(result.exitCode).toBe(1);
     expect(result.stderr).toContain('Ambiguous item');
   });
 
-  it('accepts change proposals saved with CRLF line endings', async () => {
+  it('requirement: CLI-VALIDATE-010 accepts change proposals saved with CRLF line endings', async () => {
     const changeId = 'crlf-change';
     const toCrlf = (segments: string[]) => segments.join('\n').replace(/\n/g, '\r\n');
 
@@ -131,7 +131,7 @@ describe('top-level validate command', () => {
     expect(result.exitCode).toBe(0);
   });
 
-  it('respects --no-interactive flag passed via CLI', async () => {
+  it('requirement: CLI-VALIDATE-009 respects --no-interactive flag passed via CLI', async () => {
     // This test ensures Commander.js --no-interactive flag is correctly parsed
     // and passed to the validate command. The flag sets options.interactive = false
     // (not options.noInteractive = true) due to Commander.js convention.
@@ -145,7 +145,7 @@ describe('top-level validate command', () => {
     expect(result.stderr).not.toContain('What would you like to validate?');
   });
 
-  it('fails strict spec validation when coverage audit finds uncovered requirement IDs', async () => {
+  it('requirement: CLI-VALIDATE-007 fails strict spec validation when coverage audit finds uncovered requirement IDs', async () => {
     const specWithId = [
       '## Purpose',
       'Coverage linkage check.',
