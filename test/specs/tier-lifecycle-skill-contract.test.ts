@@ -57,12 +57,12 @@ const TIER_LIFECYCLE_REQUIRED_ARTIFACTS = {
 
 describe('tier lifecycle skill contract', () => {
   describe('c3spec-tier-lifecycle reference skill', () => {
-    it('exists at the canonical path', async () => {
+    it('requirement: CANONICAL-SKILLS-001 exists at the canonical path', async () => {
       const stat = await fs.stat(skillPath('c3spec-tier-lifecycle'));
       expect(stat.isFile()).toBe(true);
     });
 
-    it('has frontmatter name "c3spec-tier-lifecycle"', async () => {
+    it('requirement: CANONICAL-SKILLS-001 has frontmatter name "c3spec-tier-lifecycle"', async () => {
       const content = await readSkill('c3spec-tier-lifecycle');
       expect(extractFrontmatterName(content)).toBe('c3spec-tier-lifecycle');
     });
@@ -105,11 +105,11 @@ describe('tier lifecycle skill contract', () => {
   });
 
   describe('canonical skill registration includes c3spec-tier-lifecycle', () => {
-    it('lists c3spec-tier-lifecycle in REQUIRED_CANONICAL_SKILL_NAMES', () => {
+    it('requirement: CANONICAL-SKILLS-002 lists c3spec-tier-lifecycle in REQUIRED_CANONICAL_SKILL_NAMES', () => {
       expect(REQUIRED_CANONICAL_SKILL_NAMES).toContain('c3spec-tier-lifecycle');
     });
 
-    it('lists c3spec-tier-lifecycle in scripts/check-canonical-skills.js', async () => {
+    it('requirement: CANONICAL-SKILLS-003 lists c3spec-tier-lifecycle in scripts/check-canonical-skills.js', async () => {
       const scriptPath = path.join(projectRoot, 'scripts', 'check-canonical-skills.js');
       const content = await fs.readFile(scriptPath, 'utf8');
       expect(content).toMatch(/['"]c3spec-tier-lifecycle['"]/);
@@ -117,7 +117,7 @@ describe('tier lifecycle skill contract', () => {
   });
 
   describe('resume / apply / archive helpers reference the lifecycle contract', () => {
-    it.each(TIER_WORKFLOW_SKILLS)('%s references c3spec-tier-lifecycle', async (skillName) => {
+    it.each(TIER_WORKFLOW_SKILLS)('requirement: CANONICAL-SKILLS-005 %s references c3spec-tier-lifecycle', async (skillName) => {
       const content = await readSkill(skillName);
       expect(
         content,
@@ -126,7 +126,7 @@ describe('tier lifecycle skill contract', () => {
     });
 
     it.each(RESUME_APPLY_ARCHIVE_HELPERS)(
-      '%s references c3spec-tier-lifecycle',
+      'requirement: CANONICAL-SKILLS-006 %s references c3spec-tier-lifecycle',
       async (skillName) => {
         const content = await readSkill(skillName);
         expect(
@@ -215,13 +215,13 @@ describe('tier lifecycle skill contract', () => {
   });
 
   describe('c3spec-host-adapter pi section', () => {
-    it('contains a pi runtime section', async () => {
+    it('requirement: CANONICAL-SKILLS-007 contains a pi runtime section', async () => {
       const content = await readSkill('c3spec-host-adapter');
       const piSection = extractSection(content, 'Pi');
       expect(piSection, 'host adapter must contain a "## Pi" section').toBeDefined();
     });
 
-    it('states unsupported runtimes are rejected', async () => {
+    it('requirement: CANONICAL-SKILLS-008 states unsupported runtimes are rejected', async () => {
       const content = await readSkill('c3spec-host-adapter');
       expect(content).toMatch(/c3spec is pi-only/i);
     });

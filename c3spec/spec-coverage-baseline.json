@@ -24,14 +24,7 @@
   "canonical-skills": {
     "allowMissingIds": false,
     "exemptRequirementIds": [
-      "CANONICAL-SKILLS-001",
-      "CANONICAL-SKILLS-002",
-      "CANONICAL-SKILLS-003",
       "CANONICAL-SKILLS-004",
-      "CANONICAL-SKILLS-005",
-      "CANONICAL-SKILLS-006",
-      "CANONICAL-SKILLS-007",
-      "CANONICAL-SKILLS-008",
       "CANONICAL-SKILLS-009"
     ]
   },
