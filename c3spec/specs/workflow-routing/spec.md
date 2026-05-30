@@ -255,28 +255,11 @@ Generated host instructions SHALL describe c3spec as an opinionated workflow con
 - **AND** they SHALL NOT require schema selection or schema-specific workflow switching for normal development flow
 
 ### Requirement: [WORKFLOW-ROUTING-012] Enforcement boundaries for the routing contract
+Coverage enforcement SHALL be implemented project-wide via requirement IDs and strict coverage audit.
 
-c3spec machine enforcement SHALL guarantee that the canonical skill, agent, and hook surfaces required by the routing contract exist, and SHALL guarantee that source-of-truth specs remain structurally normalized at the current project-wide validation level; per-requirement backing-test enforcement SHALL NOT be introduced by this contract.
-
-#### Scenario: Canonical artifact presence is enforced
-
-- **WHEN** c3spec validates or generates host artifacts
-- **THEN** the required canonical skill names (`c3spec-start`, `c3spec-research`, `c3spec-tier1-fix`, `c3spec-tier2-feature`, `c3spec-tier3-full`, `c3spec-tier-lifecycle`, `c3spec-subagent-dev`, `c3spec-host-adapter`, `c3spec-continue-change`, `c3spec-apply-change`, `c3spec-explore`, `c3spec-sync-specs`, `c3spec-archive-change`, `c3spec-bulk-archive-change`, `c3spec-verify-change`, `c3spec-onboard`, `c3spec-using-git-worktrees`, `c3spec-finishing-development-branch`) SHALL be required to exist under `.agents/skills/`
-- **AND** the required canonical agent role names (`implementer`, `spec-reviewer`, `quality-reviewer`) SHALL be required to exist under `.agents/agents/`
-- **AND** the required canonical hook name (`c3spec-memory-scan`) SHALL be required to exist under `.agents/hooks/`
-
-#### Scenario: Source-of-truth spec normalization is enforced
-
-- **WHEN** c3spec validates source-of-truth specs under `c3spec/specs/`
-- **THEN** each spec file SHALL be required to include explicit `## Purpose` and `## Requirements` sections
-- **AND** visible `### Requirement:` headers SHALL remain parseable as structured requirements
-- **AND** delta-only headers (`## ADDED Requirements`, `## MODIFIED Requirements`, `## REMOVED Requirements`, `## RENAMED Requirements`) SHALL be rejected outside of `c3spec/changes/`
-
-#### Scenario: Requirement-to-test enforcement is out of scope
-
-- **WHEN** authoring or modifying this routing contract
-- **THEN** the contract SHALL NOT introduce a per-requirement backing-test enforcement mechanism
-- **AND** project-wide requirement-to-test coverage SHALL remain deferred to the entry tracked as IDEAS.md #15
+#### Scenario: Requirement-to-test enforcement active
+- **WHEN** strict coverage runs
+- **THEN** uncovered, unknown, or duplicate requirement references fail validation.
 
 ### Requirement: [WORKFLOW-ROUTING-013] One-question interview pacing and question-first turn format
 
