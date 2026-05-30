@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Design - subagent-bootstrap-cli</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; margin: 2rem auto; max-width: 980px; line-height: 1.45; color: #17212b; }
+    h1, h2, h3 { margin-bottom: 0.4rem; }
+    table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+    th, td { border: 1px solid #d0d7de; padding: 0.5rem; text-align: left; vertical-align: top; }
+    th { background: #f6f8fa; }
+    code, pre { background: #f6f8fa; border-radius: 4px; }
+    code { padding: 0.1rem 0.3rem; }
+    pre { padding: 0.75rem; overflow-x: auto; }
+    .muted { color: #57606a; }
+  </style>
+</head>
+<body>
+  <h1>Design: subagent-bootstrap-cli</h1>
+  <p class="muted">Date: 2026-05-29</p>
+
+  <h2>Decisions</h2>
+  <table>
+    <thead>
+      <tr><th>ID</th><th>Decision</th><th>Reason</th><th>Alternatives</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>D1</td>
+        <td>Add explicit CLI gate <code>c3spec subagent bootstrap --change &lt;id&gt;</code>.</td>
+        <td>Single deterministic pre-dispatch contract reduces skill drift and late failures.</td>
+        <td>Implicit skill-only checks (rejected for inconsistency).</td>
+      </tr>
+      <tr>
+        <td>D2</td>
+        <td>Validate-only behavior in v1.</td>
+        <td>Avoid hidden mutations and environment side effects.</td>
+        <td>Auto-fix bootstrap (deferred).</td>
+      </tr>
+      <tr>
+        <td>D3</td>
+        <td>Require <code>--change &lt;id&gt;</code>; derive tier from disk metadata.</td>
+        <td>Deterministic change scoping with lower flag burden.</td>
+        <td>Auto-detect active change, require <code>--tier</code> (rejected for ambiguity/drift).</td>
+      </tr>
+      <tr>
+        <td>D4</td>
+        <td>Distinct exit codes by failure class + <code>--json</code> output.</td>
+        <td>Reliable automation and testability without parsing human text.</td>
+        <td>Single non-zero code with free-form text (rejected).</td>
+      </tr>
+      <tr>
+        <td>D5</td>
+        <td>Required checks: <code>runtime</code>, <code>artifacts</code>, <code>roles</code>; <code>memory</code> informational.</td>
+        <td>Strong gating on execution-critical prerequisites without over-blocking.</td>
+        <td>Make memory required (deferred).</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Architecture / Flow</h2>
+  <pre>subagent dispatch caller (tier/apply/subagent skill)
+  -> run: c3spec subagent bootstrap --change &lt;id&gt; [--json]
+  -> if exit code == 0: proceed dispatch
+  -> else: stop and surface remediation
+
+bootstrap internals:
+  resolve change root -> derive tier -> execute checks by category
+  -> aggregate results -> print human report or JSON
+  -> return exit code by failure class</pre>
+
+  <h2>Command Contract</h2>
+  <ul>
+    <li><code>c3spec subagent bootstrap --change &lt;id&gt;</code> (required <code>--change</code>)</li>
+    <li><code>--json</code> returns machine-readable results</li>
+    <li>Exit 0 only when all required checks pass</li>
+  </ul>
+
+  <h3>JSON shape (v1)</h3>
+  <pre>{
+  "ok": false,
+  "change": "subagent-bootstrap-cli",
+  "tier": 3,
+  "checks": [
+    {
+      "checkId": "runtime.pi-only",
+      "category": "runtime",
+      "status": "pass|fail|warn",
+      "message": "...",
+      "required": true
+    }
+  ],
+  "failures": [
+    {
+      "code": "BOOTSTRAP_RUNTIME_UNSUPPORTED",
+      "checkId": "runtime.pi-only",
+      "message": "...",
+      "nextSteps": ["..."]
+    }
+  ],
+  "nextSteps": ["..."]
+}</pre>
+
+  <h3>Exit code classes (proposed)</h3>
+  <table>
+    <thead><tr><th>Code</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td>0</td><td>All required checks passed</td></tr>
+      <tr><td>20</td><td>Runtime prerequisite failure</td></tr>
+      <tr><td>21</td><td>Change/tier resolution failure (missing/ambiguous metadata)</td></tr>
+      <tr><td>22</td><td>Required artifact readiness failure</td></tr>
+      <tr><td>23</td><td>Role dispatch prerequisite failure</td></tr>
+      <tr><td>24</td><td>CLI usage/argument error</td></tr>
+      <tr><td>25</td><td>Unexpected internal/bootstrap execution error</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Check Definitions</h2>
+  <ul>
+    <li><strong>runtime</strong> (required): pi runtime contract available for named-agent dispatch.</li>
+    <li><strong>artifacts</strong> (required): change exists, tier derivable, and apply-critical artifacts present for derived tier.</li>
+    <li><strong>roles</strong> (required): named roles <code>implementer</code>, <code>spec-reviewer</code>, <code>quality-reviewer</code> are dispatchable via host adapter contract.</li>
+    <li><strong>memory</strong> (informational): memory index/readability and relevant-entry discoverability reported as warn/pass only.</li>
+  </ul>
+
+  <h2>Integration Points</h2>
+  <ul>
+    <li><code>c3spec-subagent-dev</code>: run bootstrap before any implementer/reviewer dispatch.</li>
+    <li><code>c3spec-apply-change</code>: invoke bootstrap prior to handing off to subagent-dev (or ensure subagent-dev enforces gate).</li>
+    <li>Tier skills: no direct dispatch bypass of bootstrap gate.</li>
+    <li><code>c3spec-host-adapter</code>: align runtime/role expectations used by bootstrap checks.</li>
+  </ul>
+
+  <h2>Risks and Mitigations</h2>
+  <ul>
+    <li><strong>False negatives on legacy changes:</strong> return clear tier-resolution error with remediation instead of silent fallback.</li>
+    <li><strong>Contract drift between skills and CLI:</strong> route all dispatch gates through bootstrap; avoid duplicate ad hoc checks.</li>
+    <li><strong>Output contract churn:</strong> lock check IDs and failure codes in tests.</li>
+  </ul>
+
+  <h2>Rollout</h2>
+  <ol>
+    <li>Implement command + check engine + JSON/human output.</li>
+    <li>Add unit/integration tests for all failure classes and exit codes.</li>
+    <li>Wire subagent dispatch paths to enforce gate.</li>
+    <li>Update affected specs and skill docs.</li>
+  </ol>
+</body>
+</html>

@@ -48,6 +48,14 @@ cat c3spec/memory/<category>/<slug>.md
 
 ## Process
 
+Before any dispatch, run:
+
+```bash
+c3spec subagent bootstrap --change <id>
+```
+
+If bootstrap exits non-zero, stop and surface remediation. Do not dispatch implementer/reviewer agents until bootstrap passes.
+
 ```
 Read plan → extract all stages and tasks → create TodoWrite
 

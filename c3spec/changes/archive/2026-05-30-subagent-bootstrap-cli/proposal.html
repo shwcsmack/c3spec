@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Proposal - subagent-bootstrap-cli</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; margin: 2rem auto; max-width: 960px; line-height: 1.45; color: #17212b; }
+    h1, h2 { margin-bottom: 0.4rem; }
+    table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+    th, td { border: 1px solid #d0d7de; padding: 0.5rem; text-align: left; vertical-align: top; }
+    th { background: #f6f8fa; }
+    .muted { color: #57606a; }
+    code { background: #f6f8fa; padding: 0.1rem 0.3rem; border-radius: 4px; }
+    ul { margin-top: 0.3rem; }
+  </style>
+</head>
+<body>
+  <h1>Proposal: subagent-bootstrap-cli</h1>
+  <p class="muted">Date: 2026-05-29</p>
+
+  <h2>Why</h2>
+  <p>
+    Subagent-driven execution in c3spec currently depends on implicit prerequisites spread across skills.
+    Failures appear late at dispatch time, causing brittle workflows and unclear remediation.
+    We need a deterministic, explicit pre-dispatch gate.
+  </p>
+
+  <h2>What Changes</h2>
+  <table>
+    <thead>
+      <tr><th>Area</th><th>Before</th><th>After</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Bootstrap contract</td>
+        <td>Implicit checks in multiple skills</td>
+        <td>Explicit command: <code>c3spec subagent bootstrap --change &lt;id&gt;</code></td>
+      </tr>
+      <tr>
+        <td>Behavior</td>
+        <td>Mixed/late failure points</td>
+        <td>Validate-only, strict gating, deterministic failures</td>
+      </tr>
+      <tr>
+        <td>Output</td>
+        <td>Mostly human-oriented guidance</td>
+        <td>Human output + <code>--json</code> machine-readable mode</td>
+      </tr>
+      <tr>
+        <td>Automation semantics</td>
+        <td>Single generic failure behavior</td>
+        <td>Distinct exit codes by failure class</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>New Capabilities</h2>
+  <ul>
+    <li>New subcommand: <code>c3spec subagent bootstrap --change &lt;id&gt;</code> (required <code>--change</code> in v1).</li>
+    <li>Tier derivation from on-disk metadata; hard-fail on ambiguity.</li>
+    <li>Check categories with stable IDs: required <code>runtime</code>, <code>artifacts</code>, <code>roles</code>; informational <code>memory</code>.</li>
+    <li>Strict non-zero exits for required failures; distinct exit codes by failure class.</li>
+    <li>Stable JSON contract for automation: top-level status + check/failure details + next steps.</li>
+    <li>Subagent dispatch paths updated to require successful bootstrap before dispatch.</li>
+  </ul>
+
+  <h2>Impact</h2>
+  <ul>
+    <li><strong>Affected specs:</strong> workflow-routing, canonical-skills, cli-artifact-workflow (and possibly command-spec coverage where CLI contracts are asserted).</li>
+    <li><strong>Affected skills:</strong> c3spec-subagent-dev, c3spec-host-adapter, c3spec-apply-change, and tier skills that dispatch subagents.</li>
+    <li><strong>CLI/API:</strong> adds new user-facing command and JSON contract.</li>
+    <li><strong>Tests:</strong> add command tests for success/failure classes, exit codes, JSON schema, and integration gating from subagent entry paths.</li>
+    <li><strong>Risk:</strong> over-gating legacy/ambiguous changes; mitigated via clear diagnostics and explicit failure remediation.</li>
+  </ul>
+</body>
+</html>

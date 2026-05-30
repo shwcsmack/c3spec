@@ -15,6 +15,7 @@ import { registerConfigCommand } from '../commands/config.js';
 import { registerWorkspaceCommand } from '../commands/workspace.js';
 import { registerMemoryCommand } from '../commands/memory.js';
 import { registerIdeasCommand } from '../commands/ideas.js';
+import { registerSubagentCommand } from '../commands/subagent.js';
 import {
   statusCommand,
   instructionsCommand,
@@ -183,6 +184,7 @@ registerConfigCommand(program);
 registerWorkspaceCommand(program);
 registerMemoryCommand(program);
 registerIdeasCommand(program);
+registerSubagentCommand(program);
 
 // Top-level validate command
 program
