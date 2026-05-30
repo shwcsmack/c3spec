@@ -25,11 +25,11 @@ const ONE_QUESTION_MARKERS = [
 ];
 
 describe('workflow-routing interview pacing', () => {
-  it('documents one-question interview pacing in the workflow-routing spec', async () => {
+  it('requirement: WORKFLOW-ROUTING-013 documents one-question interview pacing in the workflow-routing spec', async () => {
     const specPath = path.join(projectRoot, 'c3spec/specs/workflow-routing/spec.md');
     const content = await fs.readFile(specPath, 'utf8');
 
-    expect(content).toMatch(/### Requirement: One-question interview pacing and question-first turn format/);
+    expect(content).toMatch(/### Requirement:\s*\[WORKFLOW-ROUTING-013\]\s*One-question interview pacing and question-first turn format/);
     expect(content).toMatch(/c3spec-start interview pacing/);
     expect(content).toMatch(/Tier 3 brainstorm discovery pacing/);
     expect(content).toMatch(/Why this question now:/);
@@ -39,7 +39,7 @@ describe('workflow-routing interview pacing', () => {
     expect(content).toMatch(/Resume\/apply helpers are exempt from re-interview/i);
   });
 
-  it.each(CANONICAL_INTERVIEW_SKILLS)('encodes interview pacing in %s', async (skillName) => {
+  it.each(CANONICAL_INTERVIEW_SKILLS)('requirement: WORKFLOW-ROUTING-004 encodes interview pacing in %s', async (skillName) => {
     const skillPath = path.join(projectRoot, '.agents/skills', skillName, 'SKILL.md');
     const content = await fs.readFile(skillPath, 'utf8');
 
@@ -56,7 +56,7 @@ describe('workflow-routing interview pacing', () => {
     }
   });
 
-  it.each(RESUME_APPLY_HELPERS)('%s explicitly avoids re-interview', async (skillName) => {
+  it.each(RESUME_APPLY_HELPERS)('requirement: WORKFLOW-ROUTING-013 %s explicitly avoids re-interview', async (skillName) => {
     const skillPath = path.join(projectRoot, '.agents/skills', skillName, 'SKILL.md');
     const content = await fs.readFile(skillPath, 'utf8');
 

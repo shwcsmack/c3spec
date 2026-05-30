@@ -15,7 +15,7 @@ const ENDGAME_SKILLS = [
 ] as const;
 
 describe('finish-branch endgame contract', () => {
-  it('documents standardized finish outcome and failure recovery in workflow-routing spec', async () => {
+  it('requirement: WORKFLOW-ROUTING-009 documents standardized finish outcome and failure recovery in workflow-routing spec', async () => {
     const specPath = path.join(projectRoot, 'c3spec/specs/workflow-routing/spec.md');
     const content = await fs.readFile(specPath, 'utf8');
 
@@ -24,7 +24,7 @@ describe('finish-branch endgame contract', () => {
     expect(content).toMatch(/recovery guidance/i);
   });
 
-  it.each(ENDGAME_SKILLS)('%s defines finish outcome contract and failure guidance', async (skillName) => {
+  it.each(ENDGAME_SKILLS)('requirement: WORKFLOW-ROUTING-009 %s defines finish outcome contract and failure guidance', async (skillName) => {
     const skillPath = path.join(projectRoot, '.agents', 'skills', skillName, 'SKILL.md');
     const content = await fs.readFile(skillPath, 'utf8');
 
