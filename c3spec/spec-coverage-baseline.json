@@ -1,144 +1,47 @@
 {
   "ai-tool-paths": {
     "allowMissingIds": false,
-    "exemptRequirementIds": [
-      "AI-TOOL-PATHS-001",
-      "AI-TOOL-PATHS-002",
-      "AI-TOOL-PATHS-003",
-      "AI-TOOL-PATHS-004"
-    ]
+    "exemptRequirementIds": []
   },
   "artifact-graph": {
     "allowMissingIds": false,
-    "exemptRequirementIds": [
-      "ARTIFACT-GRAPH-001",
-      "ARTIFACT-GRAPH-002",
-      "ARTIFACT-GRAPH-003",
-      "ARTIFACT-GRAPH-004",
-      "ARTIFACT-GRAPH-005",
-      "ARTIFACT-GRAPH-006",
-      "ARTIFACT-GRAPH-007",
-      "ARTIFACT-GRAPH-008"
-    ]
+    "exemptRequirementIds": []
   },
   "canonical-skills": {
     "allowMissingIds": false,
-    "exemptRequirementIds": [
-      "CANONICAL-SKILLS-004",
-      "CANONICAL-SKILLS-009"
-    ]
+    "exemptRequirementIds": []
   },
   "change-creation": {
     "allowMissingIds": false,
-    "exemptRequirementIds": [
-      "CHANGE-CREATION-001",
-      "CHANGE-CREATION-002",
-      "CHANGE-CREATION-003"
-    ]
+    "exemptRequirementIds": []
   },
   "cli-archive": {
     "allowMissingIds": false,
-    "exemptRequirementIds": [
-      "CLI-ARCHIVE-001",
-      "CLI-ARCHIVE-002",
-      "CLI-ARCHIVE-003",
-      "CLI-ARCHIVE-004",
-      "CLI-ARCHIVE-005",
-      "CLI-ARCHIVE-006",
-      "CLI-ARCHIVE-007",
-      "CLI-ARCHIVE-008",
-      "CLI-ARCHIVE-009",
-      "CLI-ARCHIVE-010",
-      "CLI-ARCHIVE-011"
-    ]
+    "exemptRequirementIds": []
   },
   "cli-artifact-workflow": {
     "allowMissingIds": false,
-    "exemptRequirementIds": [
-      "CLI-ARTIFACT-WORKFLOW-001",
-      "CLI-ARTIFACT-WORKFLOW-002",
-      "CLI-ARTIFACT-WORKFLOW-003",
-      "CLI-ARTIFACT-WORKFLOW-004",
-      "CLI-ARTIFACT-WORKFLOW-005",
-      "CLI-ARTIFACT-WORKFLOW-006",
-      "CLI-ARTIFACT-WORKFLOW-007",
-      "CLI-ARTIFACT-WORKFLOW-008",
-      "CLI-ARTIFACT-WORKFLOW-009",
-      "CLI-ARTIFACT-WORKFLOW-010",
-      "CLI-ARTIFACT-WORKFLOW-011",
-      "CLI-ARTIFACT-WORKFLOW-012",
-      "CLI-ARTIFACT-WORKFLOW-013",
-      "CLI-ARTIFACT-WORKFLOW-014",
-      "CLI-ARTIFACT-WORKFLOW-015",
-      "CLI-ARTIFACT-WORKFLOW-016",
-      "CLI-ARTIFACT-WORKFLOW-017",
-      "CLI-ARTIFACT-WORKFLOW-018",
-      "CLI-ARTIFACT-WORKFLOW-019",
-      "CLI-ARTIFACT-WORKFLOW-020",
-      "CLI-ARTIFACT-WORKFLOW-021",
-      "CLI-ARTIFACT-WORKFLOW-022"
-    ]
+    "exemptRequirementIds": []
   },
   "cli-change": {
     "allowMissingIds": false,
-    "exemptRequirementIds": [
-      "CLI-CHANGE-001",
-      "CLI-CHANGE-002",
-      "CLI-CHANGE-003",
-      "CLI-CHANGE-004"
-    ]
+    "exemptRequirementIds": []
   },
   "cli-completion": {
     "allowMissingIds": false,
-    "exemptRequirementIds": [
-      "CLI-COMPLETION-001",
-      "CLI-COMPLETION-002",
-      "CLI-COMPLETION-003",
-      "CLI-COMPLETION-004",
-      "CLI-COMPLETION-005",
-      "CLI-COMPLETION-006",
-      "CLI-COMPLETION-007",
-      "CLI-COMPLETION-008",
-      "CLI-COMPLETION-009",
-      "CLI-COMPLETION-010",
-      "CLI-COMPLETION-011"
-    ]
+    "exemptRequirementIds": []
   },
   "cli-config": {
     "allowMissingIds": false,
-    "exemptRequirementIds": [
-      "CLI-CONFIG-001",
-      "CLI-CONFIG-002",
-      "CLI-CONFIG-003",
-      "CLI-CONFIG-004",
-      "CLI-CONFIG-005",
-      "CLI-CONFIG-006",
-      "CLI-CONFIG-007",
-      "CLI-CONFIG-008",
-      "CLI-CONFIG-009",
-      "CLI-CONFIG-010",
-      "CLI-CONFIG-011",
-      "CLI-CONFIG-012",
-      "CLI-CONFIG-013"
-    ]
+    "exemptRequirementIds": []
   },
   "cli-feedback": {
     "allowMissingIds": false,
-    "exemptRequirementIds": [
-      "CLI-FEEDBACK-001",
-      "CLI-FEEDBACK-002",
-      "CLI-FEEDBACK-003",
-      "CLI-FEEDBACK-004",
-      "CLI-FEEDBACK-005",
-      "CLI-FEEDBACK-006",
-      "CLI-FEEDBACK-007"
-    ]
+    "exemptRequirementIds": []
   },
   "cli-init": {
     "allowMissingIds": false,
-    "exemptRequirementIds": [
-      "CLI-INIT-001"
-    ]
+    "exemptRequirementIds": []
   },
   "cli-list": {
     "allowMissingIds": false,
@@ -150,309 +53,114 @@
   },
   "cli-spec": {
     "allowMissingIds": false,
-    "exemptRequirementIds": [
-      "CLI-SPEC-001",
-      "CLI-SPEC-002",
-      "CLI-SPEC-003",
-      "CLI-SPEC-004"
-    ]
+    "exemptRequirementIds": []
   },
   "cli-update": {
     "allowMissingIds": false,
-    "exemptRequirementIds": [
-      "CLI-UPDATE-001"
-    ]
+    "exemptRequirementIds": []
   },
   "cli-validate": {
     "allowMissingIds": false,
-    "exemptRequirementIds": [
-      "CLI-VALIDATE-001",
-      "CLI-VALIDATE-002",
-      "CLI-VALIDATE-003",
-      "CLI-VALIDATE-004"
-    ]
+    "exemptRequirementIds": []
   },
   "cli-view": {
     "allowMissingIds": false,
-    "exemptRequirementIds": [
-      "CLI-VIEW-001",
-      "CLI-VIEW-002",
-      "CLI-VIEW-003",
-      "CLI-VIEW-004",
-      "CLI-VIEW-005",
-      "CLI-VIEW-006",
-      "CLI-VIEW-007",
-      "CLI-VIEW-008"
-    ]
+    "exemptRequirementIds": []
   },
   "command-generation": {
     "allowMissingIds": false,
-    "exemptRequirementIds": [
-      "COMMAND-GENERATION-001",
-      "COMMAND-GENERATION-002"
-    ]
+    "exemptRequirementIds": []
   },
   "config-loading": {
     "allowMissingIds": false,
-    "exemptRequirementIds": [
-      "CONFIG-LOADING-001",
-      "CONFIG-LOADING-002",
-      "CONFIG-LOADING-003",
-      "CONFIG-LOADING-004",
-      "CONFIG-LOADING-005",
-      "CONFIG-LOADING-006"
-    ]
+    "exemptRequirementIds": []
   },
   "context-injection": {
     "allowMissingIds": false,
-    "exemptRequirementIds": [
-      "CONTEXT-INJECTION-001",
-      "CONTEXT-INJECTION-002",
-      "CONTEXT-INJECTION-003"
-    ]
+    "exemptRequirementIds": []
   },
   "docs-agent-instructions": {
     "allowMissingIds": false,
-    "exemptRequirementIds": [
-      "DOCS-AGENT-INSTRUCTIONS-001",
-      "DOCS-AGENT-INSTRUCTIONS-002",
-      "DOCS-AGENT-INSTRUCTIONS-003",
-      "DOCS-AGENT-INSTRUCTIONS-004",
-      "DOCS-AGENT-INSTRUCTIONS-005",
-      "DOCS-AGENT-INSTRUCTIONS-006"
-    ]
+    "exemptRequirementIds": []
   },
   "global-config": {
     "allowMissingIds": false,
-    "exemptRequirementIds": [
-      "GLOBAL-CONFIG-001",
-      "GLOBAL-CONFIG-002",
-      "GLOBAL-CONFIG-003",
-      "GLOBAL-CONFIG-004",
-      "GLOBAL-CONFIG-005"
-    ]
+    "exemptRequirementIds": []
   },
   "instruction-loader": {
     "allowMissingIds": false,
-    "exemptRequirementIds": [
-      "INSTRUCTION-LOADER-001",
-      "INSTRUCTION-LOADER-002",
-      "INSTRUCTION-LOADER-003",
-      "INSTRUCTION-LOADER-004"
-    ]
+    "exemptRequirementIds": []
   },
   "legacy-cleanup": {
     "allowMissingIds": false,
-    "exemptRequirementIds": [
-      "LEGACY-CLEANUP-001",
-      "LEGACY-CLEANUP-002",
-      "LEGACY-CLEANUP-003",
-      "LEGACY-CLEANUP-004",
-      "LEGACY-CLEANUP-005",
-      "LEGACY-CLEANUP-006",
-      "LEGACY-CLEANUP-007"
-    ]
+    "exemptRequirementIds": []
   },
   "openspec-conventions": {
     "allowMissingIds": false,
-    "exemptRequirementIds": [
-      "OPENSPEC-CONVENTIONS-001",
-      "OPENSPEC-CONVENTIONS-002",
-      "OPENSPEC-CONVENTIONS-003",
-      "OPENSPEC-CONVENTIONS-004",
-      "OPENSPEC-CONVENTIONS-005",
-      "OPENSPEC-CONVENTIONS-006",
-      "OPENSPEC-CONVENTIONS-007",
-      "OPENSPEC-CONVENTIONS-008",
-      "OPENSPEC-CONVENTIONS-009",
-      "OPENSPEC-CONVENTIONS-010",
-      "OPENSPEC-CONVENTIONS-011",
-      "OPENSPEC-CONVENTIONS-012",
-      "OPENSPEC-CONVENTIONS-013",
-      "OPENSPEC-CONVENTIONS-014",
-      "OPENSPEC-CONVENTIONS-015"
-    ]
+    "exemptRequirementIds": []
   },
   "opsx-archive-skill": {
     "allowMissingIds": false,
-    "exemptRequirementIds": [
-      "OPSX-ARCHIVE-SKILL-001",
-      "OPSX-ARCHIVE-SKILL-002",
-      "OPSX-ARCHIVE-SKILL-003",
-      "OPSX-ARCHIVE-SKILL-004",
-      "OPSX-ARCHIVE-SKILL-005",
-      "OPSX-ARCHIVE-SKILL-006"
-    ]
+    "exemptRequirementIds": []
   },
   "opsx-onboard-skill": {
     "allowMissingIds": false,
-    "exemptRequirementIds": [
-      "OPSX-ONBOARD-SKILL-001",
-      "OPSX-ONBOARD-SKILL-002",
-      "OPSX-ONBOARD-SKILL-003",
-      "OPSX-ONBOARD-SKILL-004",
-      "OPSX-ONBOARD-SKILL-005",
-      "OPSX-ONBOARD-SKILL-006",
-      "OPSX-ONBOARD-SKILL-007",
-      "OPSX-ONBOARD-SKILL-008"
-    ]
+    "exemptRequirementIds": []
   },
   "opsx-verify-skill": {
     "allowMissingIds": false,
-    "exemptRequirementIds": [
-      "OPSX-VERIFY-SKILL-001",
-      "OPSX-VERIFY-SKILL-002",
-      "OPSX-VERIFY-SKILL-003",
-      "OPSX-VERIFY-SKILL-004",
-      "OPSX-VERIFY-SKILL-005",
-      "OPSX-VERIFY-SKILL-006"
-    ]
+    "exemptRequirementIds": []
   },
   "remote-skill-fetch": {
     "allowMissingIds": false,
-    "exemptRequirementIds": [
-      "REMOTE-SKILL-FETCH-001"
-    ]
+    "exemptRequirementIds": []
   },
   "rules-injection": {
     "allowMissingIds": false,
-    "exemptRequirementIds": [
-      "RULES-INJECTION-001",
-      "RULES-INJECTION-002",
-      "RULES-INJECTION-003",
-      "RULES-INJECTION-004",
-      "RULES-INJECTION-005",
-      "RULES-INJECTION-006"
-    ]
+    "exemptRequirementIds": []
   },
   "schema-fork-command": {
     "allowMissingIds": false,
-    "exemptRequirementIds": [
-      "SCHEMA-FORK-COMMAND-001",
-      "SCHEMA-FORK-COMMAND-002",
-      "SCHEMA-FORK-COMMAND-003",
-      "SCHEMA-FORK-COMMAND-004"
-    ]
+    "exemptRequirementIds": []
   },
   "schema-init-command": {
     "allowMissingIds": false,
-    "exemptRequirementIds": [
-      "SCHEMA-INIT-COMMAND-001",
-      "SCHEMA-INIT-COMMAND-002",
-      "SCHEMA-INIT-COMMAND-003",
-      "SCHEMA-INIT-COMMAND-004"
-    ]
+    "exemptRequirementIds": []
   },
   "schema-resolution": {
     "allowMissingIds": false,
-    "exemptRequirementIds": [
-      "SCHEMA-RESOLUTION-001",
-      "SCHEMA-RESOLUTION-002",
-      "SCHEMA-RESOLUTION-003",
-      "SCHEMA-RESOLUTION-004",
-      "SCHEMA-RESOLUTION-005",
-      "SCHEMA-RESOLUTION-006",
-      "SCHEMA-RESOLUTION-007",
-      "SCHEMA-RESOLUTION-008",
-      "SCHEMA-RESOLUTION-009",
-      "SCHEMA-RESOLUTION-010",
-      "SCHEMA-RESOLUTION-011"
-    ]
+    "exemptRequirementIds": []
   },
   "schema-validate-command": {
     "allowMissingIds": false,
-    "exemptRequirementIds": [
-      "SCHEMA-VALIDATE-COMMAND-001",
-      "SCHEMA-VALIDATE-COMMAND-002",
-      "SCHEMA-VALIDATE-COMMAND-003",
-      "SCHEMA-VALIDATE-COMMAND-004",
-      "SCHEMA-VALIDATE-COMMAND-005",
-      "SCHEMA-VALIDATE-COMMAND-006"
-    ]
+    "exemptRequirementIds": []
   },
   "schema-which-command": {
     "allowMissingIds": false,
-    "exemptRequirementIds": [
-      "SCHEMA-WHICH-COMMAND-001",
-      "SCHEMA-WHICH-COMMAND-002",
-      "SCHEMA-WHICH-COMMAND-003",
-      "SCHEMA-WHICH-COMMAND-004"
-    ]
+    "exemptRequirementIds": []
   },
   "specs-sync-skill": {
     "allowMissingIds": false,
-    "exemptRequirementIds": [
-      "SPECS-SYNC-SKILL-001",
-      "SPECS-SYNC-SKILL-002",
-      "SPECS-SYNC-SKILL-003"
-    ]
+    "exemptRequirementIds": []
   },
   "workflow-routing": {
     "allowMissingIds": false,
-    "exemptRequirementIds": [
-      "WORKFLOW-ROUTING-001",
-      "WORKFLOW-ROUTING-002",
-      "WORKFLOW-ROUTING-003",
-      "WORKFLOW-ROUTING-005",
-      "WORKFLOW-ROUTING-006",
-      "WORKFLOW-ROUTING-007",
-      "WORKFLOW-ROUTING-008",
-      "WORKFLOW-ROUTING-010",
-      "WORKFLOW-ROUTING-011",
-      "WORKFLOW-ROUTING-012",
-      "WORKFLOW-ROUTING-014",
-      "WORKFLOW-ROUTING-015"
-    ]
+    "exemptRequirementIds": []
   },
   "workspace-change-planning": {
     "allowMissingIds": false,
-    "exemptRequirementIds": [
-      "WORKSPACE-CHANGE-PLANNING-001",
-      "WORKSPACE-CHANGE-PLANNING-002",
-      "WORKSPACE-CHANGE-PLANNING-003"
-    ]
+    "exemptRequirementIds": []
   },
   "workspace-foundation": {
     "allowMissingIds": false,
-    "exemptRequirementIds": [
-      "WORKSPACE-FOUNDATION-001",
-      "WORKSPACE-FOUNDATION-002",
-      "WORKSPACE-FOUNDATION-003",
-      "WORKSPACE-FOUNDATION-004",
-      "WORKSPACE-FOUNDATION-005",
-      "WORKSPACE-FOUNDATION-006",
-      "WORKSPACE-FOUNDATION-007",
-      "WORKSPACE-FOUNDATION-008",
-      "WORKSPACE-FOUNDATION-009",
-      "WORKSPACE-FOUNDATION-010",
-      "WORKSPACE-FOUNDATION-011",
-      "WORKSPACE-FOUNDATION-012"
-    ]
+    "exemptRequirementIds": []
   },
   "workspace-links": {
     "allowMissingIds": false,
-    "exemptRequirementIds": [
-      "WORKSPACE-LINKS-001",
-      "WORKSPACE-LINKS-002",
-      "WORKSPACE-LINKS-003",
-      "WORKSPACE-LINKS-004",
-      "WORKSPACE-LINKS-005",
-      "WORKSPACE-LINKS-006",
-      "WORKSPACE-LINKS-007",
-      "WORKSPACE-LINKS-008",
-      "WORKSPACE-LINKS-009",
-      "WORKSPACE-LINKS-010"
-    ]
+    "exemptRequirementIds": []
   },
   "workspace-open": {
     "allowMissingIds": false,
-    "exemptRequirementIds": [
-      "WORKSPACE-OPEN-001",
-      "WORKSPACE-OPEN-002",
-      "WORKSPACE-OPEN-003",
-      "WORKSPACE-OPEN-004",
-      "WORKSPACE-OPEN-005",
-      "WORKSPACE-OPEN-006"
-    ]
+    "exemptRequirementIds": []
   }
 }
