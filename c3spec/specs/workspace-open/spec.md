@@ -6,7 +6,7 @@ VS Code editor, including workspace selection, opener resolution, launch
 behavior, linked path visibility, and durable workspace guidance.
 
 ## Requirements
-### Requirement: Workspace Open Command
+### Requirement: [WORKSPACE-OPEN-001] Workspace Open Command
 c3spec SHALL provide a `workspace open` command that opens an c3spec workspace working set through an agent or VS Code editor.
 
 #### Scenario: Opening the current workspace
@@ -41,7 +41,7 @@ c3spec SHALL provide a `workspace open` command that opens an c3spec workspace w
 - **THEN** c3spec SHALL fail with a clear error that this slice supports root workspace open
 - **AND** the error SHALL direct change-scoped open behavior to future workspace change planning
 
-### Requirement: Workspace Selection For Open
+### Requirement: [WORKSPACE-OPEN-002] Workspace Selection For Open
 c3spec SHALL resolve the workspace to open using current workspace context, local registry state, and interactive selection.
 
 #### Scenario: Current workspace wins
@@ -79,7 +79,7 @@ c3spec SHALL resolve the workspace to open using current workspace context, loca
 - **THEN** c3spec SHALL fail with a clear message
 - **AND** it SHALL suggest running `c3spec workspace setup`
 
-### Requirement: Opener Resolution
+### Requirement: [WORKSPACE-OPEN-003] Opener Resolution
 c3spec SHALL resolve the opener from command overrides, workspace-local preference, or an interactive prompt.
 
 #### Scenario: Conflicting opener overrides
@@ -127,7 +127,7 @@ c3spec SHALL resolve the opener from command overrides, workspace-local preferen
 - **THEN** c3spec SHALL fail with a clear message
 - **AND** it SHALL ask the user to pass `--agent <tool>` or `--editor`
 
-### Requirement: Opener Launch Behavior
+### Requirement: [WORKSPACE-OPEN-004] Opener Launch Behavior
 c3spec SHALL launch the selected opener using existing workspace files and linked path state.
 
 #### Scenario: Opening VS Code editor
@@ -166,7 +166,7 @@ c3spec SHALL launch the selected opener using existing workspace files and linke
 - **THEN** c3spec SHALL fail with a clear error naming `code`
 - **AND** it SHALL include the maintained `.code-workspace` path so the user can open it manually
 
-### Requirement: Linked Working Set Visibility
+### Requirement: [WORKSPACE-OPEN-005] Linked Working Set Visibility
 c3spec SHALL make linked repos and folders visible for workspace exploration and planning before change creation.
 
 #### Scenario: Attaching valid linked paths
@@ -188,7 +188,7 @@ c3spec SHALL make linked repos and folders visible for workspace exploration and
 - **THEN** c3spec SHALL include that link when its local path is valid
 - **AND** it SHALL treat missing repo-local c3spec state as an implementation-readiness concern for later workflows while continuing open
 
-### Requirement: Workspace Open Guidance
+### Requirement: [WORKSPACE-OPEN-006] Workspace Open Guidance
 c3spec SHALL use durable workspace guidance as the primary context source for root workspace open.
 
 #### Scenario: Launching with existing workspace guidance

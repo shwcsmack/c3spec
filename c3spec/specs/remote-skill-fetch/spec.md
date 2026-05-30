@@ -4,7 +4,7 @@ Define pi-only replacement behavior for canonical skill refresh after CLI update
 
 ## Requirements
 
-### Requirement: Remote skill refresh managed by pi lifecycle
+### Requirement: [REMOTE-SKILL-FETCH-001] Remote skill refresh managed by pi lifecycle
 
 Because `c3spec update` is removed in pi-only mode, runtime canonical skill refresh SHALL be managed by pi package lifecycle.
 

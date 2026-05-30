@@ -4,7 +4,7 @@
 Define `/opsx:onboard` behavior for guiding users through an end-to-end c3spec workflow on their real codebase.
 
 ## Requirements
-### Requirement: OPSX Onboard Skill
+### Requirement: [OPSX-ONBOARD-SKILL-001] OPSX Onboard Skill
 
 The system SHALL provide an `/opsx:onboard` skill that guides users through their first complete c3spec workflow cycle with narration and real codebase work.
 
@@ -22,7 +22,7 @@ The system SHALL provide an `/opsx:onboard` skill that guides users through thei
 - **AND** sets expectation of ~15 minute duration
 - **AND** explains the workflow phases: explore → new → artifacts → apply → archive
 
-### Requirement: Codebase Analysis for Task Suggestions
+### Requirement: [OPSX-ONBOARD-SKILL-002] Codebase Analysis for Task Suggestions
 
 The skill SHALL analyze the user's codebase to suggest appropriately-scoped starter tasks.
 
@@ -47,7 +47,7 @@ The skill SHALL analyze the user's codebase to suggest appropriately-scoped star
 - **AND** suggests breaking down or deferring the large task
 - **AND** offers appropriately-sized alternatives
 
-### Requirement: Explore Phase Demo
+### Requirement: [OPSX-ONBOARD-SKILL-003] Explore Phase Demo
 
 The skill SHALL briefly demonstrate explore mode before creating a change.
 
@@ -59,7 +59,7 @@ The skill SHALL briefly demonstrate explore mode before creating a change.
 - **AND** keeps this phase short (not a full exploration session)
 - **AND** transitions to change creation
 
-### Requirement: Guided Artifact Creation
+### Requirement: [OPSX-ONBOARD-SKILL-004] Guided Artifact Creation
 
 The skill SHALL guide users through each artifact with narration explaining the purpose.
 
@@ -103,7 +103,7 @@ The skill SHALL guide users through each artifact with narration explaining the 
 - **AND** generates task list from design and specs
 - **AND** shows tasks and asks if ready to implement
 
-### Requirement: Guided Implementation
+### Requirement: [OPSX-ONBOARD-SKILL-005] Guided Implementation
 
 The skill SHALL implement tasks with narration connecting back to artifacts.
 
@@ -123,7 +123,7 @@ The skill SHALL implement tasks with narration connecting back to artifacts.
 - **AND** summarizes what was done
 - **AND** transitions to archive phase
 
-### Requirement: Archive with Explanation
+### Requirement: [OPSX-ONBOARD-SKILL-006] Archive with Explanation
 
 The skill SHALL archive the completed change and explain what happened.
 
@@ -135,7 +135,7 @@ The skill SHALL archive the completed change and explain what happened.
 - **AND** shows where archived change lives
 - **AND** explains the long-term value (finding decisions later)
 
-### Requirement: Recap and Next Steps
+### Requirement: [OPSX-ONBOARD-SKILL-007] Recap and Next Steps
 
 The skill SHALL conclude with a recap and command reference.
 
@@ -147,7 +147,7 @@ The skill SHALL conclude with a recap and command reference.
 - **AND** provides command reference table (/opsx:explore, /opsx:new, /opsx:ff, /opsx:continue, /opsx:apply, /opsx:verify, /opsx:archive)
 - **AND** suggests next actions (try /opsx:new or /opsx:ff on something)
 
-### Requirement: Graceful Exit Handling
+### Requirement: [OPSX-ONBOARD-SKILL-008] Graceful Exit Handling
 
 The skill SHALL handle users who want to stop mid-way.
 

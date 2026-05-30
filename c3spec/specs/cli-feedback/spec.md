@@ -4,7 +4,7 @@
 Define `c3spec feedback` behavior for creating GitHub issues safely via `gh`, with a manual fallback when automation is unavailable.
 
 ## Requirements
-### Requirement: Feedback command
+### Requirement: [CLI-FEEDBACK-001] Feedback command
 
 The system SHALL provide an `c3spec feedback` command that creates a GitHub Issue in the c3spec repository using the `gh` CLI. The system SHALL use `execFileSync` with argument arrays to prevent shell injection vulnerabilities.
 
@@ -30,7 +30,7 @@ The system SHALL provide an `c3spec feedback` command that creates a GitHub Issu
 - **AND** the issue body contains the detailed description
 - **AND** the issue body includes metadata (c3spec version, platform, timestamp)
 
-### Requirement: GitHub CLI dependency
+### Requirement: [CLI-FEEDBACK-002] GitHub CLI dependency
 
 The system SHALL use `gh` CLI for automatic feedback submission when available, and provide a manual submission fallback when `gh` is not installed or not authenticated. The system SHALL use platform-appropriate commands to detect `gh` CLI availability.
 
@@ -76,7 +76,7 @@ The system SHALL use `gh` CLI for automatic feedback submission when available, 
 - **AND** `gh auth status` returns success (authenticated)
 - **THEN** the system proceeds with feedback submission
 
-### Requirement: Issue metadata
+### Requirement: [CLI-FEEDBACK-003] Issue metadata
 
 The system SHALL include relevant metadata in the GitHub Issue body.
 
@@ -104,7 +104,7 @@ The system SHALL include relevant metadata in the GitHub Issue body.
   - Environment variables
   - IP addresses
 
-### Requirement: Feedback always works
+### Requirement: [CLI-FEEDBACK-004] Feedback always works
 
 The system SHALL allow feedback submission in any environment, including CI.
 
@@ -114,7 +114,7 @@ The system SHALL allow feedback submission in any environment, including CI.
 - **AND** user runs `c3spec feedback "message"`
 - **THEN** the feedback submission proceeds normally (if `gh` is available and authenticated)
 
-### Requirement: Error handling
+### Requirement: [CLI-FEEDBACK-005] Error handling
 
 The system SHALL handle feedback submission errors gracefully.
 
@@ -131,7 +131,7 @@ The system SHALL handle feedback submission errors gracefully.
 - **AND** suggests checking network connectivity
 - **AND** exits with non-zero code
 
-### Requirement: Feedback skill for agents
+### Requirement: [CLI-FEEDBACK-006] Feedback skill for agents
 
 The system SHALL provide a `/feedback` skill that guides agents through collecting and submitting user feedback.
 
@@ -170,7 +170,7 @@ The system SHALL provide a `/feedback` skill that guides agents through collecti
 - **AND** allow the user to request modifications
 - **AND** only submit after user confirms
 
-### Requirement: Shell completions
+### Requirement: [CLI-FEEDBACK-007] Shell completions
 
 The system SHALL provide shell completions for the feedback command.
 

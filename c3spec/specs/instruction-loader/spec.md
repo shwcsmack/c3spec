@@ -4,7 +4,7 @@
 The instruction-loader loads instruction templates from schema directories, validates and enriches them with metadata and parameters (such as change context and dependency status), and exposes them for use by downstream services including template retrieval, parameter substitution, and enrichment.
 
 ## Requirements
-### Requirement: Template Loading
+### Requirement: [INSTRUCTION-LOADER-001] Template Loading
 The system SHALL load templates from schema directories.
 
 #### Scenario: Load template from schema directory
@@ -15,7 +15,7 @@ The system SHALL load templates from schema directories.
 - **WHEN** a template file does not exist in the schema's templates directory
 - **THEN** the system throws an error with the template path
 
-### Requirement: Change Context Loading
+### Requirement: [INSTRUCTION-LOADER-002] Change Context Loading
 The system SHALL load change context combining graph and completion state.
 
 #### Scenario: Load context for existing change
@@ -30,7 +30,7 @@ The system SHALL load change context combining graph and completion state.
 - **WHEN** `loadChangeContext` is called for a non-existent change directory
 - **THEN** the system returns context with empty completed set
 
-### Requirement: Template Enrichment
+### Requirement: [INSTRUCTION-LOADER-003] Template Enrichment
 The system SHALL enrich templates with change-specific context.
 
 #### Scenario: Include artifact metadata
@@ -49,7 +49,7 @@ The system SHALL enrich templates with change-specific context.
 - **WHEN** an artifact has no dependencies
 - **THEN** the dependency section indicates this is a root artifact
 
-### Requirement: Status Formatting
+### Requirement: [INSTRUCTION-LOADER-004] Status Formatting
 The system SHALL format change status as readable output.
 
 #### Scenario: All artifacts completed

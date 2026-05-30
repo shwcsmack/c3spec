@@ -5,7 +5,7 @@ Define the product and storage foundation for c3spec coordination workspaces,
 including workspace identity, shared versus local state, managed storage,
 registry behavior, stable link names, and repo ownership boundaries.
 ## Requirements
-### Requirement: Recognizable Workspace Home
+### Requirement: [WORKSPACE-FOUNDATION-001] Recognizable Workspace Home
 c3spec SHALL give users and agents a recognizable workspace home for cross-repo planning.
 
 #### Scenario: Planning across linked repos or folders
@@ -25,7 +25,7 @@ c3spec SHALL give users and agents a recognizable workspace home for cross-repo 
 - **THEN** it SHALL avoid treating that directory as a workspace
 - **AND** it SHALL enter workspace mode only when the workspace identity file is present
 
-### Requirement: Stable Workspace Name
+### Requirement: [WORKSPACE-FOUNDATION-002] Stable Workspace Name
 c3spec SHALL use one kebab-case workspace name across workspace identity, managed storage, and the local registry.
 
 #### Scenario: Using one workspace name
@@ -40,7 +40,7 @@ c3spec SHALL use one kebab-case workspace name across workspace identity, manage
 - **AND** it SHALL reject empty names, dot names, names with leading or trailing hyphens, names with repeated hyphens, uppercase letters, spaces, underscores, dots, and path separators
 - **AND** setup flows SHALL report OS-level folder creation failures clearly
 
-### Requirement: Dedicated Workspace Identity
+### Requirement: [WORKSPACE-FOUNDATION-003] Dedicated Workspace Identity
 c3spec SHALL distinguish a coordination workspace from a repo-local c3spec project.
 
 #### Scenario: Reading workspace identity
@@ -58,7 +58,7 @@ c3spec SHALL distinguish a coordination workspace from a repo-local c3spec proje
 - **THEN** c3spec SHALL treat that folder as a workspace coordination surface
 - **AND** users SHALL not need to initialize a repo-local `c3spec/` project inside the workspace folder
 
-### Requirement: Safe Workspace Sharing
+### Requirement: [WORKSPACE-FOUNDATION-004] Safe Workspace Sharing
 c3spec SHALL keep shared workspace information separate from local machine paths.
 
 #### Scenario: Sharing workspace planning
@@ -81,7 +81,7 @@ c3spec SHALL keep shared workspace information separate from local machine paths
 - **THEN** it SHALL exclude `.c3spec-workspace/local.yaml` from portable collaboration state by default
 - **AND** `.c3spec-workspace/workspace.yaml` SHALL remain the portable workspace identity and link-name state
 
-### Requirement: Standard Workspace Location
+### Requirement: [WORKSPACE-FOUNDATION-005] Standard Workspace Location
 c3spec SHALL use a standard location for c3spec-managed workspaces without asking most users to choose one.
 
 #### Scenario: Using the standard workspace location
@@ -120,7 +120,7 @@ c3spec SHALL use a standard location for c3spec-managed workspaces without askin
 - **THEN** it SHALL interpret paths for the runtime running c3spec
 - **AND** Windows, UNC WSL, and WSL mount paths SHALL remain explicit user-provided paths
 
-### Requirement: Local Workspace Registry
+### Requirement: [WORKSPACE-FOUNDATION-006] Local Workspace Registry
 c3spec SHALL keep a lightweight local registry of known workspaces on the current machine.
 
 #### Scenario: Recording known workspaces
@@ -138,7 +138,7 @@ c3spec SHALL keep a lightweight local registry of known workspaces on the curren
 - **THEN** c3spec MAY use the local registry to find known workspaces
 - **AND** commands that need one workspace MAY use the registry to support an interactive picker
 
-### Requirement: Stable Link Names
+### Requirement: [WORKSPACE-FOUNDATION-007] Stable Link Names
 c3spec SHALL use stable folder-style link names to refer to repos and folders in workspace planning.
 
 #### Scenario: Referring to a repo or folder in workspace planning
@@ -157,7 +157,7 @@ c3spec SHALL use stable folder-style link names to refer to repos and folders in
 - **AND** link names SHALL be unique within the workspace
 - **AND** link names SHALL not be required to use workspace-name kebab-case
 
-### Requirement: Linked Repos And Folders
+### Requirement: [WORKSPACE-FOUNDATION-008] Linked Repos And Folders
 c3spec SHALL allow workspace planning to include linked repos and folders before they have repo-local c3spec state.
 
 #### Scenario: Planning with a repo that has not adopted c3spec
@@ -180,7 +180,7 @@ c3spec SHALL allow workspace planning to include linked repos and folders before
 - **THEN** it SHALL store the link in workspace state
 - **AND** it SHALL not create, copy, move, initialize, or edit files inside the linked repo or folder
 
-### Requirement: Planning Before Implementation
+### Requirement: [WORKSPACE-FOUNDATION-009] Planning Before Implementation
 c3spec SHALL treat workspace creation and detection as planning setup, not implementation.
 
 #### Scenario: Creating or detecting a workspace
@@ -192,7 +192,7 @@ c3spec SHALL treat workspace creation and detection as planning setup, not imple
 - **WHEN** repo-local implementation, apply, verify, or archive behavior is needed
 - **THEN** that behavior SHALL require an explicit later workspace workflow
 
-### Requirement: Repo Ownership Boundaries
+### Requirement: [WORKSPACE-FOUNDATION-010] Repo Ownership Boundaries
 c3spec SHALL keep repo ownership legible when planning happens in a workspace.
 
 #### Scenario: Planning across owned repos
@@ -205,7 +205,7 @@ c3spec SHALL keep repo ownership legible when planning happens in a workspace.
 - **THEN** the workspace MAY hold planning notes or draft behavior
 - **AND** those drafts SHALL remain distinguishable from canonical repo-owned specs
 
-### Requirement: Workspace Preferred Opener State
+### Requirement: [WORKSPACE-FOUNDATION-011] Workspace Preferred Opener State
 c3spec SHALL store a workspace's preferred opener in machine-local workspace state when the user explicitly chooses one.
 
 #### Scenario: Recording an interactive setup opener choice
@@ -235,7 +235,7 @@ c3spec SHALL store a workspace's preferred opener in machine-local workspace sta
 - **AND** it SHALL order openers with detected executables before unavailable openers
 - **AND** unavailable openers SHALL remain visible with an availability note
 
-### Requirement: Maintained Workspace Open Surface
+### Requirement: [WORKSPACE-FOUNDATION-012] Maintained Workspace Open Surface
 c3spec SHALL maintain files that make a workspace directly openable after setup and link changes.
 
 #### Scenario: Creating the open surface during setup

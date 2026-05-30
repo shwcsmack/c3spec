@@ -5,7 +5,7 @@ Defines the agent skill for syncing delta specs from changes to main specs.
 
 ## Requirements
 
-### Requirement: Specs Sync Skill
+### Requirement: [SPECS-SYNC-SKILL-001] Specs Sync Skill
 The system SHALL provide an `/opsx:sync` skill that syncs delta specs from a change to the main specs.
 
 #### Scenario: Sync delta specs to main specs
@@ -24,7 +24,7 @@ The system SHALL provide an `/opsx:sync` skill that syncs delta specs from a cha
 - **THEN** the agent prompts user to select from available changes
 - **AND** shows changes that have delta specs
 
-### Requirement: Delta Reconciliation Logic
+### Requirement: [SPECS-SYNC-SKILL-002] Delta Reconciliation Logic
 The agent SHALL reconcile main specs with delta specs using the delta operation headers.
 
 #### Scenario: ADDED requirements
@@ -56,7 +56,7 @@ The agent SHALL reconcile main specs with delta specs using the delta operation 
 - **WHEN** delta spec exists for a capability not in main specs
 - **THEN** create new main spec file at `c3spec/specs/<capability>/spec.md`
 
-### Requirement: Skill Output
+### Requirement: [SPECS-SYNC-SKILL-003] Skill Output
 The skill SHALL provide clear feedback on what was applied.
 
 #### Scenario: Show applied changes

@@ -4,7 +4,7 @@
 Define `c3spec schema fork` behavior for cloning existing schemas into project-local schemas with safe overwrite controls.
 
 ## Requirements
-### Requirement: Schema fork copies existing schema
+### Requirement: [SCHEMA-FORK-COMMAND-001] Schema fork copies existing schema
 The CLI SHALL provide an `c3spec schema fork <source> [name]` command that copies an existing schema to the project's `c3spec/schemas/` directory.
 
 #### Scenario: Fork with explicit name
@@ -25,7 +25,7 @@ The CLI SHALL provide an `c3spec schema fork <source> [name]` command that copie
 - **AND** lists available schemas
 - **AND** exits with non-zero code
 
-### Requirement: Schema fork prevents accidental overwrites
+### Requirement: [SCHEMA-FORK-COMMAND-002] Schema fork prevents accidental overwrites
 The CLI SHALL require confirmation or `--force` flag when the destination schema already exists.
 
 #### Scenario: Destination exists without force
@@ -45,7 +45,7 @@ The CLI SHALL require confirmation or `--force` flag when the destination schema
 - **THEN** system prompts for confirmation to overwrite
 - **AND** proceeds based on user response
 
-### Requirement: Schema fork preserves all schema files
+### Requirement: [SCHEMA-FORK-COMMAND-003] Schema fork preserves all schema files
 The CLI SHALL copy the complete schema directory including templates, configuration, and any additional files.
 
 #### Scenario: Copy includes template files
@@ -58,7 +58,7 @@ The CLI SHALL copy the complete schema directory including templates, configurat
 - **THEN** nested directory structure is preserved
 - **AND** all nested files are copied
 
-### Requirement: Schema fork outputs JSON format
+### Requirement: [SCHEMA-FORK-COMMAND-004] Schema fork outputs JSON format
 The CLI SHALL support `--json` flag for machine-readable output.
 
 #### Scenario: JSON output on success

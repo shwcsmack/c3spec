@@ -4,7 +4,7 @@
 
 The workflow-routing capability SHALL define the c3spec development workflow entry point, tier classifier, tier handoff contracts, canonical skill and review-agent surfaces, generated host instruction alignment, and enforcement boundaries.
 ## Requirements
-### Requirement: Single front door for development work
+### Requirement: [WORKFLOW-ROUTING-001] Single front door for development work
 
 All c3spec development work SHALL enter through the `c3spec-start` skill, and `c3spec-start` SHALL complete the clean source tree gate and project memory scan before any routing or tier handoff.
 
@@ -28,7 +28,7 @@ All c3spec development work SHALL enter through the `c3spec-start` skill, and `c
 - **THEN** it SHALL load the project memory index at `c3spec/memory/MEMORY.md` before asking interview questions
 - **AND** relevant memory entries SHALL be surfaced naturally during the interview and carried forward into the tier handoff
 
-### Requirement: Workflow routing classifier
+### Requirement: [WORKFLOW-ROUTING-002] Workflow routing classifier
 
 The `c3spec-start` routing classifier SHALL produce exactly one of four outcomes — Research Workflow, T1 Spec-Aware Fix, T2 Lightweight Feature, or T3 Full Workflow — and SHALL require explicit user confirmation before handing off to the chosen workflow.
 
@@ -51,7 +51,7 @@ The `c3spec-start` routing classifier SHALL produce exactly one of four outcomes
 - **AND** SHALL accept a user override of the proposed tier without debate
 - **AND** SHALL NOT begin tier-specific work (worktree setup, plan generation, change scaffolding, or implementation) before confirmation
 
-### Requirement: Research workflow routing and handoff
+### Requirement: [WORKFLOW-ROUTING-003] Research workflow routing and handoff
 
 `c3spec-start` SHALL route explicit research intent to a dedicated research workflow that produces lightweight durable research artifacts and a handoff back to implementation routing.
 
@@ -68,7 +68,7 @@ The `c3spec-start` routing classifier SHALL produce exactly one of four outcomes
 - **AND** research outputs SHALL include a clear recommended direction and implementation handoff summary
 - **AND** implementation follow-up SHALL return through `c3spec-start` for final T1/T2/T3 classification
 
-### Requirement: Tier interview gate contract
+### Requirement: [WORKFLOW-ROUTING-004] Tier interview gate contract
 
 Tier workflows SHALL run an explicit interview/grill-me phase before planning or implementation so assumptions are surfaced and alignment is refreshed at the tier boundary.
 
@@ -85,7 +85,7 @@ Tier workflows SHALL run an explicit interview/grill-me phase before planning or
 - **THEN** those helpers SHALL use on-disk lifecycle artifacts (`tier.md`, plans, tasks) as the source of truth
 - **AND** they SHALL NOT require a new interview/grill-me phase before continuing execution
 
-### Requirement: Tier 1 Spec-Aware Fix routing and workflow shape
+### Requirement: [WORKFLOW-ROUTING-005] Tier 1 Spec-Aware Fix routing and workflow shape
 
 `c3spec-start` SHALL route changes that are low risk, localized, and free of spec-level contract changes to a Tier 1 Spec-Aware Fix workflow that avoids full proposal/design/tasks/plan ceremony while still producing a lightweight durable change record.
 
@@ -109,7 +109,7 @@ Tier workflows SHALL run an explicit interview/grill-me phase before planning or
 - **THEN** its change folder SHALL contain enough durable markdown metadata for a fresh agent to identify the tier, goal, branch, required artifacts, affected specs, and current status
 - **AND** HTML review artifacts SHALL NOT be the only durable record of spec impact or retrospective conclusions
 
-### Requirement: Tier 2 Lightweight Feature workflow
+### Requirement: [WORKFLOW-ROUTING-006] Tier 2 Lightweight Feature workflow
 
 `c3spec-start` SHALL route contained new capabilities or extensions of an existing capability that have clear scope, real but limited design decisions, and a 1–2 capability spec footprint to a Tier 2 Lightweight Feature workflow with a compact change directory and explicit lifecycle metadata.
 
@@ -127,7 +127,7 @@ Tier workflows SHALL run an explicit interview/grill-me phase before planning or
 - **AND** the workflow SHALL include a design artifact and delta specs when the feature has non-trivial design decisions or spec-level behavior changes
 - **AND** the workflow SHALL execute via `c3spec-subagent-dev`, run a lightweight verification pass, write a lightweight retrospective, and archive the change
 
-### Requirement: Tier 3 Full Workflow routing and workflow shape
+### Requirement: [WORKFLOW-ROUTING-007] Tier 3 Full Workflow routing and workflow shape
 
 `c3spec-start` SHALL route changes with significant design uncertainty, architectural reach, breaking or external-contract change, cross-system integration, DB/schema change, or any design that is expensive to undo to a Tier 3 Full Workflow with full planning artifacts and explicit lifecycle metadata.
 
@@ -143,7 +143,7 @@ Tier workflows SHALL run an explicit interview/grill-me phase before planning or
 - **AND** the workflow SHALL produce lifecycle metadata, brainstorm, proposal, design, delta specs for each affected capability, tasks, and a staged plan before implementation
 - **AND** implementation SHALL run via `c3spec-subagent-dev` followed by a full verification artifact, a retrospective, memory capture when learnings generalize, and archive
 
-### Requirement: Tier lifecycle contract
+### Requirement: [WORKFLOW-ROUTING-008] Tier lifecycle contract
 
 Tier workflows SHALL treat `c3spec-tier-lifecycle` as the single source of truth for pause gates and HTML-to-markdown handoff sequencing.
 
@@ -203,7 +203,7 @@ Tier workflows SHALL treat `c3spec-tier-lifecycle` as the single source of truth
 - **THEN** the gate SHALL be treated as approved
 - **AND** workflow SHALL continue to the next lifecycle step
 
-### Requirement: Canonical skill and review-agent surfaces
+### Requirement: [WORKFLOW-ROUTING-009] Canonical skill and review-agent surfaces
 
 The workflow-routing contract SHALL include local c3spec-owned replacements for critical external superpowers dependencies used by tier/archive workflows.
 
@@ -221,7 +221,7 @@ The workflow-routing contract SHALL include local c3spec-owned replacements for 
 - **AND** it SHALL emit a standardized `Finish Branch Outcome` summary with archive status, finish-command status, PR-ready status, and next action
 - **AND** if finishing fails, it SHALL preserve archive results and emit explicit recovery guidance
 
-### Requirement: Subagent workflow expectations
+### Requirement: [WORKFLOW-ROUTING-010] Subagent workflow expectations
 
 Tier workflows SHALL dispatch the canonical agent roles with bounded responsibilities and SHALL keep `tasks.md` checkbox state under controller ownership.
 
@@ -244,7 +244,7 @@ Tier workflows SHALL dispatch the canonical agent roles with bounded responsibil
 - **THEN** only the controlling skill (e.g. `c3spec-subagent-dev` or the tier skill) SHALL mark `[ ] → [x]` after both reviews pass
 - **AND** implementer or reviewer agents SHALL NOT edit `tasks.md` checkbox state directly
 
-### Requirement: Generated host instruction alignment
+### Requirement: [WORKFLOW-ROUTING-011] Generated host instruction alignment
 
 Generated host instructions SHALL describe c3spec as an opinionated workflow contract without schema customization entry points.
 
@@ -254,7 +254,7 @@ Generated host instructions SHALL describe c3spec as an opinionated workflow con
 - **THEN** they SHALL direct users to canonical c3spec skills and tiers
 - **AND** they SHALL NOT require schema selection or schema-specific workflow switching for normal development flow
 
-### Requirement: Enforcement boundaries for the routing contract
+### Requirement: [WORKFLOW-ROUTING-012] Enforcement boundaries for the routing contract
 
 c3spec machine enforcement SHALL guarantee that the canonical skill, agent, and hook surfaces required by the routing contract exist, and SHALL guarantee that source-of-truth specs remain structurally normalized at the current project-wide validation level; per-requirement backing-test enforcement SHALL NOT be introduced by this contract.
 
@@ -278,7 +278,7 @@ c3spec machine enforcement SHALL guarantee that the canonical skill, agent, and 
 - **THEN** the contract SHALL NOT introduce a per-requirement backing-test enforcement mechanism
 - **AND** project-wide requirement-to-test coverage SHALL remain deferred to the entry tracked as IDEAS.md #15
 
-### Requirement: One-question interview pacing and question-first turn format
+### Requirement: [WORKFLOW-ROUTING-013] One-question interview pacing and question-first turn format
 
 Interview-driven workflow steps SHALL ask exactly one user-facing interview question per message and SHALL NOT batch or compound multiple questions in the same turn. Every interview question turn SHALL include exactly one question first, then `Why this question now:`, then `Recommendation:`.
 
@@ -320,7 +320,7 @@ Interview-driven workflow steps SHALL ask exactly one user-facing interview ques
 - **THEN** it MAY use open-ended, multiple-choice, or yes/no questions when warranted
 - **AND** all modes SHALL still include the required question-first order with `Why this question now:` and `Recommendation:`
 
-### Requirement: Pi-only workflow runtime contract
+### Requirement: [WORKFLOW-ROUTING-014] Pi-only workflow runtime contract
 
 c3spec SHALL define pi as the sole supported runtime/host model for default workflows.
 
@@ -334,7 +334,7 @@ c3spec SHALL define pi as the sole supported runtime/host model for default work
 - **THEN** c3spec SHALL fail with a clear unsupported-runtime message
 - **AND** SHALL direct the user to pi as the required runtime
 
-### Requirement: Subagent bootstrap gate before dispatch
+### Requirement: [WORKFLOW-ROUTING-015] Subagent bootstrap gate before dispatch
 
 Tier/apply workflows that dispatch subagents SHALL run `c3spec subagent bootstrap --change <id>` and SHALL stop when required bootstrap checks fail.
 

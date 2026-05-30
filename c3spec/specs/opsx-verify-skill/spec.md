@@ -4,7 +4,7 @@
 Define `/opsx:verify` behavior for assessing implementation completeness, correctness, and coherence against change artifacts.
 
 ## Requirements
-### Requirement: Verify Skill Invocation
+### Requirement: [OPSX-VERIFY-SKILL-001] Verify Skill Invocation
 The system SHALL provide an `/opsx:verify` skill that validates implementation against change artifacts.
 
 #### Scenario: Verify with change name provided
@@ -22,7 +22,7 @@ The system SHALL provide an `/opsx:verify` skill that validates implementation a
 - **THEN** the agent reports "No tasks to verify"
 - **AND** suggests running `/opsx:continue` to create tasks
 
-### Requirement: Completeness Verification
+### Requirement: [OPSX-VERIFY-SKILL-002] Completeness Verification
 The agent SHALL verify that all required work has been completed.
 
 #### Scenario: Task completion check
@@ -50,7 +50,7 @@ The agent SHALL verify that all required work has been completed.
 - **AND** mark as CRITICAL issue
 - **AND** suggest: "Complete remaining tasks or mark as done if already implemented"
 
-### Requirement: Correctness Verification
+### Requirement: [OPSX-VERIFY-SKILL-003] Correctness Verification
 The agent SHALL verify that implementation matches the specifications.
 
 #### Scenario: Requirement implementation mapping
@@ -83,7 +83,7 @@ The agent SHALL verify that implementation matches the specifications.
 - **THEN** report as CRITICAL issue
 - **AND** suggest: "Implement requirement X" with guidance on what's needed
 
-### Requirement: Coherence Verification
+### Requirement: [OPSX-VERIFY-SKILL-004] Coherence Verification
 The agent SHALL verify that implementation is sensible and follows design decisions.
 
 #### Scenario: Design.md adherence check
@@ -115,7 +115,7 @@ The agent SHALL verify that implementation is sensible and follows design decisi
 - **THEN** check if new code follows existing project patterns
 - **AND** flag any significant deviations as suggestions
 
-### Requirement: Verification Report Format
+### Requirement: [OPSX-VERIFY-SKILL-005] Verification Report Format
 The agent SHALL produce a structured, prioritized report.
 
 #### Scenario: Report summary
@@ -168,7 +168,7 @@ The agent SHALL produce a structured, prioritized report.
   Ready for archive (with noted improvements).
   ```
 
-### Requirement: Flexible Artifact Handling
+### Requirement: [OPSX-VERIFY-SKILL-006] Flexible Artifact Handling
 The agent SHALL gracefully handle changes with varying artifact completeness.
 
 #### Scenario: Minimal change (tasks only)

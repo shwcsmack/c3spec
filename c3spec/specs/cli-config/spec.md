@@ -3,7 +3,7 @@
 ## Purpose
 Provide a user-friendly CLI interface for viewing and modifying global c3spec configuration settings without manually editing JSON files.
 ## Requirements
-### Requirement: Command Structure
+### Requirement: [CLI-CONFIG-001] Command Structure
 
 The config command SHALL provide subcommands for all configuration operations.
 
@@ -19,7 +19,7 @@ The config command SHALL provide subcommands for all configuration operations.
   - `reset` - Reset configuration to defaults
   - `edit` - Open config in editor
 
-### Requirement: Config Path
+### Requirement: [CLI-CONFIG-002] Config Path
 
 The config command SHALL display the config file location.
 
@@ -29,7 +29,7 @@ The config command SHALL display the config file location.
 - **THEN** print the absolute path to the config file
 - **AND** exit with code 0
 
-### Requirement: Config List
+### Requirement: [CLI-CONFIG-003] Config List
 
 The config command SHALL display all current configuration values.
 
@@ -45,7 +45,7 @@ The config command SHALL display all current configuration values.
 - **THEN** output the complete config as valid JSON
 - **AND** output only JSON (no additional text)
 
-### Requirement: Config Get
+### Requirement: [CLI-CONFIG-004] Config Get
 
 The config command SHALL retrieve specific configuration values.
 
@@ -72,7 +72,7 @@ The config command SHALL retrieve specific configuration values.
 - **WHEN** user executes `c3spec config get <key>` where the value is an object
 - **THEN** print the object as JSON
 
-### Requirement: Config Set
+### Requirement: [CLI-CONFIG-005] Config Set
 
 The config command SHALL set configuration values with automatic type coercion.
 
@@ -107,7 +107,7 @@ The config command SHALL set configuration values with automatic type coercion.
 - **THEN** create intermediate objects if they don't exist
 - **AND** set the value at the nested path
 
-### Requirement: Config Unset
+### Requirement: [CLI-CONFIG-006] Config Unset
 
 The config command SHALL remove configuration overrides.
 
@@ -126,7 +126,7 @@ The config command SHALL remove configuration overrides.
 - **THEN** display message indicating key was not set
 - **AND** exit with code 0
 
-### Requirement: Config Reset
+### Requirement: [CLI-CONFIG-007] Config Reset
 
 The config command SHALL reset configuration to defaults.
 
@@ -148,7 +148,7 @@ The config command SHALL reset configuration to defaults.
 - **THEN** display error indicating `--all` is required
 - **AND** exit with code 1
 
-### Requirement: Config Edit
+### Requirement: [CLI-CONFIG-008] Config Edit
 
 The config command SHALL open the config file in the user's editor.
 
@@ -167,7 +167,7 @@ The config command SHALL open the config file in the user's editor.
 - **THEN** display error message suggesting to set `$EDITOR`
 - **AND** exit with code 1
 
-### Requirement: Profile Configuration Flow
+### Requirement: [CLI-CONFIG-009] Profile Configuration Flow
 
 The `c3spec config profile` command SHALL provide an action-first interactive flow that allows users to modify delivery and workflow settings independently.
 
@@ -214,7 +214,7 @@ The `c3spec config profile` command SHALL provide an action-first interactive fl
 - **THEN** prompt `Apply changes to this project now?`
 - **AND** if confirmed, reload pi for the current project
 
-### Requirement: Key Naming Convention
+### Requirement: [CLI-CONFIG-010] Key Naming Convention
 
 The config command SHALL use camelCase keys matching the JSON structure.
 
@@ -224,7 +224,7 @@ The config command SHALL use camelCase keys matching the JSON structure.
 - **THEN** use camelCase matching the actual JSON property names
 - **AND** support dot notation for nested access (e.g., `featureFlags.someFlag`)
 
-### Requirement: Schema Validation
+### Requirement: [CLI-CONFIG-011] Schema Validation
 
 The config command SHALL validate configuration writes against the config schema using zod, while rejecting unknown keys for `config set` unless explicitly overridden.
 
@@ -248,7 +248,7 @@ The config command SHALL validate configuration writes against the config schema
 - **AND** do not modify the config file
 - **AND** exit with code 1
 
-### Requirement: Reserved Scope Flag
+### Requirement: [CLI-CONFIG-012] Reserved Scope Flag
 
 The config command SHALL reserve the `--scope` flag for future extensibility.
 
@@ -263,7 +263,7 @@ The config command SHALL reserve the `--scope` flag for future extensibility.
 - **THEN** display error message: "Project-local config is not yet implemented"
 - **AND** exit with code 1
 
-### Requirement: Config profile applies to current workspace
+### Requirement: [CLI-CONFIG-013] Config profile applies to current workspace
 The `c3spec config profile` command SHALL remain global while offering an explicit workspace apply path when run from inside an c3spec workspace.
 
 #### Scenario: Config profile run inside a workspace

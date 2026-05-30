@@ -4,7 +4,7 @@
 
 The `c3spec view` command provides a comprehensive dashboard view of the c3spec project state, displaying specifications, changes, and progress metrics in a unified, visually appealing format to help developers quickly understand project status.
 ## Requirements
-### Requirement: Dashboard Display
+### Requirement: [CLI-VIEW-001] Dashboard Display
 
 The system SHALL provide a `view` command that displays a dashboard overview of specs and changes.
 
@@ -18,7 +18,7 @@ The system SHALL provide a `view` command that displays a dashboard overview of 
 - **WHEN** user runs `c3spec view` in a directory without c3spec
 - **THEN** system displays error message "✗ No c3spec directory found"
 
-### Requirement: Summary Section
+### Requirement: [CLI-VIEW-002] Summary Section
 
 The dashboard SHALL display a summary section with key project metrics, including draft change count.
 
@@ -36,7 +36,7 @@ The dashboard SHALL display a summary section with key project metrics, includin
 - **WHEN** no specs or changes exist
 - **THEN** summary shows zero counts for all metrics
 
-### Requirement: Active Changes Display
+### Requirement: [CLI-VIEW-003] Active Changes Display
 The dashboard SHALL show active changes with visual progress indicators.
 
 #### Scenario: Active changes ordered by completion percentage
@@ -45,7 +45,7 @@ The dashboard SHALL show active changes with visual progress indicators.
 - **AND** treat missing progress values as 0% for ordering
 - **AND** break ties by change identifier in ascending alphabetical order to keep output deterministic
 
-### Requirement: Completed Changes Display
+### Requirement: [CLI-VIEW-004] Completed Changes Display
 
 The dashboard SHALL list completed changes in a separate section, only showing changes with ALL tasks completed.
 
@@ -67,7 +67,7 @@ The dashboard SHALL list completed changes in a separate section, only showing c
 - **THEN** system does NOT show it in "Completed Changes" section
 - **AND** shows it in "Draft Changes" section instead
 
-### Requirement: Specifications Display
+### Requirement: [CLI-VIEW-005] Specifications Display
 
 The dashboard SHALL display specifications sorted by requirement count.
 
@@ -81,7 +81,7 @@ The dashboard SHALL display specifications sorted by requirement count.
 - **WHEN** a spec file cannot be parsed
 - **THEN** system includes it with 0 requirement count
 
-### Requirement: Visual Formatting
+### Requirement: [CLI-VIEW-006] Visual Formatting
 
 The dashboard SHALL use consistent visual formatting with colors and symbols.
 
@@ -98,7 +98,7 @@ The dashboard SHALL use consistent visual formatting with colors and symbols.
 - **WHEN** displaying progress bars
 - **THEN** system uses filled blocks (█) for completed portions and light blocks (░) for remaining
 
-### Requirement: Error Handling
+### Requirement: [CLI-VIEW-007] Error Handling
 
 The view command SHALL handle errors gracefully.
 
@@ -112,7 +112,7 @@ The view command SHALL handle errors gracefully.
 - **WHEN** specs or changes have invalid format
 - **THEN** system skips invalid items and continues rendering
 
-### Requirement: Draft Changes Display
+### Requirement: [CLI-VIEW-008] Draft Changes Display
 
 The dashboard SHALL display changes without tasks in a separate "Draft" section.
 

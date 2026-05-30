@@ -6,7 +6,7 @@ Define the expected behavior for the `/opsx:archive` skill, including readiness 
 
 ## Requirements
 
-### Requirement: OPSX Archive Skill
+### Requirement: [OPSX-ARCHIVE-SKILL-001] OPSX Archive Skill
 
 The system SHALL provide an `/opsx:archive` skill that archives completed changes in the experimental workflow.
 
@@ -24,7 +24,7 @@ The system SHALL provide an `/opsx:archive` skill that archives completed change
 - **THEN** the agent prompts user to select from available changes
 - **AND** shows only active changes (excludes archive/)
 
-### Requirement: Artifact Completion Check
+### Requirement: [OPSX-ARCHIVE-SKILL-002] Artifact Completion Check
 
 The skill SHALL check artifact completion status using the artifact graph before archiving.
 
@@ -42,7 +42,7 @@ The skill SHALL check artifact completion status using the artifact graph before
 - **AND** all artifacts have status `done`
 - **THEN** proceed without warning
 
-### Requirement: Task Completion Check
+### Requirement: [OPSX-ARCHIVE-SKILL-003] Task Completion Check
 
 The skill SHALL check task completion status from tasks.md before archiving.
 
@@ -65,7 +65,7 @@ The skill SHALL check task completion status from tasks.md before archiving.
 - **WHEN** tasks.md does not exist
 - **THEN** proceed without task-related warning
 
-### Requirement: Spec Sync Prompt
+### Requirement: [OPSX-ARCHIVE-SKILL-004] Spec Sync Prompt
 
 The skill SHALL prompt to sync delta specs before archiving if specs exist.
 
@@ -83,7 +83,7 @@ The skill SHALL prompt to sync delta specs before archiving if specs exist.
 - **AND** no `specs/` directory or no spec files exist
 - **THEN** proceed without sync prompt
 
-### Requirement: Archive Process
+### Requirement: [OPSX-ARCHIVE-SKILL-005] Archive Process
 
 The skill SHALL move the change to the archive folder with date prefix.
 
@@ -101,7 +101,7 @@ The skill SHALL move the change to the archive folder with date prefix.
 - **THEN** fail with error message
 - **AND** suggest renaming existing archive or using different date
 
-### Requirement: Skill Output
+### Requirement: [OPSX-ARCHIVE-SKILL-006] Skill Output
 
 The skill SHALL provide clear feedback about the archive operation.
 

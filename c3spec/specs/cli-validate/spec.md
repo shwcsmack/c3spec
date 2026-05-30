@@ -4,7 +4,7 @@
 Define `c3spec validate` behavior for validating changes and specs with actionable remediation guidance and structured output.
 
 ## Requirements
-### Requirement: Validation SHALL provide actionable remediation steps
+### Requirement: [CLI-VALIDATE-001] Validation SHALL provide actionable remediation steps
 Validation output SHALL include specific guidance to fix each error, including expected structure, example headers, and suggested commands to verify fixes.
 
 #### Scenario: No deltas found in change
@@ -30,7 +30,7 @@ Validation output SHALL include specific guidance to fix each error, including e
   - Suggest adding 1-2 sentences describing the normative behavior prior to listing scenarios
   - Reference the pre-validation checklist in `c3spec/AGENTS.md`
 
-### Requirement: Validator SHALL detect likely misformatted scenarios and warn with a fix
+### Requirement: [CLI-VALIDATE-002] Validator SHALL detect likely misformatted scenarios and warn with a fix
 The validator SHALL recognize bulleted lines that look like scenarios (e.g., lines beginning with WHEN/THEN/AND) and emit a targeted warning with a conversion example to `#### Scenario:`.
 
 #### Scenario: Bulleted WHEN/THEN under a Requirement
@@ -43,7 +43,7 @@ The validator SHALL recognize bulleted lines that look like scenarios (e.g., lin
 - **AND** ...
 ```
 
-### Requirement: All issues SHALL include file paths and structured locations
+### Requirement: [CLI-VALIDATE-003] All issues SHALL include file paths and structured locations
 Error, warning, and info messages SHALL include:
 - Source file path (`c3spec/changes/{id}/proposal.md`, `.../specs/{cap}/spec.md`)
 - Structured path (e.g., `deltas[0].requirements[0].scenarios`)
@@ -52,7 +52,7 @@ Error, warning, and info messages SHALL include:
 - **WHEN** a schema validation fails
 - **THEN** the message SHALL include `file`, `path`, and a remediation hint if applicable
 
-### Requirement: Invalid results SHALL include a Next steps footer in human-readable output
+### Requirement: [CLI-VALIDATE-004] Invalid results SHALL include a Next steps footer in human-readable output
 The CLI SHALL append a Next steps footer when the item is invalid and not using `--json`, including:
 - Summary line with counts
 - Top-3 guidance bullets (contextual to the most frequent or blocking errors)
@@ -62,7 +62,7 @@ The CLI SHALL append a Next steps footer when the item is invalid and not using 
 - **WHEN** a change validation fails
 - **THEN** print "Next steps" with 2-3 targeted bullets and suggest `c3spec change show <id> --json --deltas-only`
 
-### Requirement: Top-level validate command
+### Requirement: [CLI-VALIDATE-005] Top-level validate command
 
 The CLI SHALL provide a top-level `validate` command for validating changes and specs with flexible selection options.
 
@@ -87,7 +87,7 @@ The CLI SHALL provide a top-level `validate` command for validating changes and 
 - **AND** validate the specified item
 - **AND** display validation results
 
-### Requirement: Bulk and filtered validation
+### Requirement: [CLI-VALIDATE-006] Bulk and filtered validation
 
 The validate command SHALL support flags for bulk validation (--all) and filtered validation by type (--changes, --specs).
 
@@ -122,7 +122,7 @@ The validate command SHALL support flags for bulk validation (--all) and filtere
 - **AND** display results for each spec
 - **AND** show summary statistics
 
-### Requirement: Validation options and progress indication
+### Requirement: [CLI-VALIDATE-007] Validation options and progress indication
 
 The validate command SHALL support standard validation options (--strict, --json) and display progress during bulk operations.
 
@@ -164,7 +164,7 @@ Where `Issue` follows the existing per-item validation report shape `{ level: "E
 - **THEN** run validations with a bounded concurrency (e.g., 4–8 in parallel)
 - **AND** ensure progress indicators remain responsive
 
-### Requirement: Item type detection and ambiguity handling
+### Requirement: [CLI-VALIDATE-008] Item type detection and ambiguity handling
 
 The validate command SHALL handle ambiguous names and explicit type overrides to ensure clear, deterministic behavior.
 
@@ -196,7 +196,7 @@ The validate command SHALL handle ambiguous names and explicit type overrides to
 - **WHEN** executing `c3spec validate --type spec <item>`
 - **THEN** treat `<item>` as a spec ID and validate it (skipping auto-detection)
 
-### Requirement: Interactivity controls
+### Requirement: [CLI-VALIDATE-009] Interactivity controls
 
 - The CLI SHALL respect `--no-interactive` to disable prompts.
 - The CLI SHALL respect `OPEN_SPEC_INTERACTIVE=0` to disable prompts globally.
@@ -208,7 +208,7 @@ The validate command SHALL handle ambiguous names and explicit type overrides to
 - **THEN** the CLI SHALL not display interactive prompts
 - **AND** SHALL print non-interactive hints or chosen outputs as appropriate
 
-### Requirement: Parser SHALL handle cross-platform line endings
+### Requirement: [CLI-VALIDATE-010] Parser SHALL handle cross-platform line endings
 The markdown parser SHALL correctly identify sections regardless of line ending format (LF, CRLF, CR).
 
 #### Scenario: Required sections parsed with CRLF line endings

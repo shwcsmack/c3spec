@@ -4,7 +4,7 @@
 Define `c3spec schema init` behavior for creating project-local schema skeletons in interactive and non-interactive modes.
 
 ## Requirements
-### Requirement: Schema init command creates project-local schema
+### Requirement: [SCHEMA-INIT-COMMAND-001] Schema init command creates project-local schema
 The CLI SHALL provide an `c3spec schema init <name>` command that creates a new schema directory under `c3spec/schemas/<name>/` with a valid `schema.yaml` file and default template files.
 
 #### Scenario: Create schema with valid name
@@ -26,7 +26,7 @@ The CLI SHALL provide an `c3spec schema init <name>` command that creates a new 
 - **AND** suggests using `--force` to overwrite or `schema fork` to copy
 - **AND** exits with non-zero code
 
-### Requirement: Schema init supports interactive mode
+### Requirement: [SCHEMA-INIT-COMMAND-002] Schema init supports interactive mode
 The CLI SHALL prompt for schema configuration when run in an interactive terminal without explicit flags.
 
 #### Scenario: Interactive prompts for description
@@ -45,7 +45,7 @@ The CLI SHALL prompt for schema configuration when run in an interactive termina
 - **THEN** system creates schema without prompting
 - **AND** uses flag values for configuration
 
-### Requirement: Schema init supports setting project default
+### Requirement: [SCHEMA-INIT-COMMAND-003] Schema init supports setting project default
 The CLI SHALL offer to set the newly created schema as the project default.
 
 #### Scenario: Set as default interactively
@@ -61,7 +61,7 @@ The CLI SHALL offer to set the newly created schema as the project default.
 - **WHEN** user runs `c3spec schema init my-workflow --no-default`
 - **THEN** system creates schema without modifying `c3spec/config.yaml`
 
-### Requirement: Schema init outputs JSON format
+### Requirement: [SCHEMA-INIT-COMMAND-004] Schema init outputs JSON format
 The CLI SHALL support `--json` flag for machine-readable output.
 
 #### Scenario: JSON output on success

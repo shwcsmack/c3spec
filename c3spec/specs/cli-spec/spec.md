@@ -4,7 +4,7 @@
 Define `c3spec spec` command behavior for listing, showing, and validating source-of-truth specifications.
 
 ## Requirements
-### Requirement: Interactive spec show
+### Requirement: [CLI-SPEC-001] Interactive spec show
 
 The spec show command SHALL support interactive selection when no spec-id is provided.
 
@@ -24,7 +24,7 @@ The spec show command SHALL support interactive selection when no spec-id is pro
 - **AND** print the existing error message for missing spec-id
 - **AND** set non-zero exit code
 
-### Requirement: Spec Command
+### Requirement: [CLI-SPEC-002] Spec Command
 
 The system SHALL provide a `spec` command with subcommands for displaying, listing, and validating specifications.
 
@@ -55,7 +55,7 @@ The system SHALL provide a `spec` command with subcommands for displaying, listi
 - **AND** validate against Zod schema
 - **AND** report any structural issues
 
-### Requirement: JSON Schema Definition
+### Requirement: [CLI-SPEC-003] JSON Schema Definition
 
 The system SHALL define Zod schemas that accurately represent the spec structure for runtime validation.
 
@@ -66,7 +66,7 @@ The system SHALL define Zod schemas that accurately represent the spec structure
 - **AND** ensure all required fields are present
 - **AND** provide clear error messages for validation failures
 
-### Requirement: Interactive spec validation
+### Requirement: [CLI-SPEC-004] Interactive spec validation
 
 The spec validate command SHALL support interactive selection when no spec-id is provided.
 

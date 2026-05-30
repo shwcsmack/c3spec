@@ -4,7 +4,7 @@
 Define how per-artifact rules from project config are injected into generated instructions with deterministic formatting and validation.
 
 ## Requirements
-### Requirement: Inject rules only for matching artifact
+### Requirement: [RULES-INJECTION-001] Inject rules only for matching artifact
 
 The system SHALL inject rules from config into instructions only when the artifact ID matches a key in the rules object.
 
@@ -24,7 +24,7 @@ The system SHALL inject rules from config into instructions only when the artifa
 - **WHEN** config has `rules: { proposal: [] }`
 - **THEN** instruction output does not include `<rules>` tags
 
-### Requirement: Format rules with XML-style tags and bullet list
+### Requirement: [RULES-INJECTION-002] Format rules with XML-style tags and bullet list
 
 The system SHALL wrap rules in `<rules>` tags with each rule as a bulleted list item.
 
@@ -40,7 +40,7 @@ The system SHALL wrap rules in `<rules>` tags with each rule as a bulleted list 
 - **WHEN** instructions are generated with both context and rules
 - **THEN** order is `<context>` then `<rules>` then `<template>`
 
-### Requirement: Preserve rule text exactly as provided
+### Requirement: [RULES-INJECTION-003] Preserve rule text exactly as provided
 
 The system SHALL inject rule text without modification, escaping, or interpretation.
 
@@ -56,7 +56,7 @@ The system SHALL inject rule text without modification, escaping, or interpretat
 - **WHEN** rule text contains line breaks
 - **THEN** line breaks are preserved within the bullet point
 
-### Requirement: Support multiple artifacts with different rules
+### Requirement: [RULES-INJECTION-004] Support multiple artifacts with different rules
 
 The system SHALL allow different rule sets for different artifacts in the same config.
 
@@ -68,7 +68,7 @@ The system SHALL allow different rule sets for different artifacts in the same c
 - **WHEN** config has rules for proposal and specs only
 - **THEN** design and tasks instructions have no `<rules>` section
 
-### Requirement: Rules are additive to schema guidance
+### Requirement: [RULES-INJECTION-005] Rules are additive to schema guidance
 
 The system SHALL add config rules to the schema's built-in artifact instruction, not replace it.
 
@@ -80,7 +80,7 @@ The system SHALL add config rules to the schema's built-in artifact instruction,
 - **WHEN** schema says "create proposal" and config rules say "include rollback plan"
 - **THEN** agent sees both the schema template and the additional rule
 
-### Requirement: Validate artifact IDs during instruction loading
+### Requirement: [RULES-INJECTION-006] Validate artifact IDs during instruction loading
 
 The system SHALL validate artifact IDs in rules against the schema when instructions are loaded and emit warnings for unknown IDs.
 

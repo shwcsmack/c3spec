@@ -4,7 +4,7 @@ Define behavior after removal of the `c3spec update` command in pi-only c3spec.
 
 ## Requirements
 
-### Requirement: Update command removal
+### Requirement: [CLI-UPDATE-001] Update command removal
 
 The `c3spec update` command SHALL NOT be available in pi-only c3spec.
 

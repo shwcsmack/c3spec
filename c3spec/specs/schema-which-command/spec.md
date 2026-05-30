@@ -4,7 +4,7 @@
 Define `c3spec schema which` behavior for reporting resolved schema source, location, and fallback details.
 
 ## Requirements
-### Requirement: Schema which shows resolution result
+### Requirement: [SCHEMA-WHICH-COMMAND-001] Schema which shows resolution result
 The CLI SHALL provide an `c3spec schema which <name>` command that displays where a schema resolves from.
 
 #### Scenario: Schema resolves from project
@@ -28,7 +28,7 @@ The CLI SHALL provide an `c3spec schema which <name>` command that displays wher
 - **AND** lists available schemas
 - **AND** exits with non-zero code
 
-### Requirement: Schema which shows shadowing information
+### Requirement: [SCHEMA-WHICH-COMMAND-002] Schema which shows shadowing information
 The CLI SHALL indicate when a schema shadows another schema at a lower priority level.
 
 #### Scenario: Project schema shadows package
@@ -45,7 +45,7 @@ The CLI SHALL indicate when a schema shadows another schema at a lower priority 
 - **WHEN** project schema shadows both user and package schemas
 - **THEN** system lists all shadowed locations in priority order
 
-### Requirement: Schema which outputs JSON format
+### Requirement: [SCHEMA-WHICH-COMMAND-003] Schema which outputs JSON format
 The CLI SHALL support `--json` flag for machine-readable output.
 
 #### Scenario: JSON output basic
@@ -56,7 +56,7 @@ The CLI SHALL support `--json` flag for machine-readable output.
 - **WHEN** user runs `c3spec schema which spec-driven --json` and schema has shadows
 - **THEN** JSON includes `shadows` array with `source` and `path` for each shadowed schema
 
-### Requirement: Schema which supports list mode
+### Requirement: [SCHEMA-WHICH-COMMAND-004] Schema which supports list mode
 The CLI SHALL support listing all schemas with their resolution sources.
 
 #### Scenario: List all schemas

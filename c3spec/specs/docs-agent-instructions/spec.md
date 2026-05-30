@@ -4,7 +4,7 @@
 Define authoring standards for generated agent instruction docs so templates, examples, and validation checklists are clear and copy-ready.
 
 ## Requirements
-### Requirement: Quick Reference Placement
+### Requirement: [DOCS-AGENT-INSTRUCTIONS-001] Quick Reference Placement
 The AI instructions SHALL begin with a quick-reference section that surfaces required file structures, templates, and formatting rules before any narrative guidance.
 
 #### Scenario: Loading templates at the top
@@ -12,7 +12,7 @@ The AI instructions SHALL begin with a quick-reference section that surfaces req
 - **THEN** the first substantive section after the title SHALL provide copy-ready headings for `proposal.md`, `tasks.md`, spec deltas, and scenario formatting
 - **AND** link each template to the corresponding workflow step for deeper reading
 
-### Requirement: Embedded Templates and Examples
+### Requirement: [DOCS-AGENT-INSTRUCTIONS-002] Embedded Templates and Examples
 `c3spec/AGENTS.md` SHALL include complete copy/paste templates and inline examples exactly where agents make corresponding edits.
 
 #### Scenario: Providing file templates
@@ -20,7 +20,7 @@ The AI instructions SHALL begin with a quick-reference section that surfaces req
 - **THEN** provide fenced Markdown templates that match the required structure (`## Why`, `## ADDED Requirements`, `#### Scenario:` etc.)
 - **AND** accompany each template with a brief example showing correct header usage and scenario bullets
 
-### Requirement: Pre-validation Checklist
+### Requirement: [DOCS-AGENT-INSTRUCTIONS-003] Pre-validation Checklist
 `c3spec/AGENTS.md` SHALL offer a concise pre-validation checklist that highlights common formatting mistakes before running `c3spec validate`.
 
 #### Scenario: Highlighting common validation failures
@@ -28,7 +28,7 @@ The AI instructions SHALL begin with a quick-reference section that surfaces req
 - **THEN** present a checklist reminding them to verify requirement headers, scenario formatting, and delta sections
 - **AND** include reminders about at least `#### Scenario:` usage and descriptive requirement text before scenarios
 
-### Requirement: Progressive Disclosure of Workflow Guidance
+### Requirement: [DOCS-AGENT-INSTRUCTIONS-004] Progressive Disclosure of Workflow Guidance
 The documentation SHALL separate beginner essentials from advanced topics so newcomers can focus on core steps without losing access to advanced workflows.
 
 #### Scenario: Organizing beginner and advanced sections
@@ -37,7 +37,7 @@ The documentation SHALL separate beginner essentials from advanced topics so new
 - **AND** move advanced topics (multi-capability changes, archiving details, tooling deep dives) into clearly labeled later sections
 - **AND** provide anchor links from the quick-reference to those advanced sections
 
-### Requirement: Behavior-First Spec Authoring Guidance
+### Requirement: [DOCS-AGENT-INSTRUCTIONS-005] Behavior-First Spec Authoring Guidance
 Agent instruction docs SHALL explicitly teach that specs capture observable behavior contracts, while implementation details belong in design/tasks.
 
 #### Scenario: Distinguishing spec vs implementation content
@@ -49,7 +49,7 @@ Agent instruction docs SHALL explicitly teach that specs capture observable beha
 - **WHEN** implementation detail is necessary
 - **THEN** instructions SHALL direct the agent to place it in `design.md` or `tasks.md`, not in the behavioral requirements section of `spec.md`
 
-### Requirement: Lightweight-by-Default Guidance
+### Requirement: [DOCS-AGENT-INSTRUCTIONS-006] Lightweight-by-Default Guidance
 Agent instruction docs SHALL promote minimal ceremony and proportional rigor for spec authoring.
 
 #### Scenario: Applying progressive rigor

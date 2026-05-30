@@ -4,7 +4,7 @@
 
 c3spec conventions SHALL define how system capabilities are documented, how changes are proposed and tracked, and how specifications evolve over time. This meta-specification serves as the source of truth for c3spec's own conventions.
 ## Requirements
-### Requirement: Structured conventions for specs and changes
+### Requirement: [OPENSPEC-CONVENTIONS-001] Structured conventions for specs and changes
 
 c3spec conventions SHALL mandate a structured spec format with clear requirement and scenario sections so tooling can parse consistently.
 
@@ -13,7 +13,7 @@ c3spec conventions SHALL mandate a structured spec format with clear requirement
 - **WHEN** writing or updating c3spec specifications
 - **THEN** authors SHALL use `### Requirement: ...` followed by at least one `#### Scenario: ...` section
 
-### Requirement: Behavior-First Specification Boundary
+### Requirement: [OPENSPEC-CONVENTIONS-002] Behavior-First Specification Boundary
 c3spec specifications SHALL capture verifiable behavior contracts and avoid internal implementation detail.
 
 #### Scenario: Writing behavior requirements
@@ -25,7 +25,7 @@ c3spec specifications SHALL capture verifiable behavior contracts and avoid inte
 - **WHEN** details involve concrete library choices, class/function structure, or execution mechanics
 - **THEN** those details SHALL be documented in `design.md` or `tasks.md` instead of behavioral requirements
 
-### Requirement: Progressive Rigor
+### Requirement: [OPENSPEC-CONVENTIONS-003] Progressive Rigor
 c3spec conventions SHALL keep specs lightweight by default and scale rigor only when risk or coordination complexity demands it.
 
 #### Scenario: Routine change specification
@@ -36,7 +36,7 @@ c3spec conventions SHALL keep specs lightweight by default and scale rigor only 
 - **WHEN** a change is cross-team, cross-repo, API-contract breaking, migration-heavy, or security/privacy sensitive
 - **THEN** authors increase detail and explicit validation expectations proportionally
 
-### Requirement: Project Structure
+### Requirement: [OPENSPEC-CONVENTIONS-004] Project Structure
 An c3spec project SHALL maintain a consistent directory structure for specifications and changes.
 
 #### Scenario: Initializing project structure
@@ -62,7 +62,7 @@ c3spec/
         └── YYYY-MM-DD-[name]/
 ```
 
-### Requirement: Structured Format for Behavioral Specs
+### Requirement: [OPENSPEC-CONVENTIONS-005] Structured Format for Behavioral Specs
 
 Behavioral specifications SHALL use a structured format with consistent section headers and keywords to ensure visual consistency and parseability.
 
@@ -91,7 +91,7 @@ Behavioral specifications SHALL use a structured format with consistent section 
   - Sub-bullets provide examples or specifics
   - Keep sub-bullets concise
 
-### Requirement: Header-Based Requirement Identification
+### Requirement: [OPENSPEC-CONVENTIONS-006] Header-Based Requirement Identification
 
 Requirement headers SHALL serve as unique identifiers for programmatic matching between current specs and proposed changes.
 
@@ -120,7 +120,7 @@ Requirement headers SHALL serve as unique identifiers for programmatic matching 
 - **THEN** ensure no duplicate headers exist within a spec
 - **AND** validation tools SHALL flag duplicate headers as errors
 
-### Requirement: Change Storage Convention
+### Requirement: [OPENSPEC-CONVENTIONS-007] Change Storage Convention
 
 Change proposals SHALL store only the additions, modifications, and removals to specifications, not complete future states.
 
@@ -163,7 +163,7 @@ The `changes/[name]/specs/` directory SHALL contain:
   - `-` for REMOVED (red)
   - `→` for RENAMED (cyan)
 
-### Requirement: Archive Process Enhancement
+### Requirement: [OPENSPEC-CONVENTIONS-008] Archive Process Enhancement
 
 The archive process SHALL programmatically apply delta changes to current specifications using header-based matching.
 
@@ -186,7 +186,7 @@ The archive process SHALL programmatically apply delta changes to current specif
 - **AND** require manual resolution before proceeding
 - **AND** provide clear guidance on resolving conflicts
 
-### Requirement: Proposal Format
+### Requirement: [OPENSPEC-CONVENTIONS-009] Proposal Format
 
 Proposals SHALL explicitly document all changes with clear from/to comparisons.
 
@@ -205,7 +205,7 @@ Proposals SHALL explicitly document all changes with clear from/to comparisons.
 
 This explicit format compensates for not having inline diffs and ensures reviewers understand exactly what will change.
 
-### Requirement: Change Review
+### Requirement: [OPENSPEC-CONVENTIONS-010] Change Review
 
 The system SHALL support multiple methods for reviewing proposed changes.
 
@@ -217,7 +217,7 @@ The system SHALL support multiple methods for reviewing proposed changes.
 - Command line: `diff -u specs/[capability]/spec.md changes/[name]/specs/[capability]/spec.md`
 - Any visual diff tool comparing current vs future state
 
-### Requirement: Structured Format Adoption
+### Requirement: [OPENSPEC-CONVENTIONS-011] Structured Format Adoption
 
 Behavioral specifications SHALL adopt the structured format with `### Requirement:` and `#### Scenario:` headers as the default.
 
@@ -227,7 +227,7 @@ Behavioral specifications SHALL adopt the structured format with `### Requiremen
 - **THEN** use `### Requirement:` for requirements
 - **AND** use `#### Scenario:` for scenarios with bold WHEN/THEN/AND keywords
 
-### Requirement: Verb–Noun CLI Command Structure
+### Requirement: [OPENSPEC-CONVENTIONS-012] Verb–Noun CLI Command Structure
 c3spec CLI design SHALL use verbs as top-level commands with nouns provided as arguments or flags for scoping.
 
 #### Scenario: Verb-first command discovery
@@ -245,7 +245,7 @@ c3spec CLI design SHALL use verbs as top-level commands with nouns provided as a
 - **THEN** `c3spec show` and `c3spec validate` SHALL accept `--type spec|change`
 - **AND** the help text SHALL document this clearly
 
-### Requirement: Workspace Product Language
+### Requirement: [OPENSPEC-CONVENTIONS-013] Workspace Product Language
 c3spec conventions SHALL describe coordination workspaces in user-facing product terms.
 
 #### Scenario: Describing workspace structure
@@ -273,7 +273,7 @@ c3spec conventions SHALL describe coordination workspaces in user-facing product
 - **THEN** conventions SHALL allow those changes to remain flat siblings under `c3spec/changes/`
 - **AND** dependency order MAY be documented in proposal prose until formal change stacking metadata is available
 
-### Requirement: Workspace planning vocabulary
+### Requirement: [OPENSPEC-CONVENTIONS-014] Workspace planning vocabulary
 c3spec conventions SHALL distinguish workspace planning concepts using user-facing product language.
 
 #### Scenario: Naming affected areas
@@ -286,7 +286,7 @@ c3spec conventions SHALL distinguish workspace planning concepts using user-faci
 - **THEN** it SHALL call them slices or phases only when delivery sequencing is the subject
 - **AND** it SHALL not use slice as a synonym for repo, folder, or affected area
 
-### Requirement: Workspace planning and implementation boundary
+### Requirement: [OPENSPEC-CONVENTIONS-015] Workspace planning and implementation boundary
 c3spec conventions SHALL distinguish workspace-level planning from repo-local implementation ownership.
 
 #### Scenario: Workspace as shared planning home

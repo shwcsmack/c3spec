@@ -2,7 +2,7 @@
 
 Define command-generation behavior in pi-only c3spec.
 ## Requirements
-### Requirement: Legacy multi-host command-generation removed
+### Requirement: [COMMAND-GENERATION-001] Legacy multi-host command-generation removed
 
 c3spec SHALL NOT provide multi-host command-generation adapters in pi-only mode.
 
@@ -11,7 +11,7 @@ c3spec SHALL NOT provide multi-host command-generation adapters in pi-only mode.
 - **THEN** c3spec SHALL report the capability is removed in pi-only mode
 - **AND** users SHALL run c3spec workflows directly in pi.
 
-### Requirement: Remove multi-host generation pipeline from core
+### Requirement: [COMMAND-GENERATION-002] Remove multi-host generation pipeline from core
 
 Core c3spec workflow execution SHALL NOT depend on host-generation renderers for Cursor, Claude Code, or Codex.
 

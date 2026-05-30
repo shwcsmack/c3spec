@@ -4,7 +4,7 @@
 Define `c3spec change` command behavior for showing, listing, and validating change proposals and deltas.
 
 ## Requirements
-### Requirement: Change Command
+### Requirement: [CLI-CHANGE-001] Change Command
 
 The system SHALL provide a `change` command with subcommands for displaying, listing, and validating change proposals.
 
@@ -35,7 +35,7 @@ The system SHALL provide a `change` command with subcommands for displaying, lis
 - **AND** validate against Zod schema
 - **AND** ensure deltas are well-formed
 
-### Requirement: Legacy Compatibility
+### Requirement: [CLI-CHANGE-002] Legacy Compatibility
 
 The system SHALL maintain backward compatibility with the existing `list` command while showing deprecation notices.
 
@@ -51,7 +51,7 @@ The system SHALL maintain backward compatibility with the existing `list` comman
 - **THEN** display all changes (existing behavior)
 - **AND** show same deprecation notice
 
-### Requirement: Interactive show selection
+### Requirement: [CLI-CHANGE-003] Interactive show selection
 
 The change show command SHALL support interactive selection when no change name is provided.
 
@@ -71,7 +71,7 @@ The change show command SHALL support interactive selection when no change name 
 - **AND** print the existing hint including available change IDs
 - **AND** set `process.exitCode = 1`
 
-### Requirement: Interactive validation selection
+### Requirement: [CLI-CHANGE-004] Interactive validation selection
 
 The change validate command SHALL support interactive selection when no change name is provided.
 

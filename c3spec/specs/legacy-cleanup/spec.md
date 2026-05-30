@@ -4,7 +4,7 @@
 Define detection and cleanup behavior for legacy c3spec artifacts during initialization and update workflows.
 
 ## Requirements
-### Requirement: Legacy artifact detection
+### Requirement: [LEGACY-CLEANUP-001] Legacy artifact detection
 
 The system SHALL detect legacy c3spec artifacts from previous init versions.
 
@@ -40,7 +40,7 @@ The system SHALL detect legacy c3spec artifacts from previous init versions.
   - `c3spec/project.md` (for migration messaging only, not deleted)
   - Root `AGENTS.md` with c3spec markers
 
-### Requirement: Legacy cleanup confirmation
+### Requirement: [LEGACY-CLEANUP-002] Legacy cleanup confirmation
 
 The system SHALL prompt for confirmation before removing legacy artifacts.
 
@@ -71,7 +71,7 @@ The system SHALL prompt for confirmation before removing legacy artifacts.
 - **AND** display detected legacy artifacts
 - **AND** suggest running interactively or using `--force` flag
 
-### Requirement: Surgical removal of config file content
+### Requirement: [LEGACY-CLEANUP-003] Surgical removal of config file content
 
 The system SHALL preserve user content when removing c3spec markers from config files.
 
@@ -95,7 +95,7 @@ The system SHALL preserve user content when removing c3spec markers from config 
 - **THEN** the system SHALL remove only the c3spec marker block
 - **AND** preserve the rest of the file
 
-### Requirement: Legacy directory removal
+### Requirement: [LEGACY-CLEANUP-004] Legacy directory removal
 
 The system SHALL remove legacy slash command directories entirely.
 
@@ -111,7 +111,7 @@ The system SHALL remove legacy slash command directories entirely.
 - **THEN** the system SHALL delete the file
 - **AND** NOT delete the `c3spec/` directory itself
 
-### Requirement: project.md migration hint
+### Requirement: [LEGACY-CLEANUP-005] project.md migration hint
 
 The system SHALL preserve project.md and display a migration hint instead of deleting it.
 
@@ -133,7 +133,7 @@ The system SHALL preserve project.md and display a migration hint instead of del
 - **WHEN** displaying the migration hint
 - **THEN** users can migrate manually or use `/opsx:explore` to get AI assistance
 
-### Requirement: Cleanup reporting
+### Requirement: [LEGACY-CLEANUP-006] Cleanup reporting
 
 The system SHALL report what was cleaned up.
 
@@ -161,7 +161,7 @@ The system SHALL report what was cleaned up.
 - **THEN** the system SHALL NOT display the cleanup section
 - **AND** proceed directly with skill setup
 
-### Requirement: Full-repository cleanup audits use risk-banded classification
+### Requirement: [LEGACY-CLEANUP-007] Full-repository cleanup audits use risk-banded classification
 
 The workflow SHALL classify candidates into risk bands and require explicit approval for high-risk removals when performing full codebase cleanup investigations.
 

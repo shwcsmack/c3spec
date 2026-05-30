@@ -11,7 +11,7 @@ c3spec archive [change-name] [--yes|-y]
 Options:
 - `--yes`, `-y`: Skip confirmation prompts (for automation)
 ## Requirements
-### Requirement: Change Selection
+### Requirement: [CLI-ARCHIVE-001] Change Selection
 
 The command SHALL support both interactive and direct change selection methods.
 
@@ -27,7 +27,7 @@ The command SHALL support both interactive and direct change selection methods.
 - **THEN** use that change directly
 - **AND** validate it exists
 
-### Requirement: Task Completion Check
+### Requirement: [CLI-ARCHIVE-002] Task Completion Check
 
 The archive command SHALL verify task completion status before archiving to prevent premature archival, while tier workflow skills SHALL perform tier artifact readiness checks before invoking archive.
 
@@ -49,7 +49,7 @@ The archive command SHALL verify task completion status before archiving to prev
 - **THEN** the skill SHALL check the required artifacts defined by the tier lifecycle contract before invoking the archive command
 - **AND** missing required artifacts SHALL be reported before archive is attempted
 
-### Requirement: Archive readiness is tier-aware at the workflow layer
+### Requirement: [CLI-ARCHIVE-003] Archive readiness is tier-aware at the workflow layer
 
 The c3spec workflow SHALL treat archive readiness as a combination of CLI archive checks and tier lifecycle checks.
 
@@ -71,7 +71,7 @@ The c3spec workflow SHALL treat archive readiness as a combination of CLI archiv
 - **THEN** the skill-level archive readiness check SHALL stop before invoking archive
 - **AND** it SHALL report which artifacts must be created before continuing
 
-### Requirement: Archive Process
+### Requirement: [CLI-ARCHIVE-004] Archive Process
 
 The archive operation SHALL follow a structured process to safely move changes to the archive.
 
@@ -96,7 +96,7 @@ The archive operation SHALL follow a structured process to safely move changes t
 - **WHEN** move succeeds
 - **THEN** display success message with archived name and list of updated specs
 
-### Requirement: Spec Update Process
+### Requirement: [CLI-ARCHIVE-005] Spec Update Process
 
 Before moving the change to archive, the command SHALL apply delta changes to main specs to reflect the deployed reality.
 
@@ -118,7 +118,7 @@ Before moving the change to archive, the command SHALL apply delta changes to ma
 - **THEN** abort with error message showing the conflict
 - **AND** suggest manual resolution
 
-### Requirement: Confirmation Behavior
+### Requirement: [CLI-ARCHIVE-006] Confirmation Behavior
 
 The spec update confirmation SHALL provide clear visibility into changes before they are applied.
 
@@ -154,7 +154,7 @@ The spec update confirmation SHALL provide clear visibility into changes before 
 - **AND** display message: "Archive cancelled. No changes were made."
 - **AND** exit with non-zero status code
 
-### Requirement: Error Conditions
+### Requirement: [CLI-ARCHIVE-007] Error Conditions
 
 The command SHALL handle various error conditions gracefully.
 
@@ -167,7 +167,7 @@ The command SHALL handle various error conditions gracefully.
   - Archive target already exists
   - File system permissions issues
 
-### Requirement: Skip Specs Option
+### Requirement: [CLI-ARCHIVE-008] Skip Specs Option
 
 The archive command SHALL support a `--skip-specs` flag that skips all spec update operations and proceeds directly to archiving.
 
@@ -178,7 +178,7 @@ The archive command SHALL support a `--skip-specs` flag that skips all spec upda
 - **AND** proceed directly to moving the change to archive
 - **AND** display a message indicating specs were skipped
 
-### Requirement: Non-blocking confirmation
+### Requirement: [CLI-ARCHIVE-009] Non-blocking confirmation
 
 The archive operation SHALL proceed when the user declines spec updates instead of cancelling the entire operation.
 
@@ -189,7 +189,7 @@ The archive operation SHALL proceed when the user declines spec updates instead 
 - **AND** continue with the archive operation
 - **AND** display a success message indicating specs were not updated
 
-### Requirement: Display Output
+### Requirement: [CLI-ARCHIVE-010] Display Output
 
 The command SHALL provide clear feedback about delta operations.
 
@@ -210,7 +210,7 @@ The command SHALL provide clear feedback about delta operations.
     → 1 renamed
   ```
 
-### Requirement: Archive Validation
+### Requirement: [CLI-ARCHIVE-011] Archive Validation
 
 The archive command SHALL validate changes before applying them to ensure data integrity.
 

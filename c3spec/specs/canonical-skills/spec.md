@@ -4,7 +4,7 @@
 
 Define `.agents/skills/` as the single source of truth for c3spec agent skills and how bundled installs validate them.
 ## Requirements
-### Requirement: Canonical skills live under `.agents/skills/`
+### Requirement: [CANONICAL-SKILLS-001] Canonical skills live under `.agents/skills/`
 
 The repository SHALL maintain one `SKILL.md` per canonical skill under `.agents/skills/<name>/`. These files SHALL be the authoritative skill content for host generation, npm package bundling, and workspace utility installs.
 
@@ -20,7 +20,7 @@ The repository SHALL maintain one `SKILL.md` per canonical skill under `.agents/
 - **THEN** those legacy surfaces SHALL NOT exist
 - **AND** `node build.js` SHALL compile TypeScript without regenerating skill templates from markdown
 
-### Requirement: Required canonical skills are enforced
+### Requirement: [CANONICAL-SKILLS-002] Required canonical skills are enforced
 
 Host generation and validation SHALL require the tier routing skills, tier lifecycle contract, resumption helpers, utility skills, and local replacements for critical superpowers dependencies: `c3spec-using-git-worktrees` and `c3spec-finishing-development-branch`.
 
@@ -30,7 +30,7 @@ Host generation and validation SHALL require the tier routing skills, tier lifec
 - **THEN** validation SHALL report a missing required canonical skill error
 - **AND** host artifacts SHALL NOT be generated as fully valid
 
-### Requirement: CI checks canonical skill presence
+### Requirement: [CANONICAL-SKILLS-003] CI checks canonical skill presence
 
 The CI pipeline SHALL run `pnpm check:canonical-skills` to assert every required skill file exists under `.agents/skills/`, including `c3spec-tier-lifecycle`.
 
@@ -39,7 +39,7 @@ The CI pipeline SHALL run `pnpm check:canonical-skills` to assert every required
 - **WHEN** all required `.agents/skills/*/SKILL.md` files are present
 - **THEN** `pnpm check:canonical-skills` SHALL exit successfully
 
-### Requirement: Workspace installs copy bundled canonical skills
+### Requirement: [CANONICAL-SKILLS-004] Workspace installs copy bundled canonical skills
 
 Workspace skill installation SHALL copy `SKILL.md` content from the bundled `.agents/skills/` package directory for profile-selected utility workflows, not from generated TypeScript templates.
 
@@ -48,7 +48,7 @@ Workspace skill installation SHALL copy `SKILL.md` content from the bundled `.ag
 - **WHEN** workspace setup installs skills for the core profile
 - **THEN** it SHALL write `c3spec-explore`, `c3spec-sync-specs`, and `c3spec-archive-change` from bundled canonical sources
 
-### Requirement: Tier lifecycle skill contract
+### Requirement: [CANONICAL-SKILLS-005] Tier lifecycle skill contract
 
 `c3spec-tier-lifecycle` SHALL define canonical pause, fast-forward, and HTML-handoff semantics that tier and resume skills consume.
 
@@ -58,7 +58,7 @@ Workspace skill installation SHALL copy `SKILL.md` content from the bundled `.ag
 - **THEN** it SHALL reference `c3spec-tier-lifecycle` for pause and handoff semantics
 - **AND** it SHALL avoid introducing contradictory local policy
 
-### Requirement: Resume helpers stay aligned with tier workflow contracts
+### Requirement: [CANONICAL-SKILLS-006] Resume helpers stay aligned with tier workflow contracts
 
 Resume helpers SHALL follow lifecycle-defined gate semantics including non-pausing `tasks.md` and `plan.md`, non-blocking `verify.md` on success, and fast-forward stop-at-retrospective behavior.
 
@@ -77,7 +77,7 @@ Resume helpers SHALL follow lifecycle-defined gate semantics including non-pausi
 - **WHEN** fast-forward is active through retrospective
 - **THEN** resume helpers SHALL stop after retrospective before archive
 
-### Requirement: Host adapter describes available dispatch surfaces
+### Requirement: [CANONICAL-SKILLS-007] Host adapter describes available dispatch surfaces
 
 `c3spec-host-adapter` SHALL describe how each supported host dispatches the canonical agent roles without requiring non-existent generated files.
 
@@ -87,7 +87,7 @@ Resume helpers SHALL follow lifecycle-defined gate semantics including non-pausi
 - **THEN** it SHALL be instructed to dispatch pi role workflows by role name through pi-native mechanisms
 - **AND** it SHALL NOT require `.cursor/agents/<name>.md` files to exist before dispatching `implementer`, `spec-reviewer`, or `quality-reviewer`
 
-### Requirement: Pi-native canonical skill execution
+### Requirement: [CANONICAL-SKILLS-008] Pi-native canonical skill execution
 
 Canonical c3spec skills SHALL be authored and validated against pi-native execution assumptions.
 
@@ -100,7 +100,7 @@ Canonical c3spec skills SHALL be authored and validated against pi-native execut
 - **WHEN** validating canonical skill surfaces
 - **THEN** validation SHALL enforce pi-only runtime contract language
 
-### Requirement: Canonical subagent bootstrap command contract
+### Requirement: [CANONICAL-SKILLS-009] Canonical subagent bootstrap command contract
 
 c3spec canonical workflow surfaces SHALL depend on a stable bootstrap command contract for pre-dispatch validation.
 

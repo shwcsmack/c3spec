@@ -4,7 +4,7 @@
 Define how c3spec creates, tracks, and guides workspace-level changes whose planning artifacts coordinate multiple linked repos or folders before implementation ownership is finalized.
 
 ## Requirements
-### Requirement: Workspace change planning home
+### Requirement: [WORKSPACE-CHANGE-PLANNING-001] Workspace change planning home
 c3spec SHALL support workspace-level changes whose shared plan lives in the workspace planning home.
 
 #### Scenario: Creating a workspace change
@@ -31,7 +31,7 @@ c3spec SHALL support workspace-level changes whose shared plan lives in the work
 - **THEN** it SHALL not create repo-local c3spec change directories inside linked repos or folders
 - **AND** it SHALL not edit implementation files in linked repos or folders
 
-### Requirement: Workspace affected areas
+### Requirement: [WORKSPACE-CHANGE-PLANNING-002] Workspace affected areas
 c3spec SHALL represent ownership or implementation boundaries in a workspace change as affected areas.
 
 #### Scenario: Using registered workspace links as areas
@@ -57,7 +57,7 @@ c3spec SHALL represent ownership or implementation boundaries in a workspace cha
 - **THEN** c3spec SHALL distinguish affected areas from delivery slices or phases
 - **AND** it SHALL not require users to define delivery slices for a small cross-area change
 
-### Requirement: Workspace planning source of truth
+### Requirement: [WORKSPACE-CHANGE-PLANNING-003] Workspace planning source of truth
 c3spec SHALL keep the workspace change plan as the source of truth until implementation begins for a selected affected area.
 
 #### Scenario: Exploring before implementation

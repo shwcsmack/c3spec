@@ -3,7 +3,7 @@
 ## Purpose
 Provide shell completion scripts for the c3spec CLI, enabling tab-completion for commands, flags, and dynamic values (change IDs, spec IDs) across multiple shells. Supports Zsh, Bash, Fish, and PowerShell.
 ## Requirements
-### Requirement: Native Shell Behavior Integration
+### Requirement: [CLI-COMPLETION-001] Native Shell Behavior Integration
 
 The completion system SHALL respect and integrate with each supported shell's native completion patterns and user interaction model.
 
@@ -46,7 +46,7 @@ The completion system SHALL respect and integrate with each supported shell's na
 - **AND** do NOT override shell-specific navigation patterns
 - **AND** ensure completions feel native to experienced users of that shell
 
-### Requirement: Command Structure
+### Requirement: [CLI-COMPLETION-002] Command Structure
 
 The completion command SHALL follow a subcommand pattern for generating and managing completion scripts.
 
@@ -58,7 +58,7 @@ The completion command SHALL follow a subcommand pattern for generating and mana
   - `install [shell]` - Install completion for Zsh (auto-detects or requires explicit shell)
   - `uninstall [shell]` - Remove completion for Zsh (auto-detects or requires explicit shell)
 
-### Requirement: Shell Detection
+### Requirement: [CLI-COMPLETION-003] Shell Detection
 
 The completion system SHALL automatically detect the user's current shell environment.
 
@@ -93,7 +93,7 @@ The completion system SHALL automatically detect the user's current shell enviro
 - **WHEN** shell path indicates an unsupported shell
 - **THEN** throw error: "Shell '<name>' is not supported. Supported shells: zsh, bash, fish, powershell"
 
-### Requirement: Completion Generation
+### Requirement: [CLI-COMPLETION-004] Completion Generation
 
 The completion command SHALL generate completion scripts for all supported shells on demand.
 
@@ -133,7 +133,7 @@ The completion command SHALL generate completion scripts for all supported shell
 - **AND** support dynamic completion for change and spec IDs via `c3spec __complete`
 - **AND** return `[System.Management.Automation.CompletionResult]` objects
 
-### Requirement: Dynamic Completions
+### Requirement: [CLI-COMPLETION-005] Dynamic Completions
 
 The completion system SHALL provide context-aware dynamic completions for project-specific values.
 
@@ -165,7 +165,7 @@ The completion system SHALL provide context-aware dynamic completions for projec
 - **THEN** skip dynamic change/spec ID completions
 - **AND** only suggest static commands and flags
 
-### Requirement: Installation Automation
+### Requirement: [CLI-COMPLETION-006] Installation Automation
 
 The completion command SHALL automatically install completion scripts into shell configuration files for all supported shells.
 
@@ -227,7 +227,7 @@ The completion command SHALL automatically install completion scripts into shell
 - **AND** offer to reinstall/update by overwriting existing files
 - **AND** exit with code 0
 
-### Requirement: Uninstallation
+### Requirement: [CLI-COMPLETION-007] Uninstallation
 
 The completion command SHALL remove installed completion scripts and configuration for all supported shells.
 
@@ -275,7 +275,7 @@ The completion command SHALL remove installed completion scripts and configurati
 - **THEN** display error message indicating completion is not installed
 - **AND** exit with code 1
 
-### Requirement: Architecture Patterns
+### Requirement: [CLI-COMPLETION-008] Architecture Patterns
 
 The completion implementation SHALL follow clean architecture principles with TypeScript best practices, supporting multiple shells through a plugin-based pattern.
 
@@ -336,7 +336,7 @@ The completion implementation SHALL follow clean architecture principles with Ty
 - **AND** implement `detectShell()` function in `src/utils/shell-detection.ts`
 - **AND** return detected shell or throw error with supported shells list
 
-### Requirement: Error Handling
+### Requirement: [CLI-COMPLETION-009] Error Handling
 
 The completion command SHALL provide clear error messages for common failure scenarios.
 
@@ -366,7 +366,7 @@ The completion command SHALL provide clear error messages for common failure sce
 - **AND** display usage hint: "Usage: c3spec completion <operation> [shell]"
 - **AND** exit with code 1
 
-### Requirement: Output Format
+### Requirement: [CLI-COMPLETION-010] Output Format
 
 The completion command SHALL provide machine-parseable and human-readable output.
 
@@ -394,7 +394,7 @@ The completion command SHALL provide machine-parseable and human-readable output
   - Configuration modifications
   - File creation confirmations
 
-### Requirement: Testing Support
+### Requirement: [CLI-COMPLETION-011] Testing Support
 
 The completion implementation SHALL be testable with unit and integration tests for all supported shells.
 

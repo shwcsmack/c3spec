@@ -5,7 +5,7 @@ Define the direct workspace setup, discovery, linking, relinking, health check,
 and JSON-output behavior for managing c3spec workspaces across repos and
 folders.
 ## Requirements
-### Requirement: Guided Workspace Setup
+### Requirement: [WORKSPACE-LINKS-001] Guided Workspace Setup
 c3spec SHALL provide a guided setup flow for users starting workspace planning.
 
 #### Scenario: Creating a workspace through setup
@@ -93,7 +93,7 @@ c3spec SHALL provide a guided setup flow for users starting workspace planning.
 - **THEN** c3spec SHALL explain that the workspace already exists
 - **AND** it SHALL not overwrite the existing workspace
 
-### Requirement: Workspace Discovery
+### Requirement: [WORKSPACE-LINKS-002] Workspace Discovery
 c3spec SHALL let users see the c3spec-managed workspaces available on the current machine.
 
 #### Scenario: Listing workspaces
@@ -122,7 +122,7 @@ c3spec SHALL let users see the c3spec-managed workspaces available on the curren
 - **THEN** c3spec SHALL treat stale entries as report-only diagnostics
 - **AND** it SHALL not expose a registry cleanup command such as `workspace forget`
 
-### Requirement: Global Workspace Commands
+### Requirement: [WORKSPACE-LINKS-003] Global Workspace Commands
 c3spec SHALL let workspace commands run from outside workspace directories.
 
 #### Scenario: Selecting a workspace by flag
@@ -181,7 +181,7 @@ c3spec SHALL let workspace commands run from outside workspace directories.
 - **AND** it SHALL print `No known c3spec workspaces. Run 'c3spec workspace setup' first.`
 - **AND** it SHALL explain that `--workspace <name>` can be used after at least one workspace is known locally
 
-### Requirement: Workspace Links
+### Requirement: [WORKSPACE-LINKS-004] Workspace Links
 c3spec SHALL let users link existing repos or folders to a workspace before creating a change.
 
 #### Scenario: Linking with an inferred name
@@ -235,7 +235,7 @@ c3spec SHALL let users link existing repos or folders to a workspace before crea
 - **AND** it SHALL suggest `workspace relink <name> <path>` when the user intended to change the existing link path
 - **AND** it SHALL preserve the existing link unless the user explicitly relinks it
 
-### Requirement: Workspace Relinks
+### Requirement: [WORKSPACE-LINKS-005] Workspace Relinks
 c3spec SHALL let users update existing link paths without recreating the workspace.
 
 #### Scenario: Updating a local path
@@ -270,7 +270,7 @@ c3spec SHALL let users update existing link paths without recreating the workspa
 - **THEN** c3spec SHALL not ask for owner or handoff metadata
 - **AND** link maintenance SHALL focus on names and local paths
 
-### Requirement: Workspace Health Check
+### Requirement: [WORKSPACE-LINKS-006] Workspace Health Check
 c3spec SHALL explain what the current machine can resolve for a workspace.
 
 #### Scenario: Doctor checks one selected workspace
@@ -326,7 +326,7 @@ c3spec SHALL explain what the current machine can resolve for a workspace.
 - **THEN** it SHALL show a readable workspace summary, linked repos or folders, and issues when present
 - **AND** it SHALL avoid printing raw JSON or relying on a rigid YAML dump as the default human experience
 
-### Requirement: Scriptable Workspace Setup Commands
+### Requirement: [WORKSPACE-LINKS-007] Scriptable Workspace Setup Commands
 c3spec SHALL provide JSON output for direct workspace setup commands.
 
 #### Scenario: Requesting JSON output
@@ -360,7 +360,7 @@ c3spec SHALL provide JSON output for direct workspace setup commands.
 - **WHEN** users run `workspace setup --no-interactive`, `workspace list`, `workspace link`, `workspace relink`, or `workspace doctor`
 - **THEN** each command SHALL support JSON output
 
-### Requirement: Workspace setup installs agent skills
+### Requirement: [WORKSPACE-LINKS-008] Workspace setup installs agent skills
 c3spec SHALL let users install c3spec agent skills into a workspace during workspace setup.
 
 #### Scenario: Prompting for workspace agent skills
@@ -418,7 +418,7 @@ c3spec SHALL let users install c3spec agent skills into a workspace during works
 - **WHEN** non-interactive workspace setup installs agent skills with JSON output enabled
 - **THEN** c3spec SHALL include generated, refreshed, skipped, or failed skill installation results in machine-readable output
 
-### Requirement: Workspace update manages agent skills
+### Requirement: [WORKSPACE-LINKS-009] Workspace update manages agent skills
 c3spec SHALL provide a workspace update flow for refreshing agent skills after setup.
 
 #### Scenario: Updating the current workspace
@@ -509,7 +509,7 @@ c3spec SHALL provide a workspace update flow for refreshing agent skills after s
 - **WHEN** workspace update runs with JSON output enabled
 - **THEN** c3spec SHALL include refreshed, added, removed, skipped, or failed skill results in machine-readable output
 
-### Requirement: Workspace skill update surface is documented
+### Requirement: [WORKSPACE-LINKS-010] Workspace skill update surface is documented
 c3spec SHALL expose workspace skill setup/update behavior in user-facing command surfaces.
 
 #### Scenario: Workspace update appears in help

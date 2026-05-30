@@ -3,7 +3,7 @@
 ## Purpose
 Define project-local schema resolution behavior, including precedence order (project-local, then user override, then package built-in) and backward-compatible fallback when `projectRoot` is not provided.
 ## Requirements
-### Requirement: Project-local schema resolution
+### Requirement: [SCHEMA-RESOLUTION-001] Project-local schema resolution
 
 The system SHALL resolve schemas from the project-local directory (`./c3spec/schemas/<name>/`) with highest priority when a `projectRoot` is provided.
 
@@ -37,7 +37,7 @@ The system SHALL resolve schemas from the project-local directory (`./c3spec/sch
 - **THEN** the system SHALL only check user override and package built-in locations
 - **AND** the system SHALL NOT check project-local location
 
-### Requirement: Project schemas directory helper
+### Requirement: [SCHEMA-RESOLUTION-002] Project schemas directory helper
 
 The system SHALL provide a `getProjectSchemasDir(projectRoot)` function that returns the project-local schemas directory path.
 
@@ -45,7 +45,7 @@ The system SHALL provide a `getProjectSchemasDir(projectRoot)` function that ret
 - **WHEN** `getProjectSchemasDir("/path/to/project")` is called
 - **THEN** the system SHALL return `/path/to/project/c3spec/schemas`
 
-### Requirement: List schemas includes project-local
+### Requirement: [SCHEMA-RESOLUTION-003] List schemas includes project-local
 
 The system SHALL include project-local schemas when listing available schemas if `projectRoot` is provided.
 
@@ -63,7 +63,7 @@ The system SHALL include project-local schemas when listing available schemas if
 - **WHEN** `listSchemas()` is called without a `projectRoot` parameter
 - **THEN** the system SHALL only include user override and package built-in schemas
 
-### Requirement: Schema info includes project source
+### Requirement: [SCHEMA-RESOLUTION-004] Schema info includes project source
 
 The system SHALL indicate `source: 'project'` for project-local schemas in `listSchemasWithInfo()` results.
 
@@ -82,7 +82,7 @@ The system SHALL indicate `source: 'project'` for project-local schemas in `list
 - **AND** `listSchemasWithInfo(projectRoot)` is called
 - **THEN** the schema info for "spec-driven" SHALL have `source: 'package'`
 
-### Requirement: Schemas command shows source
+### Requirement: [SCHEMA-RESOLUTION-005] Schemas command shows source
 
 The `c3spec schemas` command SHALL display the source of each schema.
 
@@ -90,7 +90,7 @@ The `c3spec schemas` command SHALL display the source of each schema.
 - **WHEN** user runs `c3spec schemas`
 - **THEN** the output SHALL show each schema with its source label (project, user, or package)
 
-### Requirement: Use config schema as default for new changes
+### Requirement: [SCHEMA-RESOLUTION-006] Use config schema as default for new changes
 
 The system SHALL use the schema field from `c3spec/config.yaml` as the default when creating new changes without explicit `--schema` flag and no planning-home default applies.
 
@@ -106,7 +106,7 @@ The system SHALL use the schema field from `c3spec/config.yaml` as the default w
 - **WHEN** user runs `c3spec new change foo --schema custom` and config contains `schema: "tdd"`
 - **THEN** system creates change with schema "custom" (CLI flag overrides config)
 
-### Requirement: Resolve schema with updated precedence order
+### Requirement: [SCHEMA-RESOLUTION-007] Resolve schema with updated precedence order
 
 The system SHALL resolve the schema for a change using the following precedence order: CLI flag, change metadata, planning-home default, project config, hardcoded default.
 
@@ -130,7 +130,7 @@ The system SHALL resolve the schema for a change using the following precedence 
 - **WHEN** no CLI flag, change metadata, planning-home default, or project config
 - **THEN** system uses hardcoded default "spec-driven"
 
-### Requirement: Support project-local schema names in config
+### Requirement: [SCHEMA-RESOLUTION-008] Support project-local schema names in config
 
 The system SHALL allow the config schema field to reference project-local schemas defined in `c3spec/schemas/`.
 
@@ -142,7 +142,7 @@ The system SHALL allow the config schema field to reference project-local schema
 - **WHEN** config contains `schema: "nonexistent"` and that schema does not exist
 - **THEN** system shows error when attempting to load the schema with fuzzy match suggestions and list of all valid schemas
 
-### Requirement: Provide helpful error message for invalid schema
+### Requirement: [SCHEMA-RESOLUTION-009] Provide helpful error message for invalid schema
 
 The system SHALL display schema error with fuzzy match suggestions, list of available schemas, and fix instructions.
 
@@ -162,7 +162,7 @@ The system SHALL display schema error with fuzzy match suggestions, list of avai
 - **WHEN** error lists available schemas
 - **THEN** output clearly labels each as "built-in" or "project-local"
 
-### Requirement: Maintain backwards compatibility for existing changes
+### Requirement: [SCHEMA-RESOLUTION-010] Maintain backwards compatibility for existing changes
 
 The system SHALL continue to work with existing changes that do not have project config.
 
@@ -174,7 +174,7 @@ The system SHALL continue to work with existing changes that do not have project
 - **WHEN** config file is added to project with existing changes
 - **THEN** existing changes continue to use their bound schema from `.c3spec.yaml`
 
-### Requirement: Workspace planning schema resolution
+### Requirement: [SCHEMA-RESOLUTION-011] Workspace planning schema resolution
 Schema resolution SHALL support the built-in workspace planning schema.
 
 #### Scenario: Listing workspace planning schema

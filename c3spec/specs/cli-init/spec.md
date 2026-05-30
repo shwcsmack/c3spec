@@ -4,7 +4,7 @@ Define behavior after removal of the `c3spec init` command in pi-only c3spec.
 
 ## Requirements
 
-### Requirement: Init command removal
+### Requirement: [CLI-INIT-001] Init command removal
 
 The `c3spec init` command SHALL NOT be available in pi-only c3spec.
 

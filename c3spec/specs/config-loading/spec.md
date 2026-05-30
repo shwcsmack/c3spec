@@ -4,7 +4,7 @@
 Define how `c3spec/config.yaml` is discovered, parsed, validated, and exposed to callers with safe fallbacks.
 
 ## Requirements
-### Requirement: Load project config from c3spec/config.yaml
+### Requirement: [CONFIG-LOADING-001] Load project config from c3spec/config.yaml
 
 The system SHALL read and parse the project configuration file located at `c3spec/config.yaml` relative to the project root.
 
@@ -24,7 +24,7 @@ The system SHALL read and parse the project configuration file located at `c3spe
 - **WHEN** `c3spec/config.yaml` contains valid YAML that fails Zod schema validation
 - **THEN** system logs a warning message with validation details and returns null
 
-### Requirement: Support .yml file extension alias
+### Requirement: [CONFIG-LOADING-002] Support .yml file extension alias
 
 The system SHALL accept both `.yaml` and `.yml` file extensions for the config file.
 
@@ -36,7 +36,7 @@ The system SHALL accept both `.yaml` and `.yml` file extensions for the config f
 - **WHEN** both `c3spec/config.yaml` and `c3spec/config.yml` exist
 - **THEN** system prefers `c3spec/config.yaml`
 
-### Requirement: Use resilient field-by-field parsing
+### Requirement: [CONFIG-LOADING-003] Use resilient field-by-field parsing
 
 The system SHALL parse each config field independently, collecting valid fields and warning about invalid ones without rejecting the entire config.
 
@@ -80,7 +80,7 @@ The system SHALL parse each config field independently, collecting valid fields 
 - **WHEN** config contains valid schema, invalid context type, valid rules
 - **THEN** config is returned with schema and rules fields, warning logged about context
 
-### Requirement: Enforce context size limit
+### Requirement: [CONFIG-LOADING-004] Enforce context size limit
 
 The system SHALL reject context fields exceeding 50KB and log a warning.
 
@@ -96,7 +96,7 @@ The system SHALL reject context fields exceeding 50KB and log a warning.
 - **WHEN** config contains context of 51KB
 - **THEN** warning is logged with size and limit, context field is not included in returned config
 
-### Requirement: Defer artifact ID validation to instruction loading
+### Requirement: [CONFIG-LOADING-005] Defer artifact ID validation to instruction loading
 
 The system SHALL NOT validate artifact IDs in rules during config load time. Validation happens during instruction loading when schema is known.
 
@@ -108,7 +108,7 @@ The system SHALL NOT validate artifact IDs in rules during config load time. Val
 - **WHEN** instructions are loaded for any artifact and config has unknown artifact IDs in rules
 - **THEN** warnings are emitted about unknown artifact IDs (see rules-injection spec for details)
 
-### Requirement: Gracefully handle config errors without halting
+### Requirement: [CONFIG-LOADING-006] Gracefully handle config errors without halting
 
 The system SHALL continue operation with default values when config loading or parsing fails.
 

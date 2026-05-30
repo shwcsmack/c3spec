@@ -3,7 +3,7 @@
 ## Purpose
 Define artifact workflow CLI behavior (`status`, `instructions`, `templates`, and setup flows) for scaffolded and active changes.
 ## Requirements
-### Requirement: Status Command
+### Requirement: [CLI-ARTIFACT-WORKFLOW-001] Status Command
 
 The system SHALL display artifact completion status for a change, including scaffolded (empty) changes.
 
@@ -53,7 +53,7 @@ The system SHALL display artifact completion status for a change, including scaf
 - **AND** directory `c3spec/changes/unknown-id/` does not exist
 - **THEN** the system displays an error listing all available change directories
 
-### Requirement: Next Artifact Discovery
+### Requirement: [CLI-ARTIFACT-WORKFLOW-002] Next Artifact Discovery
 
 The workflow SHALL use `c3spec status` output to determine what can be created next, rather than a separate next-command surface.
 
@@ -63,7 +63,7 @@ The workflow SHALL use `c3spec status` output to determine what can be created n
 - **THEN** `c3spec status --change <id>` identifies ready artifacts with `[ ]`
 - **AND** no dedicated "next command" is required to continue the workflow
 
-### Requirement: Instructions Command
+### Requirement: [CLI-ARTIFACT-WORKFLOW-003] Instructions Command
 
 The system SHALL output enriched instructions for creating an artifact, including for scaffolded changes.
 
@@ -97,7 +97,7 @@ The system SHALL output enriched instructions for creating an artifact, includin
 - **THEN** system outputs template and metadata for creating the proposal
 - **AND** does not require any artifacts to already exist
 
-### Requirement: Templates Command
+### Requirement: [CLI-ARTIFACT-WORKFLOW-004] Templates Command
 The system SHALL show resolved template paths for all artifacts in a schema.
 
 #### Scenario: List template paths with default schema
@@ -116,7 +116,7 @@ The system SHALL show resolved template paths for all artifacts in a schema.
 - **WHEN** displaying template paths
 - **THEN** the system indicates whether each template is from user override or package built-in
 
-### Requirement: New Change Command
+### Requirement: [CLI-ARTIFACT-WORKFLOW-005] New Change Command
 The system SHALL create new change directories with validation.
 
 #### Scenario: Create valid change
@@ -135,7 +135,7 @@ The system SHALL create new change directories with validation.
 - **WHEN** user runs `c3spec new change add-feature --description "Add new feature"`
 - **THEN** the system creates the change directory with description in README.md
 
-### Requirement: Workspace Setup Commands
+### Requirement: [CLI-ARTIFACT-WORKFLOW-006] Workspace Setup Commands
 The CLI artifact workflow SHALL expose workspace setup commands before change creation.
 
 #### Scenario: Preparing workspace planning before a change
@@ -158,7 +158,7 @@ The CLI artifact workflow SHALL expose workspace setup commands before change cr
 - **THEN** the CLI SHALL use `c3spec workspace setup`
 - **AND** it SHALL not expose `c3spec workspace create` as the public creation path
 
-### Requirement: Schema Selection
+### Requirement: [CLI-ARTIFACT-WORKFLOW-007] Schema Selection
 The system SHALL support custom schema selection for workflow commands.
 
 #### Scenario: Default schema
@@ -173,7 +173,7 @@ The system SHALL support custom schema selection for workflow commands.
 - **WHEN** user specifies an unknown schema
 - **THEN** the system displays an error listing available schemas
 
-### Requirement: Output Formatting
+### Requirement: [CLI-ARTIFACT-WORKFLOW-008] Output Formatting
 The system SHALL provide consistent output formatting.
 
 #### Scenario: Color output
@@ -188,7 +188,7 @@ The system SHALL provide consistent output formatting.
 - **WHEN** loading change state takes time
 - **THEN** the system displays a spinner during loading
 
-### Requirement: Experimental Isolation
+### Requirement: [CLI-ARTIFACT-WORKFLOW-009] Experimental Isolation
 The system SHALL implement artifact workflow commands in isolation for easy removal.
 
 #### Scenario: Single file implementation
@@ -199,7 +199,7 @@ The system SHALL implement artifact workflow commands in isolation for easy remo
 - **WHEN** user runs `--help` on any artifact workflow command
 - **THEN** help text indicates the command is experimental
 
-### Requirement: Schema Apply Block
+### Requirement: [CLI-ARTIFACT-WORKFLOW-010] Schema Apply Block
 
 The system SHALL support an `apply` block in schema definitions that controls when and how implementation begins.
 
@@ -216,7 +216,7 @@ The system SHALL support an `apply` block in schema definitions that controls wh
 - **THEN** the system requires all artifacts to exist before apply is available
 - **AND** uses default instruction: "All artifacts complete. Proceed with implementation."
 
-### Requirement: Apply Instructions Command
+### Requirement: [CLI-ARTIFACT-WORKFLOW-011] Apply Instructions Command
 
 The system SHALL generate schema-aware apply instructions via `c3spec instructions apply`, and tier-aware helper skills SHALL use those instructions together with the tier lifecycle contract before starting implementation.
 
@@ -248,7 +248,7 @@ The system SHALL generate schema-aware apply instructions via `c3spec instructio
   - `tracks`: path to progress file or null
   - `applyRequires`: list of required artifact IDs
 
-### Requirement: Tier lifecycle metadata is readable by agents
+### Requirement: [CLI-ARTIFACT-WORKFLOW-012] Tier lifecycle metadata is readable by agents
 
 Workflow artifact commands and skills SHALL preserve enough concrete paths and artifact context for agents to combine schema-backed status with tier lifecycle metadata.
 
@@ -264,7 +264,7 @@ Workflow artifact commands and skills SHALL preserve enough concrete paths and a
 - **THEN** resume helpers SHALL use status output for artifact existence and lifecycle metadata for tier-specific gates
 - **AND** they SHALL NOT treat schema artifact readiness as permission to skip human approval gates
 
-### Requirement: Artifact workflow supports tier helper checks without schema rewrite
+### Requirement: [CLI-ARTIFACT-WORKFLOW-013] Artifact workflow supports tier helper checks without schema rewrite
 
 The artifact workflow SHALL support tier-aware helpers without requiring every tier to be encoded as a separate schema in this pass.
 
@@ -280,7 +280,7 @@ The artifact workflow SHALL support tier-aware helpers without requiring every t
 - **THEN** existing `status` and `instructions` behavior SHALL remain available
 - **AND** lifecycle-aware helpers SHALL treat the CLI output as artifact path/status context, not the entire workflow contract
 
-### Requirement: Tool selection flag
+### Requirement: [CLI-ARTIFACT-WORKFLOW-014] Tool selection flag
 
 The `artifact-experimental-setup` command SHALL accept a `--tool <tool-id>` flag to specify the target AI tool.
 
@@ -313,7 +313,7 @@ The `artifact-experimental-setup` command SHALL accept a `--tool <tool-id>` flag
 - **THEN** skill files are generated successfully
 - **AND** command generation is skipped with informational message
 
-### Requirement: Output messaging
+### Requirement: [CLI-ARTIFACT-WORKFLOW-015] Output messaging
 
 The setup command SHALL display clear output about what was generated.
 
@@ -333,7 +333,7 @@ The setup command SHALL display clear output about what was generated.
 - **WHEN** command generation is skipped due to missing adapter
 - **THEN** output includes message: "Command generation skipped - no adapter for <tool>"
 
-### Requirement: Status JSON provides planning context
+### Requirement: [CLI-ARTIFACT-WORKFLOW-016] Status JSON provides planning context
 The status command SHALL provide machine-readable planning context for repo-local and workspace changes.
 
 #### Scenario: Reporting planning home
@@ -358,7 +358,7 @@ The status command SHALL provide machine-readable planning context for repo-loca
 - **THEN** the output SHALL include next step guidance for agents
 - **AND** the guidance SHALL use plain action language
 
-### Requirement: Status JSON action context
+### Requirement: [CLI-ARTIFACT-WORKFLOW-017] Status JSON action context
 The status command SHALL expose action context that lets agents act without hardcoded filesystem assumptions.
 
 #### Scenario: Planning action context
@@ -377,7 +377,7 @@ The status command SHALL expose action context that lets agents act without hard
 - **THEN** status JSON SHALL preserve existing artifact status behavior
 - **AND** it SHALL report a repo-local planning home for agents that use action context
 
-### Requirement: Instructions use resolved planning paths
+### Requirement: [CLI-ARTIFACT-WORKFLOW-018] Instructions use resolved planning paths
 Artifact and apply instructions SHALL use resolved planning paths rather than hardcoded repo-local change paths.
 
 #### Scenario: Workspace artifact instructions
@@ -391,7 +391,7 @@ Artifact and apply instructions SHALL use resolved planning paths rather than ha
 - **WHEN** a user runs `c3spec instructions <artifact> --change <id> --json`
 - **THEN** instruction output SHALL preserve existing repo-local paths
 
-### Requirement: Workflow skills use CLI artifact context
+### Requirement: [CLI-ARTIFACT-WORKFLOW-019] Workflow skills use CLI artifact context
 Generated workflow skills SHALL use c3spec CLI output as the source of truth for artifact locations.
 
 #### Scenario: Skills inspect status before artifact work
@@ -416,7 +416,7 @@ Generated workflow skills SHALL use c3spec CLI output as the source of truth for
 - **THEN** it SHALL tell the agent that the workspace action is not supported yet
 - **AND** it SHALL not instruct the agent to fall back to repo-local paths or edit linked repos without an explicit allowed edit root
 
-### Requirement: Workspace schema instructions
+### Requirement: [CLI-ARTIFACT-WORKFLOW-020] Workspace schema instructions
 Workflow commands SHALL use the workspace planning schema instructions for workspace-scoped changes that use that schema.
 
 #### Scenario: Workspace planning artifact order
@@ -432,7 +432,7 @@ Workflow commands SHALL use the workspace planning schema instructions for works
 - **AND** it SHALL not require all affected areas to be finalized before planning can continue
 - **AND** it SHALL not instruct the agent to create repo-local spec files while the change is still in workspace planning
 
-### Requirement: Artifact workflow uses fixed c3spec contract
+### Requirement: [CLI-ARTIFACT-WORKFLOW-021] Artifact workflow uses fixed c3spec contract
 
 Artifact workflow commands SHALL operate using c3spec's fixed workflow contract and SHALL NOT require schema resolution from package/project schema directories.
 
@@ -448,7 +448,7 @@ Artifact workflow commands SHALL operate using c3spec's fixed workflow contract 
 - **THEN** the runtime SHALL not resolve templates from `schemas/*` or `c3spec/schemas/*`
 - **AND** workflow guidance SHALL come from fixed command/skill logic
 
-### Requirement: Subagent bootstrap CLI command
+### Requirement: [CLI-ARTIFACT-WORKFLOW-022] Subagent bootstrap CLI command
 
 The CLI SHALL provide a validate-only bootstrap command for subagent dispatch readiness.
 

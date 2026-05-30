@@ -3,7 +3,7 @@
 ## Purpose
 Define the artifact graph model, dependency validation, and completion-state logic used by schema-driven workflows.
 ## Requirements
-### Requirement: Schema Loading
+### Requirement: [ARTIFACT-GRAPH-001] Schema Loading
 The system SHALL load artifact graph definitions from YAML schema files within schema directories.
 
 #### Scenario: Valid schema loaded
@@ -30,7 +30,7 @@ The system SHALL load artifact graph definitions from YAML schema files within s
 - **WHEN** resolving a schema name that has no corresponding directory
 - **THEN** the system throws an error listing available schemas
 
-### Requirement: Build Order Calculation
+### Requirement: [ARTIFACT-GRAPH-002] Build Order Calculation
 The system SHALL compute a valid topological build order for artifacts.
 
 #### Scenario: Linear dependency chain
@@ -45,7 +45,7 @@ The system SHALL compute a valid topological build order for artifacts.
 - **WHEN** artifacts have no dependencies
 - **THEN** getBuildOrder() returns them in a stable order
 
-### Requirement: State Detection
+### Requirement: [ARTIFACT-GRAPH-003] State Detection
 The system SHALL detect artifact completion state by scanning the filesystem.
 
 #### Scenario: Simple file exists
@@ -68,7 +68,7 @@ The system SHALL detect artifact completion state by scanning the filesystem.
 - **WHEN** the change directory does not exist
 - **THEN** all artifacts are marked as not completed (empty state)
 
-### Requirement: Ready Artifact Query
+### Requirement: [ARTIFACT-GRAPH-004] Ready Artifact Query
 The system SHALL identify which artifacts are ready to be created based on dependency completion.
 
 #### Scenario: Root artifacts ready initially
@@ -83,7 +83,7 @@ The system SHALL identify which artifacts are ready to be created based on depen
 - **WHEN** an artifact has uncompleted dependencies
 - **THEN** getNextArtifacts() does not include that artifact
 
-### Requirement: Completion Check
+### Requirement: [ARTIFACT-GRAPH-005] Completion Check
 The system SHALL determine when all artifacts in a graph are complete.
 
 #### Scenario: All complete
@@ -94,7 +94,7 @@ The system SHALL determine when all artifacts in a graph are complete.
 - **WHEN** some artifacts in the graph are not completed
 - **THEN** isComplete() returns false
 
-### Requirement: Blocked Query
+### Requirement: [ARTIFACT-GRAPH-006] Blocked Query
 The system SHALL identify which artifacts are blocked and return all their unmet dependencies.
 
 #### Scenario: Artifact blocked by single dependency
@@ -109,7 +109,7 @@ The system SHALL identify which artifacts are blocked and return all their unmet
 - **WHEN** artifact C requires A and B, and neither is complete
 - **THEN** getBlocked() returns `{ C: ['A', 'B'] }`
 
-### Requirement: Schema Directory Structure
+### Requirement: [ARTIFACT-GRAPH-007] Schema Directory Structure
 The system SHALL support self-contained schema directories with co-located templates.
 
 #### Scenario: Schema with templates
@@ -128,7 +128,7 @@ The system SHALL support self-contained schema directories with co-located templ
 - **WHEN** listing schemas
 - **THEN** the system returns schema names from both user and package directories
 
-### Requirement: Workspace planning schema
+### Requirement: [ARTIFACT-GRAPH-008] Workspace planning schema
 The artifact graph SHALL provide a built-in workspace planning schema for workspace-scoped changes.
 
 #### Scenario: Built-in workspace planning schema is available

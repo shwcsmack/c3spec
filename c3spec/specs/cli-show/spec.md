@@ -4,7 +4,7 @@
 Define top-level `c3spec show` behavior for interactive and direct display of change and spec content.
 
 ## Requirements
-### Requirement: Top-level show command
+### Requirement: [CLI-SHOW-001] Top-level show command
 
 The CLI SHALL provide a top-level `show` command for displaying changes and specs with intelligent selection.
 
@@ -45,7 +45,7 @@ The CLI SHALL provide a top-level `show` command for displaying changes and spec
 - **WHEN** executing `c3spec show --type spec <item>`
 - **THEN** treat `<item>` as a spec ID and show it (skipping auto-detection)
 
-### Requirement: Output format options
+### Requirement: [CLI-SHOW-002] Output format options
 
 The show command SHALL support various output formats consistent with existing commands.
 
@@ -65,7 +65,7 @@ The show command SHALL support various output formats consistent with existing c
   - Spec-only flags: `--requirements`, `--no-scenarios`, `-r/--requirement`
 - **AND** ignore irrelevant flags for the detected type with a warning
 
-### Requirement: Interactivity controls
+### Requirement: [CLI-SHOW-003] Interactivity controls
 
 - The CLI SHALL respect `--no-interactive` to disable prompts.
 - The CLI SHALL respect `OPEN_SPEC_INTERACTIVE=0` to disable prompts globally.

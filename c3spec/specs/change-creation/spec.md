@@ -3,7 +3,7 @@
 ## Purpose
 Provide programmatic utilities for creating and validating c3spec change directories.
 ## Requirements
-### Requirement: Change Creation
+### Requirement: [CHANGE-CREATION-001] Change Creation
 The system SHALL provide a function to create new change directories programmatically.
 
 #### Scenario: Create change
@@ -22,7 +22,7 @@ The system SHALL provide a function to create new change directories programmati
 - **WHEN** `createChange(projectRoot, 'Add Auth')` is called with an invalid name
 - **THEN** the system throws a validation error
 
-### Requirement: Change Name Validation
+### Requirement: [CHANGE-CREATION-002] Change Name Validation
 The system SHALL validate change names follow kebab-case conventions.
 
 #### Scenario: Valid kebab-case name accepted
@@ -65,7 +65,7 @@ The system SHALL validate change names follow kebab-case conventions.
 - **WHEN** a change name like `add--auth` is validated
 - **THEN** validation returns `{ valid: false, error: "..." }`
 
-### Requirement: Workspace-aware change creation
+### Requirement: [CHANGE-CREATION-003] Workspace-aware change creation
 Change creation SHALL support both repo-local and workspace planning homes.
 
 #### Scenario: Creating a change from a workspace root

@@ -4,7 +4,7 @@
 
 The `c3spec list` command SHALL provide developers with a quick overview of all active changes in the project, showing their names and task completion status.
 ## Requirements
-### Requirement: Command Execution
+### Requirement: [CLI-LIST-001] Command Execution
 The command SHALL scan and analyze either active changes or specs based on the selected mode.
 
 #### Scenario: Scanning for changes (default)
@@ -19,7 +19,7 @@ The command SHALL scan and analyze either active changes or specs based on the s
 - **AND** read each capability's `spec.md`
 - **AND** parse requirements to compute requirement counts
 
-### Requirement: Task Counting
+### Requirement: [CLI-LIST-002] Task Counting
 
 The command SHALL accurately count task completion status using standard markdown checkbox patterns.
 
@@ -31,7 +31,7 @@ The command SHALL accurately count task completion status using standard markdow
   - Incomplete: Lines containing `- [ ]`
 - **AND** calculate total tasks as the sum of completed and incomplete
 
-### Requirement: Output Format
+### Requirement: [CLI-LIST-003] Output Format
 The command SHALL display items in a clear, readable table format with mode-appropriate progress or counts.
 
 #### Scenario: Displaying change list (default)
@@ -46,7 +46,7 @@ The command SHALL display items in a clear, readable table format with mode-appr
   - Spec id (directory name)
   - Requirement count (e.g., "requirements 12")
 
-### Requirement: Flags
+### Requirement: [CLI-LIST-004] Flags
 The command SHALL accept flags to select the noun being listed.
 
 #### Scenario: Selecting specs
@@ -57,7 +57,7 @@ The command SHALL accept flags to select the noun being listed.
 - **WHEN** `--changes` is provided
 - **THEN** list changes explicitly (same as default behavior)
 
-### Requirement: Empty State
+### Requirement: [CLI-LIST-005] Empty State
 The command SHALL provide clear feedback when no items are present for the selected mode.
 
 #### Scenario: Handling empty state (changes)
@@ -68,7 +68,7 @@ The command SHALL provide clear feedback when no items are present for the selec
 - **WHEN** no specs directory exists or contains no capabilities
 - **THEN** display: "No specs found."
 
-### Requirement: Error Handling
+### Requirement: [CLI-LIST-006] Error Handling
 
 The command SHALL gracefully handle missing files and directories with appropriate messages.
 
@@ -83,7 +83,7 @@ The command SHALL gracefully handle missing files and directories with appropria
 - **THEN** display error: "No c3spec changes directory found. ensure c3spec package scaffolding exists in this project."
 - **AND** exit with code 1
 
-### Requirement: Sorting
+### Requirement: [CLI-LIST-007] Sorting
 
 The command SHALL maintain consistent ordering of changes for predictable output.
 

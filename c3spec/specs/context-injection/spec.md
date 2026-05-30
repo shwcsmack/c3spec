@@ -4,7 +4,7 @@
 Define how project context from `c3spec/config.yaml` is injected into workflow instructions while preserving source text and formatting.
 
 ## Requirements
-### Requirement: Inject context into all artifact instructions
+### Requirement: [CONTEXT-INJECTION-001] Inject context into all artifact instructions
 
 The system SHALL inject the context field from project config into instructions for all artifacts, wrapped in XML-style `<context>` tags.
 
@@ -24,7 +24,7 @@ The system SHALL inject the context field from project config into instructions 
 - **WHEN** instructions are loaded for any artifact (proposal, specs, design, tasks)
 - **THEN** context section appears in all instruction outputs
 
-### Requirement: Format context with XML-style tags
+### Requirement: [CONTEXT-INJECTION-002] Format context with XML-style tags
 
 The system SHALL wrap context content in `<context>` opening and `</context>` closing tags with content on separate lines.
 
@@ -36,7 +36,7 @@ The system SHALL wrap context content in `<context>` opening and `</context>` cl
 - **WHEN** instructions are generated with context
 - **THEN** `<context>` section appears before the `<template>` section
 
-### Requirement: Preserve context content exactly as provided
+### Requirement: [CONTEXT-INJECTION-003] Preserve context content exactly as provided
 
 The system SHALL inject context content without modification, escaping, or interpretation.
 

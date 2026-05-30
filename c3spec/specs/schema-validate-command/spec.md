@@ -4,7 +4,7 @@
 Define `c3spec schema validate` behavior for validating schema syntax, structure, templates, and dependency graphs.
 
 ## Requirements
-### Requirement: Schema validate checks schema structure
+### Requirement: [SCHEMA-VALIDATE-COMMAND-001] Schema validate checks schema structure
 The CLI SHALL provide an `c3spec schema validate [name]` command that validates schema configuration and reports errors.
 
 #### Scenario: Validate specific schema
@@ -24,7 +24,7 @@ The CLI SHALL provide an `c3spec schema validate [name]` command that validates 
 - **THEN** system displays error that schema was not found
 - **AND** exits with non-zero code
 
-### Requirement: Schema validate checks YAML syntax
+### Requirement: [SCHEMA-VALIDATE-COMMAND-002] Schema validate checks YAML syntax
 The CLI SHALL report YAML parsing errors with line numbers when possible.
 
 #### Scenario: Invalid YAML syntax
@@ -37,7 +37,7 @@ The CLI SHALL report YAML parsing errors with line numbers when possible.
 - **THEN** system displays Zod validation error for missing required field
 - **AND** identifies the specific missing field
 
-### Requirement: Schema validate checks template existence
+### Requirement: [SCHEMA-VALIDATE-COMMAND-003] Schema validate checks template existence
 The CLI SHALL verify that all template files referenced by artifacts exist.
 
 #### Scenario: Missing template file
@@ -50,7 +50,7 @@ The CLI SHALL verify that all template files referenced by artifacts exist.
 - **THEN** system reports that templates are valid
 - **AND** template existence is included in validation summary
 
-### Requirement: Schema validate checks dependency graph
+### Requirement: [SCHEMA-VALIDATE-COMMAND-004] Schema validate checks dependency graph
 The CLI SHALL verify that artifact dependencies form a valid directed acyclic graph.
 
 #### Scenario: Valid dependency graph
@@ -68,7 +68,7 @@ The CLI SHALL verify that artifact dependencies form a valid directed acyclic gr
 - **THEN** system reports error: "Artifact 'x' requires unknown artifact 'nonexistent-artifact'"
 - **AND** exits with non-zero code
 
-### Requirement: Schema validate outputs JSON format
+### Requirement: [SCHEMA-VALIDATE-COMMAND-005] Schema validate outputs JSON format
 The CLI SHALL support `--json` flag for machine-readable validation results.
 
 #### Scenario: JSON output for valid schema
@@ -81,7 +81,7 @@ The CLI SHALL support `--json` flag for machine-readable validation results.
 - **AND** each issue includes `level`, `path`, and `message` fields
 - **AND** format matches existing `c3spec validate` output structure
 
-### Requirement: Schema validate supports verbose mode
+### Requirement: [SCHEMA-VALIDATE-COMMAND-006] Schema validate supports verbose mode
 The CLI SHALL support `--verbose` flag for detailed validation information.
 
 #### Scenario: Verbose output shows all checks

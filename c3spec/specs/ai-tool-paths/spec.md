@@ -3,7 +3,7 @@
 ## Purpose
 Define AI tool path metadata used to generate c3spec skills and commands in tool-specific directories.
 ## Requirements
-### Requirement: AIToolOption skillsDir field
+### Requirement: [AI-TOOL-PATHS-001] AIToolOption skillsDir field
 
 The `AIToolOption` interface SHALL include an optional `skillsDir` field for skill generation path configuration.
 
@@ -18,7 +18,7 @@ The `AIToolOption` interface SHALL include an optional `skillsDir` field for ski
 - **THEN** skills SHALL be written to `<projectRoot>/<skillsDir>/skills/`
 - **AND** the `/skills` suffix is appended per Agent Skills specification
 
-### Requirement: Path configuration for supported tools
+### Requirement: [AI-TOOL-PATHS-002] Path configuration for supported tools
 
 The `AI_TOOLS` array SHALL include `skillsDir` for tools that support the Agent Skills specification.
 
@@ -47,7 +47,7 @@ The `AI_TOOLS` array SHALL include `skillsDir` for tools that support the Agent 
 - **WHEN** a tool has no `skillsDir` defined
 - **THEN** skill generation SHALL error with message indicating the tool is not supported
 
-### Requirement: Cross-platform path handling
+### Requirement: [AI-TOOL-PATHS-003] Cross-platform path handling
 
 The system SHALL handle paths correctly across operating systems.
 
@@ -62,7 +62,7 @@ The system SHALL handle paths correctly across operating systems.
 - **WHEN** constructing skill paths on macOS or Linux
 - **THEN** the system SHALL use `path.join()` for consistency
 
-### Requirement: Pi-only tool/runtime selection
+### Requirement: [AI-TOOL-PATHS-004] Pi-only tool/runtime selection
 
 c3spec SHALL expose pi as the only supported runtime selection for core workflows.
 
