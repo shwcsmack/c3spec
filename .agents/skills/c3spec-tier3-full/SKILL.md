@@ -358,6 +358,19 @@ Finish the development branch:
 c3spec-finishing-development-branch
 ```
 
+After finish command returns, always print a standardized outcome block:
+
+```markdown
+## Finish Branch Outcome
+- Change: <change-name>
+- Archive: <success|failed>
+- Finish command: <success|failed>
+- PR-ready: <yes|no>
+- Next action: <explicit command or recovery step>
+```
+
+If `c3spec-finishing-development-branch` fails, keep archive state as-is and include recovery guidance (rerun command, resolve listed blocker, then continue PR handoff).
+
 PR is last. The PR description should reference the proposal, design, verification, retrospective, and memory entries if any were created.
 
 ---

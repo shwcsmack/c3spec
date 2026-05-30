@@ -218,6 +218,8 @@ The workflow-routing contract SHALL include local c3spec-owned replacements for 
 - **WHEN** tier or archive flow performs branch finalization
 - **THEN** it SHALL invoke `c3spec-finishing-development-branch`
 - **AND** it SHALL NOT require external `superpowers:finishing-a-development-branch` availability for critical-path execution
+- **AND** it SHALL emit a standardized `Finish Branch Outcome` summary with archive status, finish-command status, PR-ready status, and next action
+- **AND** if finishing fails, it SHALL preserve archive results and emit explicit recovery guidance
 
 ### Requirement: Subagent workflow expectations
 

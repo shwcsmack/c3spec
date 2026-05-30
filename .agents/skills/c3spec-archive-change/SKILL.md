@@ -138,6 +138,17 @@ Archive a completed change in the experimental workflow.
    - Finish-branch status (success/failure + recovery guidance if failed)
    - Note about any warnings (incomplete artifacts/tasks)
 
+   Always include this standardized block:
+
+   ```markdown
+   ## Finish Branch Outcome
+   - Change: <change-name>
+   - Archive: <success|failed>
+   - Finish command: <success|failed>
+   - PR-ready: <yes|no>
+   - Next action: <explicit command or recovery step>
+   ```
+
 **Output On Success**
 
 ```
