@@ -4,6 +4,7 @@ import { Validator } from '../core/validation/validator.js';
 import { isInteractive, resolveNoInteractive } from '../utils/interactive.js';
 import { getActiveChangeIds, getSpecIds } from '../utils/item-discovery.js';
 import { nearestMatches } from '../utils/match.js';
+import { runCoverageAudit } from './coverage.js';
 
 type ItemType = 'change' | 'spec';
 
@@ -17,6 +18,7 @@ interface ExecuteOptions {
   noInteractive?: boolean;
   interactive?: boolean; // Commander sets this to false when --no-interactive is used
   concurrency?: string;
+  coverage?: boolean;
 }
 
 interface BulkItemResult {
@@ -36,14 +38,14 @@ export class ValidateCommand {
       await this.runBulkValidation({
         changes: !!options.all || !!options.changes,
         specs: !!options.all || !!options.specs,
-      }, { strict: !!options.strict, json: !!options.json, concurrency: options.concurrency, noInteractive: resolveNoInteractive(options) });
+      }, { strict: !!options.strict, json: !!options.json, concurrency: options.concurrency, noInteractive: resolveNoInteractive(options), coverage: !!options.coverage });
       return;
     }
 
     // No item and no flags
     if (!itemName) {
       if (interactive) {
-        await this.runInteractiveSelector({ strict: !!options.strict, json: !!options.json, concurrency: options.concurrency });
+        await this.runInteractiveSelector({ strict: !!options.strict, json: !!options.json, concurrency: options.concurrency, coverage: !!options.coverage });
         return;
       }
       this.printNonInteractiveHint();
@@ -63,7 +65,7 @@ export class ValidateCommand {
     return undefined;
   }
 
-  private async runInteractiveSelector(opts: { strict: boolean; json: boolean; concurrency?: string }): Promise<void> {
+  private async runInteractiveSelector(opts: { strict: boolean; json: boolean; concurrency?: string; coverage?: boolean }): Promise<void> {
     const { select } = await import('@inquirer/prompts');
     const choice = await select({
       message: 'What would you like to validate?',
@@ -181,7 +183,7 @@ export class ValidateCommand {
     bullets.forEach(b => console.error(`  ${b}`));
   }
 
-  private async runBulkValidation(scope: { changes: boolean; specs: boolean }, opts: { strict: boolean; json: boolean; concurrency?: string; noInteractive?: boolean }): Promise<void> {
+  private async runBulkValidation(scope: { changes: boolean; specs: boolean }, opts: { strict: boolean; json: boolean; concurrency?: string; noInteractive?: boolean; coverage?: boolean }): Promise<void> {
     const spinner = !opts.json && !opts.noInteractive ? ora('Validating...').start() : undefined;
     const [changeIds, specIds] = await Promise.all([
       scope.changes ? getActiveChangeIds() : Promise.resolve<string[]>([]),
@@ -292,6 +294,16 @@ export class ValidateCommand {
     }
 
     process.exitCode = failed > 0 ? 1 : 0;
+
+    if (opts.coverage && scope.specs) {
+      if (opts.json) {
+        console.error('Note: coverage audit JSON is emitted separately from validate JSON output.');
+      }
+      const previousExit = process.exitCode ?? 0;
+      await runCoverageAudit(process.cwd(), opts.strict, opts.json);
+      const coverageExit = process.exitCode ?? 0;
+      process.exitCode = previousExit !== 0 || coverageExit !== 0 ? 1 : 0;
+    }
   }
 }
 

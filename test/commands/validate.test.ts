@@ -144,4 +144,26 @@ describe('top-level validate command', () => {
     // Should complete without hanging and without prompts
     expect(result.stderr).not.toContain('What would you like to validate?');
   });
+
+  it('fails strict spec validation when coverage audit finds uncovered requirement IDs', async () => {
+    const specWithId = [
+      '## Purpose',
+      'Coverage linkage check.',
+      '',
+      '## Requirements',
+      '',
+      '### Requirement: [ALPHA-001] Alpha module SHALL produce deterministic output',
+      'The alpha module SHALL produce deterministic response.',
+      '',
+      '#### Scenario: Deterministic alpha run',
+      '- **GIVEN** a configured alpha module',
+      '- **WHEN** the module runs the default flow',
+      '- **THEN** the output matches expected result',
+    ].join('\n');
+
+    await fs.writeFile(path.join(specsDir, 'alpha', 'spec.md'), specWithId, 'utf-8');
+
+    const result = await runCLI(['validate', '--specs', '--strict', '--coverage'], { cwd: testDir });
+    expect(result.exitCode).toBe(1);
+  });
 });

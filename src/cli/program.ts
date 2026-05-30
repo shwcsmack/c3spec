@@ -16,6 +16,7 @@ import { registerWorkspaceCommand } from '../commands/workspace.js';
 import { registerMemoryCommand } from '../commands/memory.js';
 import { registerIdeasCommand } from '../commands/ideas.js';
 import { registerSubagentCommand } from '../commands/subagent.js';
+import { registerCoverageCommand } from '../commands/coverage.js';
 import {
   statusCommand,
   instructionsCommand,
@@ -185,6 +186,7 @@ registerWorkspaceCommand(program);
 registerMemoryCommand(program);
 registerIdeasCommand(program);
 registerSubagentCommand(program);
+registerCoverageCommand(program);
 
 // Top-level validate command
 program
@@ -197,8 +199,9 @@ program
   .option('--strict', 'Enable strict validation mode')
   .option('--json', 'Output validation results as JSON')
   .option('--concurrency <n>', 'Max concurrent validations (defaults to env C3SPEC_CONCURRENCY or 6)')
+  .option('--coverage', 'Also run requirement-to-test coverage audit for specs')
   .option('--no-interactive', 'Disable interactive prompts')
-  .action(async (itemName?: string, options?: { all?: boolean; changes?: boolean; specs?: boolean; type?: string; strict?: boolean; json?: boolean; noInteractive?: boolean; concurrency?: string }) => {
+  .action(async (itemName?: string, options?: { all?: boolean; changes?: boolean; specs?: boolean; type?: string; strict?: boolean; json?: boolean; noInteractive?: boolean; concurrency?: string; coverage?: boolean }) => {
     try {
       const validateCommand = new ValidateCommand();
       await validateCommand.execute(itemName, options);
