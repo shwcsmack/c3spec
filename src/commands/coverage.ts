@@ -102,7 +102,7 @@ export async function runCoverageAudit(projectRoot: string, strict: boolean, jso
   }
 
   const unknownRefs = [...refs.keys()].filter((id) => !seen.has(id));
-  const hasErrors = duplicateIds.size > 0 || (strict && (missingId.length > 0 || uncovered.length > 0));
+  const hasErrors = duplicateIds.size > 0 || (strict && (missingId.length > 0 || uncovered.length > 0 || unknownRefs.length > 0));
 
   const uncoveredSet = new Set(uncovered);
   const perSpec = specs.map((spec) => {
