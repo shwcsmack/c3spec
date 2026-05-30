@@ -31,7 +31,7 @@ describe('ListCommand', () => {
   });
 
   describe('execute', () => {
-    it('should handle missing c3spec/changes directory', async () => {
+    it('requirement: CLI-LIST-006 should handle missing c3spec/changes directory', async () => {
       const listCommand = new ListCommand();
       
       await expect(listCommand.execute(tempDir, 'changes')).rejects.toThrow(
@@ -39,7 +39,7 @@ describe('ListCommand', () => {
       );
     });
 
-    it('should handle empty changes directory', async () => {
+    it('requirement: CLI-LIST-005 should handle empty changes directory', async () => {
       const changesDir = path.join(tempDir, 'c3spec', 'changes');
       await fs.mkdir(changesDir, { recursive: true });
 
@@ -49,7 +49,7 @@ describe('ListCommand', () => {
       expect(logOutput).toEqual(['No active changes found.']);
     });
 
-    it('should exclude archive directory', async () => {
+    it('requirement: CLI-LIST-001 should exclude archive directory', async () => {
       const changesDir = path.join(tempDir, 'c3spec', 'changes');
       await fs.mkdir(path.join(changesDir, 'archive'), { recursive: true });
       await fs.mkdir(path.join(changesDir, 'my-change'), { recursive: true });
@@ -68,7 +68,7 @@ describe('ListCommand', () => {
       expect(logOutput.some(line => line.includes('archive'))).toBe(false);
     });
 
-    it('should count tasks correctly', async () => {
+    it('requirement: CLI-LIST-002 should count tasks correctly', async () => {
       const changesDir = path.join(tempDir, 'c3spec', 'changes');
       await fs.mkdir(path.join(changesDir, 'test-change'), { recursive: true });
       
@@ -90,7 +90,7 @@ Regular text that should be ignored
       expect(logOutput.some(line => line.includes('2/5 tasks'))).toBe(true);
     });
 
-    it('should show complete status for fully completed changes', async () => {
+    it('requirement: CLI-LIST-003 should show complete status for fully completed changes', async () => {
       const changesDir = path.join(tempDir, 'c3spec', 'changes');
       await fs.mkdir(path.join(changesDir, 'completed-change'), { recursive: true });
       
@@ -105,7 +105,7 @@ Regular text that should be ignored
       expect(logOutput.some(line => line.includes('✓ Complete'))).toBe(true);
     });
 
-    it('should handle changes without tasks.md', async () => {
+    it('requirement: CLI-LIST-006 should handle changes without tasks.md', async () => {
       const changesDir = path.join(tempDir, 'c3spec', 'changes');
       await fs.mkdir(path.join(changesDir, 'no-tasks'), { recursive: true });
 
@@ -115,7 +115,7 @@ Regular text that should be ignored
       expect(logOutput.some(line => line.includes('no-tasks') && line.includes('No tasks'))).toBe(true);
     });
 
-    it('should sort changes alphabetically when sort=name', async () => {
+    it('requirement: CLI-LIST-007 should sort changes alphabetically when sort=name', async () => {
       const changesDir = path.join(tempDir, 'c3spec', 'changes');
       await fs.mkdir(path.join(changesDir, 'zebra'), { recursive: true });
       await fs.mkdir(path.join(changesDir, 'alpha'), { recursive: true });
@@ -133,7 +133,7 @@ Regular text that should be ignored
       expect(changeLines[2]).toContain('zebra');
     });
 
-    it('should handle multiple changes with various states', async () => {
+    it('requirement: CLI-LIST-003 should handle multiple changes with various states', async () => {
       const changesDir = path.join(tempDir, 'c3spec', 'changes');
       
       // Complete change

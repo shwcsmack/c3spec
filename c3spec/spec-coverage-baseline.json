@@ -142,15 +142,7 @@
   },
   "cli-list": {
     "allowMissingIds": false,
-    "exemptRequirementIds": [
-      "CLI-LIST-001",
-      "CLI-LIST-002",
-      "CLI-LIST-003",
-      "CLI-LIST-004",
-      "CLI-LIST-005",
-      "CLI-LIST-006",
-      "CLI-LIST-007"
-    ]
+    "exemptRequirementIds": []
   },
   "cli-show": {
     "allowMissingIds": false,
