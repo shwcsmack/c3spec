@@ -1,4 +1,4 @@
-<!-- c3spec:ideas-digest d862700ebb84ae3cf7f0ffadc75580883cf67247c704497fdd12a982c0d7695d -->
+<!-- c3spec:ideas-digest b33578fe9766f06765e31469d3a683de121e38f97aafa01abcdd784812d1d1ed -->
 # Ideas
 
 Backlog of ideas to pick up later. Each entry is intentionally light - flesh out via `/c3spec:start` when ready to work on it.
@@ -99,16 +99,7 @@ Investigate what it would take to repackage c3spec as a first-class pi package a
 - Define migration options: additive support, staged default switch, or full strategic pivot
 - Produce a recommendation document with explicit success criteria, blockers, and follow-up ideas
 
-## 10. Fix finishing-development-branch flow at end of every workflow
-
-Harden the branch-finalization flow so every workflow consistently ends with a reliable finishing-development-branch step and clear PR-ready output.
-
-- Audit where c3spec-finishing-development-branch is invoked (or skipped) across Tier 1/2/3 and archive paths.
-- Standardize end-of-workflow invocation contract, including required inputs and expected outputs.
-- Improve failure handling/retry guidance when finalization checks fail.
-- Add tests ensuring each workflow path reaches finishing-development-branch under the correct conditions.
-
-## 11. Auto-resolve ideas after implementation with idea-specific workflow
+## 10. Auto-resolve ideas after implementation with idea-specific workflow
 
 Design a reliable mechanism to remove or mark ideas complete once the corresponding fix/feature is delivered, potentially via an idea-linked workflow that tracks implementation-to-backlog closure.
 
